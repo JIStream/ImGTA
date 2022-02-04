@@ -18,6 +18,13 @@
 
 #include <cmath>
 
+
+char* GetCharactersFromBitset(int bitset) {
+	static char result[8][4] = { "   ", "M  ", "F  ", "MF ", "T  ", "TM ", "TF ", "TMF"};
+
+	return result[bitset];
+}
+
 CommsMod::CommsMod(DLLObject & dllObject, bool supportGlobals) :
 	Mod(dllObject, "Comms", true, supportGlobals),
 	m_gMessage1(GlobalID::_127127),
@@ -27,7 +34,11 @@ CommsMod::CommsMod(DLLObject & dllObject, bool supportGlobals) :
 	m_gMessage5(GlobalID::_2873),
 	m_gMessage6(GlobalID::_1683749),
 	m_gMessage7(GlobalID::_109748),
-	m_gEmail1(GlobalID::_45154)
+	m_gQueuedTexts(GlobalID::_103948), //Global_97353.f_5944.f_651
+	m_gQueuedCalls(GlobalID::_103927), //Global_97353.f_5944
+	m_gQueuedEmails(GlobalID::_104062), //Global_97353.f_5944.f_765
+	m_gEmail1(GlobalID::_45154),
+	m_gTextMessagesSaved(109748)
 {
 	m_windowFlags = ImGuiWindowFlags_MenuBar;
 }
@@ -56,23 +67,28 @@ void CommsMod::UpdateLocationData()
 	if (m_supportGlobals)
 	{
 		m_gMessage1.LoadElement();
-		m_gMessage2.LoadElement();
+		/*m_gMessage2.LoadElement();
 		m_gMessage3.LoadElement();
 		m_gMessage4.LoadElement();
 		m_gMessage5.LoadElement();
 		m_gMessage6.LoadElement();
-		m_gMessage7.LoadElement();
-		m_gEmail1.LoadElement();
+		m_gMessage7.LoadElement();*/
+		m_gQueuedTexts.LoadElement();
+		m_gQueuedCalls.LoadElement();
+		m_gQueuedEmails.LoadElement();
+		m_gTextMessagesSaved.LoadElement();
+		/*m_gEmail1.LoadElement(); */
 
-		// Global_35464 -> store time where it's possible to receive message. not always updated though
+		noQueuedTexts = *(int*)GetGlobalPtr(104061);
+		noQueuedCalls = *(int*)GetGlobalPtr(103947);
+		noQueuedEmails = *(int*)GetGlobalPtr(104163);
+
+
+		currentTime = MISC::GET_GAME_TIMER();
+
 		m_nextReceivingTime = *(int *)GetGlobalPtr(GlobalID::_35464);
-		int tmp = (MISC::GET_GAME_TIMER() - m_nextReceivingTime) / 1000;
+		int tmp =  (m_nextReceivingTime - currentTime) / 1000;
 		m_timeLeftForReceiving = tmp >= 0 ? tmp : 0;
-		m_unk15750 = std::string((char *)GetGlobalPtr(GlobalID::_15750));
-		m_unk15756 = std::string((char *)GetGlobalPtr(GlobalID::_15756));
-		m_unk15774 = std::string((char *)GetGlobalPtr(GlobalID::_15774));
-		m_unk15780 = std::string((char *)GetGlobalPtr(GlobalID::_15780));
-		m_unk15840 = std::string((char *)GetGlobalPtr(GlobalID::_15840));
 	}
 }
 
@@ -104,69 +120,34 @@ bool CommsMod::Draw()
 
 	ImGui::Separator();
 	ImGui::Text("Next time comms can be received: %d", m_nextReceivingTime);
-	ImGui::Text("Time left for being able to receive comms: %d sec", m_timeLeftForReceiving);
-	ImGui::Text("Unk15750: %s", m_unk15750.c_str());
+	ImGui::Text("Next comm in %d s", m_timeLeftForReceiving);
+	/*ImGui::Text("Unk15750: %s", m_unk15750.c_str());
 	ImGui::Text("Unk15756: %s", m_unk15756.c_str());
 	ImGui::Text("Unk15774: %s", m_unk15774.c_str());
 	ImGui::Text("Unk15780: %s", m_unk15780.c_str());
-	ImGui::Text("Unk15840: %s", m_unk15840.c_str());
+	ImGui::Text("Unk15840: %s", m_unk15840.c_str());*/
 
 	if (m_supportGlobals)
 	{
 		ImGui::Separator();
-		if (ImGui::TreeNodeEx("Messages?", ImGuiTreeNodeFlags_SpanAvailWidth))
-		{
-			ImGui::SetNextItemWidth(m_inputIDWidgetWidth);
-			if (ImGui::InputInt("Message ID", &m_gMessage1.id))
-			{
-				ClipInt(m_gMessage1.id, 0, m_gMessage1.size - 1);
-				m_wantsUpdate = true;
-			}
-			ImGui::SameLine();
-			ImGui::Text("(max: %d)", m_gMessage1.size);
+		
 
-			ImGui::Text("Hash: %d", m_gMessage1.arr.field_0);
-			ImGui::Text("Field 1: %d", m_gMessage1.arr.field_1);
-			ImGui::Text("Field 2: %d", m_gMessage1.arr.field_2);
-			ImGui::Text("Field 3: %s", m_gMessage1.arr.field_3);
-			ImGui::Text("Field 7: %s", m_gMessage1.arr.field_7);
-			ImGui::Text("Field B: %d", m_gMessage1.arr.field_11);
-			ImGui::Text("Field C: %d", m_gMessage1.arr.field_12_size);
-			std::string field_C = "Field C: ";
-			for (int i = 0; i < m_gMessage1.arr.field_12_size; ++i)
-				field_C += std::to_string(m_gMessage1.arr.field_12[i].val) + ", ";
-			ImGui::Text(field_C.c_str());
-			ImGui::Text("Field 11: %d", m_gMessage1.arr.field_17);
-			ImGui::Text("Field 12: %d", m_gMessage1.arr.field_18);
-			ImGui::Text("Field 13: %d", m_gMessage1.arr.field_20_size);
-			std::string field_13 = "Field 13: ";
-			for (int i = 0; i < m_gMessage1.arr.field_20_size; ++i)
-				field_13 += std::to_string(m_gMessage1.arr.field_20[i].val) + ", ";
-			ImGui::Text(field_13.c_str());
-			ImGui::Text("Field 18: %d", m_gMessage1.arr.field_25_size);
-			std::string field_18 = "Field 18: ";
-			for (int i = 0; i < m_gMessage1.arr.field_25_size; ++i)
-				field_18 += std::to_string(m_gMessage1.arr.field_25[i].val) + ", ";
-			ImGui::Text(field_18.c_str());
-			ImGui::TreePop();
-		}
+		//ImGui::Separator();
+		//if (ImGui::TreeNodeEx("Call numbers?", ImGuiTreeNodeFlags_SpanAvailWidth))
+		//{
+		//	if (m_gMessage1.id < m_gMessage2.size)
+		//		m_gMessage2.id = m_gMessage1.id;
+		//	ImGui::Text("Same ID as mission ID: %d", m_gMessage2.id);
+		//	ImGui::SameLine();
+		//	ImGui::Text("(max: %d)", m_gMessage2.size);
+		//	ImGui::Text("Field 0: %s", m_gMessage2.arr.f_0);
+		//	ImGui::Text("Field 4: %s", m_gMessage2.arr.f_4);
+		//	ImGui::Text("Field 8: %d", m_gMessage2.arr.f_8);
+		//	ImGui::Text("Field 9: %d", m_gMessage2.arr.f_9);
+		//	ImGui::TreePop();
+		//}
 
-		ImGui::Separator();
-		if (ImGui::TreeNodeEx("Call numbers?", ImGuiTreeNodeFlags_SpanAvailWidth))
-		{
-			if (m_gMessage1.id < m_gMessage2.size)
-				m_gMessage2.id = m_gMessage1.id;
-			ImGui::Text("Same ID as mission ID: %d", m_gMessage2.id);
-			ImGui::SameLine();
-			ImGui::Text("(max: %d)", m_gMessage2.size);
-			ImGui::Text("Field 0: %s", m_gMessage2.arr.f_0);
-			ImGui::Text("Field 4: %s", m_gMessage2.arr.f_4);
-			ImGui::Text("Field 8: %d", m_gMessage2.arr.f_8);
-			ImGui::Text("Field 9: %d", m_gMessage2.arr.f_9);
-			ImGui::TreePop();
-		}
-
-		ImGui::Separator();
+	/*	ImGui::Separator();
 		if (ImGui::TreeNodeEx("Message Array 3", ImGuiTreeNodeFlags_SpanAvailWidth))
 		{
 			ImGui::SetNextItemWidth(m_inputIDWidgetWidth);
@@ -246,52 +227,169 @@ bool CommsMod::Draw()
 
 			ImGui::Text("Field 0: %s", m_gMessage6.arr.f_0);
 			ImGui::TreePop();
-		}
+		}*/
+
 
 		ImGui::Separator();
-		if (ImGui::TreeNodeEx("Received texts", ImGuiTreeNodeFlags_SpanAvailWidth))
+		if (ImGui::TreeNodeEx("Queued texts", ImGuiTreeNodeFlags_SpanAvailWidth))
 		{
-			ImGui::SetNextItemWidth(m_inputIDWidgetWidth);
-			if (ImGui::InputInt("Array 7 ID", &m_gMessage7.id))
-			{
-				ClipInt(m_gMessage7.id, 0, m_gMessage7.size - 1);
-				m_wantsUpdate = true;
-			}
-			ImGui::SameLine();
-			ImGui::Text("(max: %d)", m_gMessage7.size);
 
-			ImGui::Text("Name: %s", m_gMessage7.arr.name);
-			ImGui::Text("Notification ID: %d", m_gMessage7.arr.notificationId);
-			ImGui::Text("Field 17: %d", m_gMessage7.arr.f_17);
-			ImGui::Text("Reception Time (hour, min, sec): %d, %d, %d", m_gMessage7.arr.timeAndDate.hours,
-				m_gMessage7.arr.timeAndDate.minutes,
-				m_gMessage7.arr.timeAndDate.seconds);
-			ImGui::Text("Reception Date (day,month,year): %d, %d, %d", m_gMessage7.arr.timeAndDate.day,
-				m_gMessage7.arr.timeAndDate.month,
-				m_gMessage7.arr.timeAndDate.year);
-			ImGui::Text("Field 24: %d", m_gMessage7.arr.f_24);
-			ImGui::Text("Field 25: %d", m_gMessage7.arr.f_25);
-			ImGui::Text("Field 26: %d", m_gMessage7.arr.f_26);
-			ImGui::Text("Field 27: %d", m_gMessage7.arr.f_27);
-			ImGui::Text("Field 28: %d", m_gMessage7.arr.f_28);
-			ImGui::Text("Field 29: %d", m_gMessage7.arr.f_29);
-			ImGui::Text("Field 30: %d", m_gMessage7.arr.f_30);
-			ImGui::Text("Field 31: %d", m_gMessage7.arr.f_31);
-			ImGui::Text("Field 32: %d", m_gMessage7.arr.f_32);
-			ImGui::Text("Field 33: %s", m_gMessage7.arr.f_33);
-			ImGui::Text("Field 49: %d", m_gMessage7.arr.f_49);
-			ImGui::Text("Field 50: %s", m_gMessage7.arr.f_50);
-			ImGui::Text("Field 66: %d", m_gMessage7.arr.f_66);
-			ImGui::Text("Field 67: %s", m_gMessage7.arr.f_67);
-			ImGui::Text("Field 83: %s", m_gMessage7.arr.f_83);
-			ImGui::Text("Message recipient array size: %d", m_gMessage7.arr.f_99_size);
-			std::string field_99 = "Message recipient (michael, franklin, trevor, multiplayer?): ";
-			for (int i = 0; i < m_gMessage7.arr.f_99_size; ++i)
-				field_99 += std::to_string(m_gMessage7.arr.type[i].val) + ", ";
-			ImGui::Text(field_99.c_str());
+			ImGui::SetNextItemWidth(m_inputIDWidgetWidth);
+			ImGui::Text("(Count: %d)", noQueuedTexts);
+
+			if (noQueuedTexts > 0) {
+				if (ImGui::InputInt("Queued Text ID", &m_gQueuedTexts.id))
+				{
+					ClipInt(m_gQueuedTexts.id, 0, noQueuedTexts - 1);
+					m_wantsUpdate = true;
+				}
+			
+				ImGui::Text("ID: %d (Name %s)", m_gQueuedTexts.arr.CommData.ID, GetTextMessageName(m_gQueuedTexts.arr.CommData.ID));
+				ImGui::Text("Settings: %d", m_gQueuedTexts.arr.CommData.Settings);
+				ImGui::Text("For Characters: %s", GetCharactersFromBitset(m_gQueuedTexts.arr.CommData.Player_Char_Bitset));
+				ImGui::Text("Priority %d", m_gQueuedTexts.arr.CommData.Priority);
+
+				if (m_gQueuedTexts.arr.CommData.Queue_Time > currentTime) {
+
+					ImGui::Text("Queue_Time: In %d s (%d)", (m_gQueuedTexts.arr.CommData.Queue_Time - currentTime) / 1000, m_gQueuedTexts.arr.CommData.Queue_Time);
+					if (ImGui::Button("Force ready")) {
+						m_gQueuedTexts.ptr->CommData.Queue_Time = currentTime + 16;
+					}
+				}
+				else
+					ImGui::Text("Queue_Time: Ready to send");
+
+				ImGui::Text("Requeue_Time: %d s", m_gQueuedTexts.arr.CommData.Requeue_Time);
+				ImGui::Text("NPC_Character: %s", GetCommsCharacterName(m_gQueuedTexts.arr.CommData.NPC_Character));
+				ImGui::Text("Restricted_Area_ID: %d", m_gQueuedTexts.arr.CommData.Restricted_Area_ID);
+				ImGui::Text("Execute_On_Complete_ID: %d", m_gQueuedTexts.arr.CommData.Execute_On_Complete_ID);
+				ImGui::Text("Send_Check: %d", m_gQueuedTexts.arr.CommData.Send_Check);
+				ImGui::Text("ePart1: %d", m_gQueuedTexts.arr.ePart1);
+				ImGui::Text("ePart2: %d", m_gQueuedTexts.arr.ePart2);
+				ImGui::Text("Fail_Count: %d", m_gQueuedTexts.arr.Fail_Count);
+				ImGui::Text("WhichCanCallSenderStatus: %d", m_gQueuedTexts.arr.WhichCanCallSenderStatus);
+			}
 			ImGui::TreePop();
 		}
 
+		ImGui::Separator();
+		if (ImGui::TreeNodeEx("Queued calls", ImGuiTreeNodeFlags_SpanAvailWidth))
+		{
+
+			ImGui::SetNextItemWidth(m_inputIDWidgetWidth);
+			ImGui::Text("(Count: %d)", noQueuedCalls);
+			if(noQueuedCalls > 0) {
+				if (ImGui::InputInt("Queued Call ID", &m_gQueuedCalls.id))
+				{
+					ClipInt(m_gQueuedCalls.id, 0, noQueuedCalls - 1);
+					m_wantsUpdate = true;
+				}
+			
+				ImGui::Text("ID: %d (Name %s)", m_gQueuedCalls.arr.CommData.ID, GetCallName(m_gQueuedCalls.arr.CommData.ID));
+				ImGui::Text("Settings: %d", m_gQueuedCalls.arr.CommData.Settings);
+				ImGui::Text("For Characters: %s", GetCharactersFromBitset(m_gQueuedCalls.arr.CommData.Player_Char_Bitset));
+
+				if (m_gQueuedCalls.arr.CommData.Queue_Time > currentTime)
+					ImGui::Text("Queue_Time: In %d s (%d)", (m_gQueuedCalls.arr.CommData.Queue_Time - currentTime) / 1000, m_gQueuedCalls.arr.CommData.Queue_Time);
+				else
+					ImGui::Text("Queue_Time: Ready to send");				
+
+				ImGui::Text("Requeue_Time: %d s", m_gQueuedCalls.arr.CommData.Requeue_Time);
+				ImGui::Text("NPC_Character: %s", GetCommsCharacterName(m_gQueuedCalls.arr.CommData.NPC_Character));
+				ImGui::Text("Restricted_Area_ID: %d", m_gQueuedCalls.arr.CommData.Restricted_Area_ID);
+				ImGui::Text("Execute_On_Complete_ID: %d", m_gQueuedCalls.arr.CommData.Execute_On_Complete_ID);
+				ImGui::Text("Send_Check: %d", m_gQueuedCalls.arr.CommData.Send_Check);
+			}
+			ImGui::TreePop();
+		}
+
+		ImGui::Separator();
+		if (ImGui::TreeNodeEx("Queued emails", ImGuiTreeNodeFlags_SpanAvailWidth))
+		{
+			
+			ImGui::SetNextItemWidth(m_inputIDWidgetWidth);
+			ImGui::Text("(Count: %d)", noQueuedEmails);
+			if (noQueuedEmails > 0) {
+				if (ImGui::InputInt("Queued Email ID", &m_gQueuedEmails.id))
+				{
+					ClipInt(m_gQueuedEmails.id, 0, noQueuedEmails - 1);
+					m_wantsUpdate = true;
+				}
+			
+				ImGui::Text("ID: %d", m_gQueuedEmails.arr.ID);
+				ImGui::Text("Settings: %d", m_gQueuedEmails.arr.Settings);
+				ImGui::Text("For Characters: %s", GetCharactersFromBitset(m_gQueuedEmails.arr.Player_Char_Bitset));
+
+				if (m_gQueuedEmails.arr.Queue_Time > currentTime)
+					ImGui::Text("Queue_Time: In %d s (%d)", (m_gQueuedEmails.arr.Queue_Time - currentTime) / 1000, m_gQueuedEmails.arr.Queue_Time);
+				else
+					ImGui::Text("Queue_Time: Ready to send");
+
+				ImGui::Text("Requeue_Time: %d", m_gQueuedEmails.arr.Requeue_Time);
+				ImGui::Text("NPC_Character: %s", GetCommsCharacterName(m_gQueuedEmails.arr.NPC_Character));
+				ImGui::Text("Restricted_Area_ID: %d", m_gQueuedEmails.arr.Restricted_Area_ID);
+				ImGui::Text("Execute_On_Complete_ID: %d", m_gQueuedEmails.arr.Execute_On_Complete_ID);
+				ImGui::Text("Send_Check: %d", m_gQueuedEmails.arr.Send_Check);
+			}
+
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNodeEx("Charsheet Saved Contacts", ImGuiTreeNodeFlags_SpanAvailWidth))
+		{
+			ImGui::SetNextItemWidth(m_inputIDWidgetWidth);
+			if (ImGui::InputInt("Message ID", &m_gMessage1.id))
+			{
+				ClipInt(m_gMessage1.id, 0, m_gMessage1.size - 1);
+				m_wantsUpdate = true;
+			}
+			ImGui::SameLine();
+			ImGui::Text("(max: %d)", m_gMessage1.size);
+
+			ImGui::Text("Game Model Hash: %d", m_gMessage1.arr.game_model);
+			ImGui::Text("Alpha: %d", m_gMessage1.arr.alpha_int);
+			ImGui::Text("Original Alpha: %d", m_gMessage1.arr.orig_alpha_int);
+			ImGui::Text("Character Label: %s", m_gMessage1.arr.char_label);
+			ImGui::Text("Character Picture: %s", m_gMessage1.arr.char_picture);
+			ImGui::Text("Is Friend?: %d", m_gMessage1.arr.is_friend);
+			/*ImGui::Text("Field C: %d", m_gMessage1.arr.field_12_size);
+			std::string field_C = "Field C: ";
+			for (int i = 0; i < m_gMessage1.arr.field_12_size; ++i)
+				field_C += std::to_string(m_gMessage1.arr.field_12[i].val) + ", ";
+			ImGui::Text(field_C.c_str());
+			ImGui::Text("Field 11: %d", m_gMessage1.arr.field_17);
+			ImGui::Text("Field 12: %d", m_gMessage1.arr.field_18);
+			ImGui::Text("Field 13: %d", m_gMessage1.arr.field_20_size);
+			std::string field_13 = "Field 13: ";
+			for (int i = 0; i < m_gMessage1.arr.field_20_size; ++i)
+				field_13 += std::to_string(m_gMessage1.arr.field_20[i].val) + ", ";
+			ImGui::Text(field_13.c_str());
+			ImGui::Text("Field 18: %d", m_gMessage1.arr.field_25_size);
+			std::string field_18 = "Field 18: ";
+			for (int i = 0; i < m_gMessage1.arr.field_25_size; ++i)
+				field_18 += std::to_string(m_gMessage1.arr.field_25[i].val) + ", ";
+			ImGui::Text(field_18.c_str());*/
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNodeEx("Saved Texts", ImGuiTreeNodeFlags_SpanAvailWidth))
+		{
+			ImGui::SetNextItemWidth(m_inputIDWidgetWidth);
+			if (ImGui::InputInt("Message ID", &m_gTextMessagesSaved.id))
+			{
+				ClipInt(m_gTextMessagesSaved.id, 0, m_gMessage1.size - 1);
+				m_wantsUpdate = true;
+			}
+			ImGui::SameLine();
+			ImGui::Text("(max: %d)", m_gTextMessagesSaved.size);
+
+			ImGui::Text("Text Label: %s", m_gTextMessagesSaved.arr.GXTlabel);
+			ImGui::Text("Sender: %s", GetCommsCharacterName(m_gTextMessagesSaved.arr.Sender));
+			ImGui::Text("Sent at %d:%d:%d on %d/%d/%d ", m_gTextMessagesSaved.arr.SentHours, m_gTextMessagesSaved.arr.SentMins, m_gTextMessagesSaved.arr.SentSecs, m_gTextMessagesSaved.arr.SentDay, m_gTextMessagesSaved.arr.SentMonth, m_gTextMessagesSaved.arr.SentYear);
+		
+			ImGui::TreePop();
+		}
+		/*
 		ImGui::Separator();
 		if (ImGui::TreeNodeEx("Email array", ImGuiTreeNodeFlags_SpanAvailWidth))
 		{
@@ -325,7 +423,7 @@ bool CommsMod::Draw()
 					ImGui::Text("Field 0 of field 7 of field 10: %s", m_gEmail1.arr.f_10[i].f_7[j].f_0);
 			}
 			ImGui::TreePop();
-		}
+		}*/
 	}
 	return true;
 }

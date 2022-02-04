@@ -38,7 +38,7 @@ struct CheatsSettings {
 	CommonSettings common;
 	bool enableInGameHUD = true;
 	bool showGeneralInfo = true;
-	bool showAvailableInputs = true;
+	bool showAvailableInputs = false;
 	bool floatingMenu = true;
 	bool displayKMH = true;
 };

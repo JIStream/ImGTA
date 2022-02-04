@@ -9,32 +9,32 @@
 #include "utils.h"
 #include "user_settings.h"
 
-struct MessageArray
+struct CharsheetSavedArray
 {
 	// Global_127127 -> Global_97353.f_29774
-	int field_0; // Hash example 'ig_devin' -> Look in standard_global_reg for correspondance
+	int game_model; // Hash example 'ig_devin' -> Look in standard_global_reg for correspondance
 	DWORD _padding0;
-	int field_1;
+	int alpha_int;
 	DWORD _padding1;
-	int field_2;
+	int orig_alpha_int;
 	DWORD _padding2;
-	char field_3[32];
-	char field_7[32];
-	int field_11; // 11
+	char char_label[32];
+	char char_picture[32];
+	int is_friend; // 11
 	DWORD _padding11;
-	int field_12_size; // 12 // size 4?
+	int PhoneBookStatesize; // 12 // size 4?
 	DWORD _padding12;
-	PaddedInt field_12[4];
-	int field_17; // 17
+	PaddedInt PhoneBookStateArray[4];
+	int bank_acc; // 17
 	DWORD _padding17;
-	int field_18; // 18
+	int Picmsg_Status; // 18
 	DWORD _padding18;
-	int field_20_size = 4; // 19
+	int MissedCallStatusSize = 4; // 19
 	DWORD _padding20;
-	PaddedInt field_20[4]; // 20
-	int field_25_size; // 25 // size 4?
+	PaddedInt MissedCallStatusArray[4]; // 20
+	int StatusAsCallerSize; // 25 // size 4?
 	DWORD _padding25;
-	PaddedInt field_25[4];
+	PaddedInt StatusAsCallerArray[4];
 }; // Size 29 * 8 bytes
 
 struct MessageArray2 {
@@ -155,6 +155,80 @@ struct MessageArray7 {
 	PaddedInt type[4]; // 99
 }; // Size 104 * 8
 
+struct CommunicationDataStruct {
+	int ID;
+	DWORD _padding0;
+	int Settings;
+	DWORD _padding1;
+	int Player_Char_Bitset;
+	DWORD _padding2;
+	int Priority;
+	DWORD _padding3;
+	int Queue_Time;
+	DWORD _padding4;
+	int Requeue_Time;
+	DWORD _padding5;
+	int NPC_Character;
+	DWORD _padding6;
+	int Restricted_Area_ID;
+	DWORD _padding7;
+	int Execute_On_Complete_ID;
+	DWORD _padding8;
+	int Send_Check;
+	DWORD _padding9;
+};
+
+struct TextMessageDataStruct {
+	CommunicationDataStruct CommData;
+	int ePart1;
+	DWORD _padding10;
+	int ePart2;
+	DWORD _padding11;
+	int Fail_Count;
+	DWORD _padding12;
+	int WhichCanCallSenderStatus;
+	DWORD _padding13;
+};
+
+struct CallDataStruct {
+	CommunicationDataStruct CommData;
+	int eCommExtra;
+	DWORD _padding10;
+	int eCommExtra2;
+	DWORD _padding11;
+	int eYesResponse;
+	DWORD _padding12;
+	int eNoResponse;
+	DWORD _padding13; 
+	int Speaker_ID;
+	DWORD _padding14;
+};
+//size: 832
+struct SentTextMessageStruct {
+	char GXTlabel[16]; // 0 1 2 3 ... 14 15
+	DWORD _padding0[28]; // 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120 124
+	int FeedId_Int; //128
+	DWORD _padding16; //132
+	int Sender; //136
+	DWORD _padding17; // 140
+	int SentSecs; //144
+	DWORD _padding18;//148
+	int SentMins; //152
+	DWORD _padding18_1;//156
+	int SentHours; //160
+	DWORD _padding18_2;//164
+	int SentDay; //168
+	DWORD _padding18_3;//172
+	int SentMonth; //176
+	DWORD _padding18_4;//180
+	int SentYear; //184
+	DWORD _padding18_5;//188
+
+	PaddedInt _rest[77]; // 192 - 800
+	DWORD _paddinglast[6]; // 808
+
+};
+
 struct EmailArrayBis2 {
 	char f_0[32];
 }; // Size 4 * 8 bytes
@@ -202,13 +276,18 @@ private:
 	CommonSettings & GetCommonSettings() override { return m_settings.common; }
 
 	CommsSettings m_settings;
-	GlobalArray<MessageArray> m_gMessage1;
+	GlobalArray<CharsheetSavedArray> m_gMessage1;
 	GlobalArray<MessageArray2> m_gMessage2;
 	GlobalArray<MessageArray3> m_gMessage3;
 	GlobalArray<MessageArray4> m_gMessage4;
 	GlobalArray<MessageArray5> m_gMessage5;
 	GlobalArray<MessageArray6> m_gMessage6;
 	GlobalArray<MessageArray7> m_gMessage7;
+	GlobalArray<TextMessageDataStruct> m_gQueuedTexts;
+	GlobalArray<CallDataStruct> m_gQueuedCalls;
+	GlobalArray<CommunicationDataStruct> m_gQueuedEmails;
+	GlobalArray<SentTextMessageStruct> m_gTextMessagesSaved;
+
 	GlobalArray<EmailArray> m_gEmail1;
 
 	std::string m_unk15750 = "";
@@ -216,8 +295,13 @@ private:
 	std::string m_unk15774 = "";
 	std::string m_unk15780 = "";
 	std::string m_unk15840 = "";
+	int noQueuedTexts = 0;
+	int noQueuedCalls = 0;
+	int noQueuedEmails = 0;
+
 	int m_nextReceivingTime = 0;
 	int m_timeLeftForReceiving = 0;
+	int currentTime = 0;
 
 	// ImGui inputs / internals
 	bool m_wantsUpdate = false;
