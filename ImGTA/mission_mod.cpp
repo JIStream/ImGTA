@@ -52,7 +52,7 @@ void MissionMod::Unload()
 
 void MissionMod::Think()
 {
-	if (m_constantUpdate || m_wantsUpdate)
+	if (m_settings.common.autoUpdate || m_wantsUpdate)
 	{
 		UpdateMissionData();
 		m_wantsUpdate = false;
@@ -125,7 +125,7 @@ bool MissionMod::Draw()
 	ImGui::SetWindowFontScale(m_settings.common.contentFontSize);
 
 	Widgets::AutoUpdateCheckBox(&m_settings.common.autoUpdate);
-	if (!m_constantUpdate)
+	if (!m_settings.common.autoUpdate)
 		if (ImGui::Button("Update"))
 			m_wantsUpdate = true;
 

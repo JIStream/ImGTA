@@ -51,7 +51,6 @@ private:
 
 	// ImGui inputs / internals
 	bool m_wantsUpdate = false;
-	bool m_constantUpdate = true;
 	ScriptObject *m_selected;
 	unsigned int m_startFlags = 1024;
 	char m_startScriptName[128] = "";

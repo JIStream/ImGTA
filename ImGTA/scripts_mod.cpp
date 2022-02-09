@@ -42,7 +42,7 @@ void ScriptsMod::Unload()
 
 void ScriptsMod::Think()
 {
-	if (m_constantUpdate || m_wantsUpdate)
+	if (m_settings.common.autoUpdate || m_wantsUpdate)
 	{
 		std::lock_guard<std::mutex> lock(m_scriptsMutex);
 		m_scripts.clear();
@@ -81,7 +81,7 @@ void ScriptsMod::Think()
 		float yOff = m_settings.common.inGameOffsetY;
 		const float step = 1.2f * TextFontHeight(m_settings.common.inGameFontSize, m_font);
 
-		std::snprintf(buf, sizeof(buf), "Constant updates: %s", BoolToStr(m_constantUpdate));
+		std::snprintf(buf, sizeof(buf), "Constant updates: %s", BoolToStr(m_settings.common.autoUpdate));
 		DrawTextToScreen(buf, xOff, yOff, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
 		yOff += step;
 
@@ -256,7 +256,7 @@ bool ScriptsMod::Draw()
 	ImGui::SetWindowFontScale(m_settings.common.contentFontSize);
 
 	Widgets::AutoUpdateCheckBox(&m_settings.common.autoUpdate);
-	if (!m_constantUpdate)
+	if (!m_settings.common.autoUpdate)
 		if (ImGui::Button("Update"))
 			m_wantsUpdate = true;
 

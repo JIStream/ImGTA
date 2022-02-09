@@ -40,7 +40,7 @@ void PlayerSwitchMod::Unload()
 
 void PlayerSwitchMod::Think()
 {
-	if (m_constantUpdate || m_wantsUpdate)
+	if (m_settings.common.autoUpdate || m_wantsUpdate)
 	{
 		UpdateLocationData();
 		m_wantsUpdate = false;
@@ -115,7 +115,7 @@ bool PlayerSwitchMod::Draw()
 	ImGui::SetWindowFontScale(m_settings.common.contentFontSize);
 
 	Widgets::AutoUpdateCheckBox(&m_settings.common.autoUpdate);
-	if (!m_constantUpdate)
+	if (!m_settings.common.autoUpdate)
 		if (ImGui::Button("Update"))
 			m_wantsUpdate = true;
 

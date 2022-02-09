@@ -45,7 +45,6 @@ private:
 	// ImGui inputs / internals
 	bool m_wantsUpdate = false;
 	int m_handleInput = 0;
-	bool m_constantUpdate = true;
 	char m_animDictInput[256] = "";
 	char m_animNameInput[256] = "";
 	unsigned int m_animFlags = 0;
