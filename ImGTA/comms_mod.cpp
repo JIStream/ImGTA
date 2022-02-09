@@ -17,6 +17,7 @@
 #include "imgui_extras.h"
 
 #include <cmath>
+#include "widgets.h"
 
 
 char* GetCharactersFromBitset(int bitset) {
@@ -57,7 +58,7 @@ void CommsMod::Unload()
 
 void CommsMod::Think()
 {
-	if (m_constantUpdate || m_wantsUpdate)
+	if (&m_settings.common.autoUpdate || m_wantsUpdate)
 	{
 		UpdateLocationData();
 		m_wantsUpdate = false;
@@ -119,8 +120,8 @@ bool CommsMod::Draw()
 
 	ImGui::SetWindowFontScale(m_settings.common.contentFontSize);
 
-	ImGui::Checkbox("Constant Updates?", &m_constantUpdate);
-	if (!m_constantUpdate)
+	Widgets::AutoUpdateCheckBox(&m_settings.common.autoUpdate);
+	if (!&m_settings.common.autoUpdate)
 		if (ImGui::Button("Update"))
 			m_wantsUpdate = true;
 

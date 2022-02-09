@@ -13,6 +13,7 @@
 
 struct CommonSettings {
 	bool showInGame = true;
+	bool autoUpdate = true;
 	float menuFontSize = 1.0f;
 	float contentFontSize = 1.0f;
 	float inGameFontSize = 0.3f;

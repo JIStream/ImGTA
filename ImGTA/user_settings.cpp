@@ -130,6 +130,8 @@ void UserSettingsManager::LoadCommon(std::string & line, std::istringstream & st
 {
 	if (line.find(prefix + "common.showInGame") != -1)
 		stream >> common.showInGame;
+	if (line.find(prefix + "common.autoUpdate") != -1)
+		stream >> common.autoUpdate;
 	else if (line.find(prefix + "common.menuFontSize") != -1)
 		stream >> common.menuFontSize;
 	else if (line.find(prefix + "common.contentFontSize") != -1)
@@ -153,6 +155,7 @@ void UserSettingsManager::LoadCommon(std::string & line, std::istringstream & st
 void UserSettingsManager::SaveCommon(std::ofstream & file, CommonSettings & common, const std::string & prefix)
 {
 	file << prefix + "common.showInGame = " << common.showInGame << std::endl;
+	file << prefix + "common.autoUpdate = " << common.autoUpdate << std::endl;
 	file << prefix + "common.menuFontSize = " << common.menuFontSize << std::endl;
 	file << prefix + "common.contentFontSize = " << common.contentFontSize << std::endl;
 	file << prefix + "common.inGameFontSize = " << common.inGameFontSize << std::endl;
