@@ -27,7 +27,7 @@ void SyncSceneMod::Unload()
 
 void SyncSceneMod::Think()
 {
-	if (m_constantUpdate || m_wantsUpdate)
+	if (m_settings.common.autoUpdate || m_wantsUpdate)
 	{
 		UpdateHandleData();
 		ListRunning();
@@ -130,7 +130,7 @@ bool SyncSceneMod::Draw()
 	ImGui::SetWindowFontScale(m_settings.common.contentFontSize);
 
 	Widgets::AutoUpdateCheckBox(&m_settings.common.autoUpdate);
-	if (!m_constantUpdate)
+	if (!m_settings.common.autoUpdate)
 		if (ImGui::Button("Update"))
 			m_wantsUpdate = true;
 
