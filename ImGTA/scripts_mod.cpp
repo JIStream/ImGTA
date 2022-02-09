@@ -18,6 +18,7 @@
 #include "imgui_extras.h"
 
 #include <algorithm>
+#include "widgets.h"
 
 bool CompareScriptByHandle(ScriptObject a, ScriptObject b)
 {
@@ -254,7 +255,7 @@ bool ScriptsMod::Draw()
 
 	ImGui::SetWindowFontScale(m_settings.common.contentFontSize);
 
-	ImGui::Checkbox("Constant Updates?", &m_constantUpdate);
+	Widgets::AutoUpdateCheckBox(&m_settings.common.autoUpdate);
 	if (!m_constantUpdate)
 		if (ImGui::Button("Update"))
 			m_wantsUpdate = true;

@@ -19,6 +19,7 @@
 #include <cstdio>
 #include <sstream>
 #include <iomanip>
+#include "widgets.h"
 
 const char *entityTypes[] = { "Invalid", "Ped", "Vehicle", "Object" };
 
@@ -338,7 +339,7 @@ bool HandleHelperMod::Draw()
 
 	ImGui::SetWindowFontScale(m_settings.common.contentFontSize);
 
-	ImGui::Checkbox("Constant Updates?", &m_constantUpdate);
+	Widgets::AutoUpdateCheckBox(&m_settings.common.autoUpdate);
 	if (!m_constantUpdate)
 		if (ImGui::Button("Update"))
 			m_wantsUpdate = true;
