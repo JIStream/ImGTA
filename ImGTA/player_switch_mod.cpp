@@ -15,6 +15,7 @@
 
 #include "imgui.h"
 #include "imgui_extras.h"
+#include "widgets.h"
 
 PlayerSwitchMod::PlayerSwitchMod(DLLObject & dllObject, bool supportGlobals) :
 	Mod(dllObject, "Player Switch", true, supportGlobals),
@@ -39,7 +40,7 @@ void PlayerSwitchMod::Unload()
 
 void PlayerSwitchMod::Think()
 {
-	if (m_constantUpdate || m_wantsUpdate)
+	if (m_settings.common.autoUpdate || m_wantsUpdate)
 	{
 		UpdateLocationData();
 		m_wantsUpdate = false;
@@ -113,8 +114,8 @@ bool PlayerSwitchMod::Draw()
 
 	ImGui::SetWindowFontScale(m_settings.common.contentFontSize);
 
-	ImGui::Checkbox("Constant Updates?", &m_constantUpdate);
-	if (!m_constantUpdate)
+	Widgets::AutoUpdateCheckBox(&m_settings.common.autoUpdate);
+	if (!m_settings.common.autoUpdate)
 		if (ImGui::Button("Update"))
 			m_wantsUpdate = true;
 

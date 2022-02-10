@@ -211,6 +211,7 @@ copy "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)
     <ClCompile Include="user_settings.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="watch_entry.cpp" />
+    <ClCompile Include="widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\imgui\backends\imgui_impl_dx11.h" />
@@ -254,6 +255,7 @@ copy "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)
     <ClInclude Include="utils.h" />
     <ClInclude Include="vehicle_names.h" />
     <ClInclude Include="watch_entry.h" />
+    <ClInclude Include="widgets.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lua_engine.h" />

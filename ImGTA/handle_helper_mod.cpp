@@ -19,6 +19,7 @@
 #include <cstdio>
 #include <sstream>
 #include <iomanip>
+#include "widgets.h"
 
 const char *entityTypes[] = { "Invalid", "Ped", "Vehicle", "Object" };
 
@@ -34,7 +35,7 @@ void HandleHelperMod::Unload()
 
 void HandleHelperMod::Think()
 {
-	if (m_constantUpdate || m_wantsUpdate)
+	if (m_settings.common.autoUpdate || m_wantsUpdate)
 	{
 		ListPeds();
 		ListVehs();
@@ -338,8 +339,8 @@ bool HandleHelperMod::Draw()
 
 	ImGui::SetWindowFontScale(m_settings.common.contentFontSize);
 
-	ImGui::Checkbox("Constant Updates?", &m_constantUpdate);
-	if (!m_constantUpdate)
+	Widgets::AutoUpdateCheckBox(&m_settings.common.autoUpdate);
+	if (!m_settings.common.autoUpdate)
 		if (ImGui::Button("Update"))
 			m_wantsUpdate = true;
 

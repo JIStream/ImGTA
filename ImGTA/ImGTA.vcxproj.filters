@@ -57,6 +57,9 @@
     <Filter Include="Modules\Comms">
       <UniqueIdentifier>{4659fcf2-47a9-42f1-9f30-8eeaa7a1f23c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{6a5c57f0-c57b-475a-8200-d712b3a4d8a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -154,6 +157,9 @@
     </ClCompile>
     <ClCompile Include="..\Libraries\imgui\backends\imgui_impl_dx11.cpp">
       <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -279,6 +285,9 @@
     </ClInclude>
     <ClInclude Include="vehicle_names.h">
       <Filter>Modules\Cheats</Filter>
+    </ClInclude>
+    <ClInclude Include="widgets.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
