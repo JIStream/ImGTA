@@ -18,6 +18,7 @@ DLLObject object{};
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 void Load();
+void ThreadTime();
 void OnPresent(IDXGISwapChain *swap);
 
 BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
@@ -27,6 +28,7 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 	case DLL_PROCESS_ATTACH:
 		DisableThreadLibraryCalls(inst);
 		scriptRegister(inst, Load);
+		//scriptRegisterAdditionalThread(inst, ThreadTime);
 		presentCallbackRegister((PresentCallback)OnPresent);
 		break;
 
@@ -39,12 +41,6 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 			scriptUnregister(inst);
 		}
 		break;
-
-	case DLL_THREAD_ATTACH:
-		break;
-
-	case DLL_THREAD_DETACH:
-		break;
 	}
 
 	return TRUE;
@@ -53,6 +49,11 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 void Load()
 {
 	object.Load();
+}
+
+void ThreadTime()
+{
+	object.ThreadTime();
 }
 
 LRESULT __stdcall WndProc(HWND hand, UINT msg, WPARAM wParam, LPARAM lParam)

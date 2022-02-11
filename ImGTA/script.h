@@ -40,6 +40,7 @@ public:
 	void Unload();
 	void ToggleOpen();
 	void OnPresent(IDXGISwapChain *swap);
+	void ThreadTime();
 	
 	std::chrono::time_point<std::chrono::high_resolution_clock> GetLastGameTime() { return m_lastGameTime; }
 	std::string GetSettingsFolder() { return m_settingsFolder; }
@@ -56,6 +57,7 @@ public:
 	bool m_updatedPauseMenuOn = false;
 	bool m_updatedPauseMenuOff = false;
 	bool m_timerThreadAlive = false;
+	std::thread m_timerThread;
 
 private:
 	std::string m_settingsFolder = "ImGTA/";
@@ -71,7 +73,6 @@ private:
 	bool m_floatingMenu = false;
 	bool m_enableHUD = true;
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_lastGameTime;
-	std::thread m_timerThread;
 
 	// TODO: Update this bad design for ON/OFF
 	bool m_updatedTextDrawMaxWarningOn = false;
