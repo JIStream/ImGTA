@@ -52,8 +52,6 @@ public:
 	void SetFloatingMenu(bool isFloating) { m_floatingMenu = isFloating; }
 	void SetEnableHUD(bool enable) { m_enableHUD = enable; }
 	bool GetEnableHUD() { return m_enableHUD; }
-	bool m_updatedPauseMenuOn = false;
-	bool m_updatedPauseMenuOff = false;
 
 private:
 	std::string m_settingsFolder = "ImGTA/";
