@@ -31,7 +31,6 @@ public:
 	void RunOnNativeThread(std::function<void()> func);
 
 	void SetAllWindowCollapsed(bool collapse);
-	void SetPauseMenuOn(bool on);
 	void SetShowAllInGame(bool show);
 	void SetTextDrawMaxWarning(bool toggle);
 	void SetAllFontSize(float menuSize, float contentSize, float ingameSize);

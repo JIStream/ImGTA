@@ -141,12 +141,6 @@ void DLLObject::SetAllWindowCollapsed(bool collapse)
 		m->SetWindowCollapsed(collapse);
 }
 
-void DLLObject::SetPauseMenuOn(bool on)
-{
-	for (auto &m : m_modsLoaded)
-		m->SetPauseMenuOn(on);
-}
-
 void DLLObject::SetShowAllInGame(bool show)
 {
 	for (auto &m : m_modsLoaded)
