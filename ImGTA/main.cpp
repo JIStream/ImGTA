@@ -39,12 +39,6 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 			scriptUnregister(inst);
 		}
 		break;
-
-	case DLL_THREAD_ATTACH:
-		break;
-
-	case DLL_THREAD_DETACH:
-		break;
 	}
 
 	return TRUE;
