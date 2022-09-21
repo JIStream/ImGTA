@@ -12,6 +12,7 @@
 #include "natives.h"
 
 #include <bitset>
+#include "widgets.h"
 
 
 void SyncSceneMod::Load()
@@ -26,7 +27,7 @@ void SyncSceneMod::Unload()
 
 void SyncSceneMod::Think()
 {
-	if (m_constantUpdate || m_wantsUpdate)
+	if (m_settings.common.autoUpdate || m_wantsUpdate)
 	{
 		UpdateHandleData();
 		ListRunning();
@@ -128,8 +129,8 @@ bool SyncSceneMod::Draw()
 
 	ImGui::SetWindowFontScale(m_settings.common.contentFontSize);
 
-	ImGui::Checkbox("Constant Updates?", &m_constantUpdate);
-	if (!m_constantUpdate)
+	Widgets::AutoUpdateCheckBox(&m_settings.common.autoUpdate);
+	if (!m_settings.common.autoUpdate)
 		if (ImGui::Button("Update"))
 			m_wantsUpdate = true;
 
