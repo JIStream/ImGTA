@@ -28,6 +28,8 @@ struct AreaSettings {
 	CommonSettings common;
 	float drawOffsetZ = 0;
 	bool drawBox = false;
+	bool drawAngledArea = false;
+	bool drawSphere = false;
 };
 
 struct AudioSettings {

@@ -285,6 +285,8 @@ private:
 	GlobalArray<MessageArray7> m_gMessage7;
 	GlobalArray<TextMessageDataStruct> m_gQueuedTexts;
 	GlobalArray<CallDataStruct> m_gQueuedCalls;
+	GlobalArray<CallDataStruct> m_gChatCalls;
+	GlobalArray<CallDataStruct> m_gMissedCalls;
 	GlobalArray<CommunicationDataStruct> m_gQueuedEmails;
 	GlobalArray<SentTextMessageStruct> m_gTextMessagesSaved;
 
@@ -297,6 +299,8 @@ private:
 	std::string m_unk15840 = "";
 	int noQueuedTexts = 0;
 	int noQueuedCalls = 0;
+	int noChatCalls = 0;
+	int noMissedCalls = 0;
 	int noQueuedEmails = 0;
 
 	int m_nextReceivingTime = 0;

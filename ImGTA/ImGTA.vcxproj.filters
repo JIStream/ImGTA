@@ -280,6 +280,15 @@
     <ClInclude Include="vehicle_names.h">
       <Filter>Modules\Cheats</Filter>
     </ClInclude>
+    <ClInclude Include="widgets.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vectors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="lua_engine.h">

@@ -141,12 +141,6 @@ void DLLObject::SetAllWindowCollapsed(bool collapse)
 		m->SetWindowCollapsed(collapse);
 }
 
-void DLLObject::SetPauseMenuOn(bool on)
-{
-	for (auto &m : m_modsLoaded)
-		m->SetPauseMenuOn(on);
-}
-
 void DLLObject::SetShowAllInGame(bool show)
 {
 	for (auto &m : m_modsLoaded)
@@ -171,37 +165,6 @@ void DLLObject::SetAllInGameFontColor(int red, int green, int blue)
 		m->SetInGameFontColor(red, green, blue);
 }
 
-void updTime(DLLObject * dllObject)
-{
-	using namespace std::chrono_literals;
-	while (!dllObject->m_timerThreadAlive)
-		std::this_thread::sleep_for(5s);
-
-	while (dllObject->m_timerThreadAlive)
-	{
-		std::chrono::time_point<std::chrono::high_resolution_clock> newGameTime = \
-			std::chrono::high_resolution_clock::now();
-		// If game timer hasn't changed for 100ms, update
-		if ((newGameTime - dllObject->GetLastGameTime()) >  std::chrono::milliseconds(100)) {
-			if (!dllObject->m_updatedPauseMenuOn)
-			{
-				dllObject->SetPauseMenuOn(true);
-				dllObject->m_updatedPauseMenuOn = true;
-				dllObject->m_updatedPauseMenuOff = false;
-			}
-		}
-		else {
-			if (!dllObject->m_updatedPauseMenuOff)
-			{
-				dllObject->SetPauseMenuOn(false);
-				dllObject->m_updatedPauseMenuOff = true;
-				dllObject->m_updatedPauseMenuOn = false;
-			}
-		}
-		std::this_thread::sleep_for(100ms);
-	}
-}
-
 
 void DLLObject::Load()
 {
@@ -213,13 +176,11 @@ void DLLObject::Load()
 			m->Load();
 		MISC::SET_THIS_SCRIPT_CAN_BE_PAUSED(false);
 		m_isLoaded = true;
-		m_timerThread = std::thread(updTime, this);
 	}
 		
 	// After loading a save, ScriptHookV does not call ProcessDetach,
 	// but ProcessAttach again
 
-	m_timerThreadAlive = true;
 	while (true)
 	{
 		Update();
@@ -234,9 +195,6 @@ void DLLObject::Unload()
 	{
 		m_isOpen = false;
 
-		// Stop the timer thread
-		m_timerThreadAlive = false;
-		m_timerThread.join();
 
 		// Unload mods
 		for (auto &m : m_modsLoaded)

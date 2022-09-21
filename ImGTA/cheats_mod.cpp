@@ -55,7 +55,6 @@ void CheatsMod::Unload()
 
 void CheatsMod::Think()
 {
-	m_pauseMenuOn = HUD::IS_PAUSE_MENU_ACTIVE();
 	m_currentPos = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), false);
 	int playerPedID = PLAYER::PLAYER_PED_ID();
 	int playerID = PLAYER::PLAYER_ID();
@@ -187,7 +186,8 @@ void CheatsMod::Think()
 			startY += step;
 
 			bool invincible = PLAYER::GET_PLAYER_INVINCIBLE(playerID);
-			std::snprintf(buf, sizeof(buf), "Invincible: %s", BoolToStr(invincible));
+			std::snprintf(buf, sizeof(buf), "Invincible: %s ", BoolToStr(invincible));
+
 			DrawTextToScreen(buf, startX, startY, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
 			startY += step;
 
@@ -729,11 +729,6 @@ bool CheatsMod::Draw()
 		{
 			ImGui::SameLine();
 			ImGui::TextColored(ImVec4(0.3f, 1.0f, 0.3f, 1.0f), " Maximum (100) number of element displayed in-game reached (Some will not be displayed)!");
-		}
-		if (m_pauseMenuOn)
-		{
-			ImGui::SameLine();
-			ImGui::TextColored(ImVec4(0.3f, 0.3f, 1.0f, 1.0f), " Game paused. No updates!");
 		}
 
 		ImGui::SameLine(ImGui::GetWindowWidth() - 230);

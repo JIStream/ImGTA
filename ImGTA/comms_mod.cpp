@@ -36,6 +36,8 @@ CommsMod::CommsMod(DLLObject & dllObject, bool supportGlobals) :
 	m_gMessage7(GlobalID::_109748),
 	m_gQueuedTexts(GlobalID::_103948), //Global_97353.f_5944.f_651
 	m_gQueuedCalls(GlobalID::_103927), //Global_97353.f_5944
+	m_gChatCalls(103496), // Global_97353.f_5944.f_199
+	m_gMissedCalls(103434), // Global_97353.f_5944.f_137
 	m_gQueuedEmails(GlobalID::_104062), //Global_97353.f_5944.f_765
 	m_gEmail1(GlobalID::_45154),
 	m_gTextMessagesSaved(109748)
@@ -75,12 +77,16 @@ void CommsMod::UpdateLocationData()
 		m_gMessage7.LoadElement();*/
 		m_gQueuedTexts.LoadElement();
 		m_gQueuedCalls.LoadElement();
+		m_gChatCalls.LoadElement();
+		m_gMissedCalls.LoadElement();
 		m_gQueuedEmails.LoadElement();
 		m_gTextMessagesSaved.LoadElement();
 		/*m_gEmail1.LoadElement(); */
 
 		noQueuedTexts = *(int*)GetGlobalPtr(104061);
-		noQueuedCalls = *(int*)GetGlobalPtr(103947);
+		noQueuedCalls = *(int*)GetGlobalPtr(103433);
+		noChatCalls = *(int*)GetGlobalPtr(103947);
+		noMissedCalls = *(int*)GetGlobalPtr(103495);
 		noQueuedEmails = *(int*)GetGlobalPtr(104163);
 
 
@@ -288,6 +294,7 @@ bool CommsMod::Draw()
 				ImGui::Text("ID: %d (Name %s)", m_gQueuedCalls.arr.CommData.ID, GetCallName(m_gQueuedCalls.arr.CommData.ID));
 				ImGui::Text("Settings: %d", m_gQueuedCalls.arr.CommData.Settings);
 				ImGui::Text("For Characters: %s", GetCharactersFromBitset(m_gQueuedCalls.arr.CommData.Player_Char_Bitset));
+				ImGui::Text("Priority %d", m_gQueuedCalls.arr.CommData.Priority);
 
 				if (m_gQueuedCalls.arr.CommData.Queue_Time > currentTime)
 					ImGui::Text("Queue_Time: In %d s (%d)", (m_gQueuedCalls.arr.CommData.Queue_Time - currentTime) / 1000, m_gQueuedCalls.arr.CommData.Queue_Time);
@@ -299,6 +306,70 @@ bool CommsMod::Draw()
 				ImGui::Text("Restricted_Area_ID: %d", m_gQueuedCalls.arr.CommData.Restricted_Area_ID);
 				ImGui::Text("Execute_On_Complete_ID: %d", m_gQueuedCalls.arr.CommData.Execute_On_Complete_ID);
 				ImGui::Text("Send_Check: %d", m_gQueuedCalls.arr.CommData.Send_Check);
+			}
+			ImGui::TreePop();
+		}
+
+		ImGui::Separator();
+		if (ImGui::TreeNodeEx("Chat calls", ImGuiTreeNodeFlags_SpanAvailWidth))
+		{
+
+			ImGui::SetNextItemWidth(m_inputIDWidgetWidth);
+			ImGui::Text("(Count: %d)", noChatCalls);
+			if (noChatCalls > 0) {
+				if (ImGui::InputInt("Queued Call ID", &m_gChatCalls.id))
+				{
+					ClipInt(m_gChatCalls.id, 0, noChatCalls - 1);
+					m_wantsUpdate = true;
+				}
+
+				ImGui::Text("ID: %d (Name %s)", m_gChatCalls.arr.CommData.ID, GetCallName(m_gChatCalls.arr.CommData.ID));
+				ImGui::Text("Settings: %d", m_gChatCalls.arr.CommData.Settings);
+				ImGui::Text("For Characters: %s", GetCharactersFromBitset(m_gChatCalls.arr.CommData.Player_Char_Bitset));
+				ImGui::Text("Priority %d", m_gChatCalls.arr.CommData.Priority);
+
+				if (m_gChatCalls.arr.CommData.Queue_Time > currentTime)
+					ImGui::Text("Queue_Time: In %d s (%d)", (m_gChatCalls.arr.CommData.Queue_Time - currentTime) / 1000, m_gChatCalls.arr.CommData.Queue_Time);
+				else
+					ImGui::Text("Queue_Time: Ready to send");
+
+				ImGui::Text("Requeue_Time: %d s", m_gChatCalls.arr.CommData.Requeue_Time);
+				ImGui::Text("NPC_Character: %s", GetCommsCharacterName(m_gChatCalls.arr.CommData.NPC_Character));
+				ImGui::Text("Restricted_Area_ID: %d", m_gChatCalls.arr.CommData.Restricted_Area_ID);
+				ImGui::Text("Execute_On_Complete_ID: %d", m_gChatCalls.arr.CommData.Execute_On_Complete_ID);
+				ImGui::Text("Send_Check: %d", m_gChatCalls.arr.CommData.Send_Check);
+			}
+			ImGui::TreePop();
+		}
+
+		ImGui::Separator();
+		if (ImGui::TreeNodeEx("Missed calls", ImGuiTreeNodeFlags_SpanAvailWidth))
+		{
+
+			ImGui::SetNextItemWidth(m_inputIDWidgetWidth);
+			ImGui::Text("(Count: %d)", noMissedCalls);
+			if (noMissedCalls > 0) {
+				if (ImGui::InputInt("Queued Call ID", &m_gMissedCalls.id))
+				{
+					ClipInt(m_gMissedCalls.id, 0, noMissedCalls - 1);
+					m_wantsUpdate = true;
+				}
+
+				ImGui::Text("ID: %d (Name %s)", m_gMissedCalls.arr.CommData.ID, GetCallName(m_gMissedCalls.arr.CommData.ID));
+				ImGui::Text("Settings: %d", m_gMissedCalls.arr.CommData.Settings);
+				ImGui::Text("For Characters: %s", GetCharactersFromBitset(m_gMissedCalls.arr.CommData.Player_Char_Bitset));
+				ImGui::Text("Priority %d", m_gMissedCalls.arr.CommData.Priority);
+
+				if (m_gMissedCalls.arr.CommData.Queue_Time > currentTime)
+					ImGui::Text("Queue_Time: In %d s (%d)", (m_gMissedCalls.arr.CommData.Queue_Time - currentTime) / 1000, m_gMissedCalls.arr.CommData.Queue_Time);
+				else
+					ImGui::Text("Queue_Time: Ready to send");
+
+				ImGui::Text("Requeue_Time: %d s", m_gMissedCalls.arr.CommData.Requeue_Time);
+				ImGui::Text("NPC_Character: %s", GetCommsCharacterName(m_gMissedCalls.arr.CommData.NPC_Character));
+				ImGui::Text("Restricted_Area_ID: %d", m_gMissedCalls.arr.CommData.Restricted_Area_ID);
+				ImGui::Text("Execute_On_Complete_ID: %d", m_gMissedCalls.arr.CommData.Execute_On_Complete_ID);
+				ImGui::Text("Send_Check: %d", m_gMissedCalls.arr.CommData.Send_Check);
 			}
 			ImGui::TreePop();
 		}

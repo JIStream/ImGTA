@@ -10,6 +10,8 @@
 
 #include "types.h"
 
+#include<vector>
+
 class AreaMod : public Mod
 {
 public:
@@ -35,17 +37,30 @@ private:
 	Vector3 m_endBoxPoint = {};
 
 	// Angled area
-	bool m_angledAreaSameBox = true;
-	bool m_isInAngledArea = false;
-	Vector3 m_angledAreaStartPoint = {};
-	Vector3 m_angledAreaEndPoint = {};
-	float m_angledAreaWidth = 10;
-	bool m_angledAreaDebug = false;
-	bool m_angledAreaIncludeZ = true;
-	int m_angledAreaUnk0 = 0;
+	struct AngledArea {
+		bool m_isInAngledArea = false;
+		Vector3 m_angledAreaStartPoint = {};
+		Vector3 m_angledAreaEndPoint = {};
+		float m_angledAreaWidth = 10;
+		bool m_angledAreaDebug = false;
+		bool m_angledAreaIncludeZ = true;
+		int m_angledAreaUnk0 = 0;
+
+		int red;
+		int green;
+		int blue;
+	};
+
+	std::vector<AngledArea> m_angledAreas;
+	AngledArea newAngledArea;
+
+
+	//Sphere
+	Vector3 m_centerPoint = {};
+	float m_sphereRadius = {};
 
 	// Area
-	bool m_areaSameBox = true;
+	bool m_areaSameBox = false;
 	bool m_isInArea = false;
 	Vector3 m_areaStartPoint = {};
 	Vector3 m_areaEndPoint = {};
@@ -69,5 +84,8 @@ private:
 	char m_animNameInput[256] = "";
 	unsigned int m_animFlags = 0;
 	bool m_animLoop = false;
+
+	// Share
+	char m_importString[512] = "";
 };
 

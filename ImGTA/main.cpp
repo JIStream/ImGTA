@@ -25,11 +25,9 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 	switch (reason)
 	{
 	case DLL_PROCESS_ATTACH:
-		DisableThreadLibraryCalls(inst);
 		scriptRegister(inst, Load);
 		presentCallbackRegister((PresentCallback)OnPresent);
 		break;
-
 	case DLL_PROCESS_DETACH:
 		// If unloaded dynamically
 		if (lpReserved == NULL)
@@ -39,14 +37,7 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 			scriptUnregister(inst);
 		}
 		break;
-
-	case DLL_THREAD_ATTACH:
-		break;
-
-	case DLL_THREAD_DETACH:
-		break;
 	}
-
 	return TRUE;
 }
 

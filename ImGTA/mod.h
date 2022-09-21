@@ -30,7 +30,6 @@ public:
 	virtual bool Draw() = 0;
 
 	void SetWindowCollapsed(bool collapse);
-	void SetPauseMenuOn(bool on);
 	void SetShowInGame(bool show);
 	void SetFontSize(float menuSize, float contentSize, float ingameSize);
 	void SetInGameFontColor(int red, int green, int blue);
@@ -47,7 +46,6 @@ protected:
 	std::string m_windowName;
 	bool m_enableHUD;
 	bool m_hasWindow;
-	bool m_pauseMenuOn;
 	bool m_supportGlobals;
 	bool m_textDrawMaxWarning;
 

@@ -242,40 +242,16 @@ void MemWatcherMod::ShowSelectedPopup()
 		else if (std::string(m_watchInfoModifyBuf) != m_selectedEntry->m_info)
 			strncpy_s(m_watchInfoModifyBuf, sizeof(m_watchInfoModifyBuf), m_selectedEntry->m_info.c_str(), sizeof(m_watchInfoModifyBuf));
 
-		uint64_t * val;
+		uint64_t * val = nullptr;
 		if (m_selectedEntry->IsGlobal())
 		{
 			val = GetGlobalPtr(m_selectedEntry->m_addressIndex);
-
-			// Can only edit globalPtr for now
-			if (val != nullptr)
-			{
-				switch (m_selectedEntry->m_type)
-				{
-				case WatchType::kBitfield32:
-					ImGuiExtras::BitField("Value##GlobalWatchValueBitfield", (unsigned int *)val, nullptr);
-					if (ImGui::Button("LS<<##GlobalWatchLBitshift"))
-						*val = *val << 1;
-					if (ImGui::Button(">>RS##GlobalWatchRBitshift"))
-						*val = *val >> 1;
-					break;
-				case WatchType::kInt:
-					ImGui::InputInt("Value##GlobalWatchValue", (int *)val);
-					break;
-				case WatchType::kFloat:
-					ImGui::InputFloat("Value##GlobalWatchValue", (float *)val, 0.0f, 0.0f, "%.4f");
-					break;
-				case WatchType::kVector3:
-					ImGuiExtras::InputVector3("GlobalWatchValue", (Vector3 *)val);
-					break;
-				case WatchType::kString:
-					ImGui::TextDisabled("Cannot edit string.");
-					break;
-				}
-			}
+			
 		}
 		else
 		{
+			val = GetThreadAddress(m_selectedEntry->m_addressIndex, m_selectedEntry->m_scriptHash);
+
 			if (ImGui::InputText("Script Name##EntryProperties", m_scriptNameBuf, sizeof(m_scriptNameBuf)))
 			{
 				m_scriptName = std::string(m_scriptNameBuf);
@@ -297,6 +273,32 @@ void MemWatcherMod::ShowSelectedPopup()
 				m_selectedEntry->m_scriptName = m_scriptName;
 				m_selectedEntry->m_scriptHash = m_scriptHash;
 				m_selectedWatchScriptRunning = false;
+			}
+		}
+
+		if (val)
+		{
+			switch (m_selectedEntry->m_type)
+			{
+			case WatchType::kBitfield32:
+				ImGuiExtras::BitField("Value##WatchValueBitfield", (unsigned int*)val, nullptr);
+				if (ImGui::Button("LS<<##WatchLBitshift"))
+					*val = *val << 1;
+				if (ImGui::Button(">>RS##WatchRBitshift"))
+					*val = *val >> 1;
+				break;
+			case WatchType::kInt:
+				ImGui::InputInt("Value##WatchValue", (int*)val);
+				break;
+			case WatchType::kFloat:
+				ImGui::InputFloat("Value##WatchValue", (float*)val, 0.0f, 0.0f, "%.4f");
+				break;
+			case WatchType::kVector3:
+				ImGuiExtras::InputVector3("WatchValue", (Vector3*)val);
+				break;
+			case WatchType::kString:
+				ImGui::TextDisabled("Cannot edit string.");
+				break;
 			}
 		}
 

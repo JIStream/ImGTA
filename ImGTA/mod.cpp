@@ -36,11 +36,6 @@ void Mod::SetWindowCollapsed(bool collapse)
 	ImGui::SetWindowCollapsed(m_windowName.c_str(), collapse, ImGuiCond_None);
 }
 
-void Mod::SetPauseMenuOn(bool on)
-{
-	m_pauseMenuOn = on;
-}
-
 void Mod::SetShowInGame(bool show)
 {
 	GetCommonSettings().showInGame = show;
