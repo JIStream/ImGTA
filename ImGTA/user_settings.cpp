@@ -44,6 +44,38 @@ void UserSettingsManager::Load(const std::string & filename) {
 			current >> s.cheats.floatingMenu;
 		else if (line.find("cheats.displayKMH") != -1)
 			current >> s.cheats.displayKMH;
+		else if (line.find("cheats.showPosition") != -1)
+			current >> s.cheats.showPosition;
+		else if (line.find("cheats.showEntityHealth") != -1)
+			current >> s.cheats.showEntityHealth;
+		else if (line.find("cheats.showEntityArmour") != -1)
+			current >> s.cheats.showEntityArmour;
+		else if (line.find("cheats.showCurrentSpeed") != -1)
+			current >> s.cheats.showCurrentSpeed;
+		else if (line.find("cheats.showCurrentAcceleration") != -1)
+			current >> s.cheats.showCurrentAcceleration;
+		else if (line.find("cheats.showMaxSpeed") != -1)
+			current >> s.cheats.showMaxSpeed;
+		else if (line.find("cheats.showMaxAcceleration") != -1)
+			current >> s.cheats.showMaxAcceleration;
+		else if (line.find("cheats.showSpeedVector") != -1)
+			current >> s.cheats.showSpeedVector;
+		else if (line.find("cheats.showSprintTimeRemaining") != -1)
+			current >> s.cheats.showSprintTimeRemaining;
+		else if (line.find("cheats.showUnderwaterTimeRemaining") != -1)
+			current >> s.cheats.showUnderwaterTimeRemaining;
+		else if (line.find("cheats.showInvincible") != -1)
+			current >> s.cheats.showInvincible;
+		else if (line.find("cheats.showCanRagdoll") != -1)
+			current >> s.cheats.showCanRagdoll;
+		else if (line.find("cheats.showStreamingRequests") != -1)
+			current >> s.cheats.showStreamingRequests;
+		else if (line.find("cheats.showPedHandle") != -1)
+			current >> s.cheats.showPedHandle;
+		else if (line.find("cheats.showGameTime") != -1)
+			current >> s.cheats.showGameTime;
+		else if (line.find("cheats.showGameDateTime") != -1)
+			current >> s.cheats.showGameDateTime;
 		// Comms
 		// Cutscene
 		// HandleHelper
@@ -104,6 +136,22 @@ void UserSettingsManager::Save(const std::string & filename) {
 	file << "cheats.showAvailableInputs = " << s.cheats.showAvailableInputs << std::endl;
 	file << "cheats.floatingMenu = " << s.cheats.floatingMenu << std::endl;
 	file << "cheats.displayKMH = " << s.cheats.displayKMH << std::endl;
+	file << "cheats.showPosition = " << s.cheats.showPosition << std::endl;
+	file << "cheats.showEntityHealth = " << s.cheats.showEntityHealth << std::endl;
+	file << "cheats.showEntityArmour = " << s.cheats.showEntityArmour << std::endl;
+	file << "cheats.showCurrentSpeed = " << s.cheats.showCurrentSpeed << std::endl;
+	file << "cheats.showCurrentAcceleration = " << s.cheats.showCurrentAcceleration << std::endl;
+	file << "cheats.showMaxSpeed = " << s.cheats.showMaxSpeed << std::endl;
+	file << "cheats.showMaxAcceleration = " << s.cheats.showMaxAcceleration << std::endl;
+	file << "cheats.showSpeedVector = " << s.cheats.showSpeedVector << std::endl;
+	file << "cheats.showSprintTimeRemaining = " << s.cheats.showSprintTimeRemaining << std::endl;
+	file << "cheats.showUnderwaterTimeRemaining = " << s.cheats.showUnderwaterTimeRemaining << std::endl;
+	file << "cheats.showInvincible = " << s.cheats.showInvincible << std::endl;
+	file << "cheats.showCanRagdoll = " << s.cheats.showCanRagdoll << std::endl;
+	file << "cheats.showStreamingRequests = " << s.cheats.showStreamingRequests << std::endl;
+	file << "cheats.showPedHandle = " << s.cheats.showPedHandle << std::endl;
+	file << "cheats.showGameTime = " << s.cheats.showGameTime << std::endl;
+	file << "cheats.showGameDateTime = " << s.cheats.showGameDateTime << std::endl;
 	// Comms
 	// Cutscene
 	// HandleHelper
