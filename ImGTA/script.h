@@ -52,6 +52,7 @@ public:
 	void SetFloatingMenu(bool isFloating) { m_floatingMenu = isFloating; }
 	void SetEnableHUD(bool enable) { m_enableHUD = enable; }
 	bool GetEnableHUD() { return m_enableHUD; }
+	bool disableAction = false;
 	bool m_updatedPauseMenuOn = false;
 	bool m_updatedPauseMenuOff = false;
 	bool m_timerThreadAlive = false;
