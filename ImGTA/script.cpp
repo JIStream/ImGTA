@@ -195,7 +195,6 @@ void DLLObject::Unload()
 	{
 		m_isOpen = false;
 
-
 		// Unload mods
 		for (auto &m : m_modsLoaded)
 		{

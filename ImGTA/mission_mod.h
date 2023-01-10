@@ -276,6 +276,7 @@ private:
 	void DrawMenuBar();
 	void ResetData();
 	void UpdateMissionData();
+	void ReloadMission9WithID(int id);
 	CommonSettings & GetCommonSettings() override { return m_settings.common; }
 
 	MissionSettings m_settings;
