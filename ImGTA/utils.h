@@ -75,10 +75,10 @@ struct GlobalArray {
 	T* ptr; // pointer, editable
 	int id = 0;
 	int size = 0;
+	int startAddr = 0;
 
 private:
 	int sizeAddr = 0;
-	int startAddr = 0;
 };
 
 struct PaddedInt {

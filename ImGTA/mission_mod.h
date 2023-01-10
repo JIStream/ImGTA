@@ -270,6 +270,7 @@ public:
 	void Think() override;
 	void Load() override;
 	void Unload() override;
+	void PassCurrentMission();
 
 private:
 	void DrawMenuBar();

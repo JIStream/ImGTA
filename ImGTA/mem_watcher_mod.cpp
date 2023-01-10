@@ -246,7 +246,6 @@ void MemWatcherMod::ShowSelectedPopup()
 		if (m_selectedEntry->IsGlobal())
 		{
 			val = GetGlobalPtr(m_selectedEntry->m_addressIndex);
-			
 		}
 		else
 		{
