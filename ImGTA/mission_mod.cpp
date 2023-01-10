@@ -129,8 +129,7 @@ void MissionMod::PassCurrentMission()
 		int threadId = m_gMission9.arr.threadId;
 		if (threadId != 0)
 		{
-			uint64_t* p = GetGlobalPtr(m_gMission9.startAddr + 1 + m_gMission9.id * sizeof(MissionArray9) / 8); //f_1 bitfield
-			*p |= 1 << 4; //mission passed flag
+			m_gMission9.ptr->f_1.set(4, 1); //mission passed flag
 			m_dllObject.RunOnNativeThread([=]
 				{
 					SCRIPT::TERMINATE_THREAD(threadId); //flow_controller awaits script termination to pass the mission
