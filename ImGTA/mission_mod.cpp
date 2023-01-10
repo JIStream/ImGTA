@@ -125,6 +125,7 @@ void MissionMod::PassCurrentMission()
 	int oldId = m_gMission9.id; //save current id to restore after completion
 	for (int i = 0; i < m_gMission9.size; i++)
 	{
+		ReloadMission9WithID(i);
 		int threadId = m_gMission9.arr.threadId;
 		if (threadId != 0)
 		{
@@ -136,10 +137,13 @@ void MissionMod::PassCurrentMission()
 				});
 			break;
 		}
-		m_gMission9.id = i;
-		m_gMission9.LoadElement();
 	}
-	m_gMission9.id = oldId; //restore id selected in ui
+	ReloadMission9WithID(oldId); //restore id selected in ui
+}
+
+void MissionMod::ReloadMission9WithID(int id)
+{
+	m_gMission9.id = id;
 	m_gMission9.LoadElement();
 }
 
