@@ -15,6 +15,7 @@
 #include "imgui.h"
 #include "imgui_extras.h"
 #include "widgets.h"
+#include "scripts_mod.h"
 
 
 MissionMod::MissionMod(DLLObject & dllObject, bool supportGlobals) :
@@ -109,12 +110,37 @@ void MissionMod::DrawMenuBar()
 	{
 		if (ImGui::BeginMenu("Menu"))
 		{
-			ImGui::MenuItem("Empty");
+			if (ImGui::MenuItem("Pass Current Mission"))
+			{
+				PassCurrentMission();
+			}
 			ImGui::EndMenu();
 		}
-
 		ImGui::EndMenuBar();
 	}
+}
+
+void MissionMod::PassCurrentMission()
+{
+	int oldId = m_gMission9.id; //save current id to restore after completion
+	for (int i = 0; i < m_gMission9.size; i++)
+	{
+		int threadId = m_gMission9.arr.threadId;
+		if (threadId != 0)
+		{
+			uint64_t* p = GetGlobalPtr(m_gMission9.startAddr + 1 + m_gMission9.id * sizeof(MissionArray9) / 8); //f_1 bitfield
+			*p |= 1 << 4; //mission passed flag
+			m_dllObject.RunOnNativeThread([=]
+				{
+					SCRIPT::TERMINATE_THREAD(threadId); //flow_controller awaits script termination to pass the mission
+				});
+			break;
+		}
+		m_gMission9.id = i;
+		m_gMission9.LoadElement();
+	}
+	m_gMission9.id = oldId; //restore id selected in ui
+	m_gMission9.LoadElement();
 }
 
 bool MissionMod::Draw()

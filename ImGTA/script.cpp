@@ -66,7 +66,7 @@ void DLLObject::InitMods()
 	if (supportGlobals)
 	{
 		m_modsLoaded.push_back(new CommsMod(*this, supportGlobals));
-		m_modsLoaded.push_back(new MissionMod(*this, supportGlobals));
+		m_modsLoaded.push_back(missionMod = new MissionMod(*this, supportGlobals));
 	}
 	//modsLoaded.push_back(new TestMod(supportGlobals));
 }
@@ -220,6 +220,11 @@ void DLLObject::ToggleOpen()
 {
 	m_isOpen = !m_isOpen;
 	ImGui::GetIO().MouseDrawCursor = m_isOpen;
+}
+
+void DLLObject::PassCurrentMission()
+{
+	missionMod->PassCurrentMission();
 }
 
 void DLLObject::OnPresent(IDXGISwapChain *swap)
