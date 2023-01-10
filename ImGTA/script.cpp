@@ -224,7 +224,8 @@ void DLLObject::ToggleOpen()
 
 void DLLObject::PassCurrentMission()
 {
-	missionMod->PassCurrentMission();
+	if(missionMod != nullptr)
+		missionMod->PassCurrentMission();
 }
 
 void DLLObject::OnPresent(IDXGISwapChain *swap)
