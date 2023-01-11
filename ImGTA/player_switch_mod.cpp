@@ -50,16 +50,6 @@ void PlayerSwitchMod::Think()
 void PlayerSwitchMod::UpdateLocationData()
 {
 	m_switchInProgress = STREAMING::IS_PLAYER_SWITCH_IN_PROGRESS();
-	m_switchType = STREAMING::GET_PLAYER_SWITCH_TYPE();
-	m_switchState = STREAMING::GET_PLAYER_SWITCH_STATE();
-	m_shortSwitchState = STREAMING::GET_PLAYER_SHORT_SWITCH_STATE();
-	m_switchJumpCutIndex = STREAMING::GET_PLAYER_SWITCH_JUMP_CUT_INDEX();
-	m_switchReadyForDescent = STREAMING::IS_SWITCH_READY_FOR_DESCENT();
-	m_switchSkippingDescent = STREAMING::IS_SWITCH_SKIPPING_DESCENT();
-	m_unkSwitch = STREAMING::_0x933BBEEB8C61B5F4();
-	m_unkSwitch2 = STREAMING::_0x71E7B2E657449AAD();
-	m_switchInterpOutDuration = STREAMING::GET_PLAYER_SWITCH_INTERP_OUT_DURATION();
-	m_switchInterpOutCurrentTime = STREAMING::GET_PLAYER_SWITCH_INTERP_OUT_CURRENT_TIME();
 
 	if (m_supportGlobals)
 	{

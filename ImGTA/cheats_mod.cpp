@@ -36,7 +36,7 @@ void CheatsMod::Load()
 		m_helper = new MissionHelper(getGameVersion());
 
 	// Setup available vehicles
-	for (const auto & category : vehicle_names)
+	/*for (const auto & category : vehicle_names)
 	{
 		std::vector<int> tmpAvailableVehicles;
 		for (int i = 0; i < category.second.size(); ++i)
@@ -45,7 +45,7 @@ void CheatsMod::Load()
 				tmpAvailableVehicles.push_back(i);
 		}
 		m_availableVehicles.insert({ category.first, tmpAvailableVehicles });
-	}
+	}*/
 }
 
 void CheatsMod::Unload()
@@ -55,7 +55,7 @@ void CheatsMod::Unload()
 
 void CheatsMod::Think()
 {
-	m_currentPos = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), false);
+	m_currentPos = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), false, false);
 	int playerPedID = PLAYER::PLAYER_PED_ID();
 	int playerID = PLAYER::PLAYER_ID();
 	char buf[112] = "";
@@ -75,7 +75,7 @@ void CheatsMod::Think()
 			// TODO: Remove the manual tweaks here and there... It's unreadable
 
 			// Position
-			Vector3 pos = ENTITY::GET_ENTITY_COORDS(playerPedID, TRUE);
+			Vector3 pos = ENTITY::GET_ENTITY_COORDS(playerPedID, TRUE, false);
 			buffer << "Position (x, y, z): (";
 			DrawTextToScreen(buffer.str().c_str(), startX, startY, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
 			buffer.str("");
@@ -96,7 +96,7 @@ void CheatsMod::Think()
 			startY += step;
 
 			int health = ENTITY::GET_ENTITY_HEALTH(playerPedID);
-			int maxHealth = ENTITY::GET_ENTITY_MAX_HEALTH(playerPedID);
+			int maxHealth = ENTITY::GET_ENTITY_MAX_HEALTH(playerPedID, false);
 			std::snprintf(buf, sizeof(buf), "Health: %d / %d", health, maxHealth);
 			DrawTextToScreen(buf, startX, startY, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
 			startY += step;
@@ -167,15 +167,15 @@ void CheatsMod::Think()
 			DrawTextToScreen(buffer.str().c_str(), startX + valueStep * 4.5f, startY, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
 			startY += step;
 
-			float sprintTimeRemaining = PLAYER::GET_PLAYER_SPRINT_TIME_REMAINING(playerID);
-			std::snprintf(buf, sizeof(buf), "Sprint time remaining: %.1f s", sprintTimeRemaining);
-			DrawTextToScreen(buf, startX, startY, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
-			startY += step;
+			//float sprintTimeRemaining = PLAYER::GET_PLAYER_SPRINT_TIME_REMAINING(playerID);
+			//std::snprintf(buf, sizeof(buf), "Sprint time remaining: %.1f s", sprintTimeRemaining);
+			//DrawTextToScreen(buf, startX, startY, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
+			//startY += step;
 
-			float underwaterTimeRemaining = PLAYER::GET_PLAYER_UNDERWATER_TIME_REMAINING(playerID);
-			std::snprintf(buf, sizeof(buf), "Underwater time remaining: %.1f s", underwaterTimeRemaining);
-			DrawTextToScreen(buf, startX, startY, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
-			startY += step;
+			//float underwaterTimeRemaining = PLAYER::GET_PLAYER_UNDERWATER_TIME_REMAINING(playerID);
+			//std::snprintf(buf, sizeof(buf), "Underwater time remaining: %.1f s", underwaterTimeRemaining);
+			//DrawTextToScreen(buf, startX, startY, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
+			//startY += step;
 
 			bool invincible = PLAYER::GET_PLAYER_INVINCIBLE(playerID);
 			std::snprintf(buf, sizeof(buf), "Invincible: %s ", BoolToStr(invincible));
@@ -336,8 +336,6 @@ void CheatsMod::DrawPlayerMenu()
 			{
 				int p = PLAYER::PLAYER_PED_ID();
 				ENTITY::SET_ENTITY_HEALTH(p, PED::GET_PED_MAX_HEALTH(p), FALSE);
-				PED::SET_PED_ARMOUR(PLAYER::PLAYER_PED_ID(), PLAYER::GET_PLAYER_MAX_ARMOUR(PLAYER::PLAYER_ID()));
-				PLAYER::SPECIAL_ABILITY_FILL_METER(PLAYER::PLAYER_ID(), 1, 0);
 			});
 		}
 
@@ -347,22 +345,6 @@ void CheatsMod::DrawPlayerMenu()
 			{
 				int p = PLAYER::PLAYER_PED_ID();
 				ENTITY::SET_ENTITY_HEALTH(p, PED::GET_PED_MAX_HEALTH(p), FALSE);
-			});
-		}
-
-		if (ImGui::MenuItem("Max armour"))
-		{
-			m_dllObject.RunOnNativeThread([]
-			{
-				PED::SET_PED_ARMOUR(PLAYER::PLAYER_PED_ID(), PLAYER::GET_PLAYER_MAX_ARMOUR(PLAYER::PLAYER_ID()));
-			});
-		}
-
-		if (ImGui::MenuItem("Charge special ability"))
-		{
-			m_dllObject.RunOnNativeThread([]
-			{
-				PLAYER::SPECIAL_ABILITY_FILL_METER(PLAYER::PLAYER_ID(), 1, 0);
 			});
 		}
 
@@ -402,7 +384,7 @@ void CheatsMod::DrawPlayerMenu()
 			{
 				m_dllObject.RunOnNativeThread([]
 				{
-					WEAPON::REMOVE_ALL_PED_WEAPONS(PLAYER::PLAYER_PED_ID(), FALSE);
+					WEAPON::REMOVE_ALL_PED_WEAPONS(PLAYER::PLAYER_PED_ID(), FALSE, FALSE);
 				});
 			}
 
@@ -412,7 +394,7 @@ void CheatsMod::DrawPlayerMenu()
 				{
 					for (int i = 0; i < IM_ARRAYSIZE(weapons); i++)
 					{
-						WEAPON::GIVE_WEAPON_TO_PED(PLAYER::PLAYER_PED_ID(), MISC::GET_HASH_KEY((char *)weapons[i]), 99999, FALSE, TRUE);
+						WEAPON::GIVE_WEAPON_TO_PED(PLAYER::PLAYER_PED_ID(), MISC::GET_HASH_KEY((char *)weapons[i]), 99999, FALSE, TRUE, 0, false, 0, 0, 0xB784AD1E, false, false, false);
 					}
 				});
 			}
@@ -425,7 +407,7 @@ void CheatsMod::DrawPlayerMenu()
 					{
 						m_dllObject.RunOnNativeThread([i]
 						{
-							WEAPON::GIVE_WEAPON_TO_PED(PLAYER::PLAYER_PED_ID(), MISC::GET_HASH_KEY((char *)weapons[i]), 99999, FALSE, TRUE);
+							WEAPON::GIVE_WEAPON_TO_PED(PLAYER::PLAYER_PED_ID(), MISC::GET_HASH_KEY((char *)weapons[i]), 99999, FALSE, TRUE, 0, false, 0, 0, 0xB784AD1E, false, false, false);
 						});
 					}
 				}
@@ -445,9 +427,9 @@ void CheatsMod::SpawnVehicle(const std::string & name)
 		Model vehModel(name.c_str());
 		if (vehModel.IsValid() && vehModel.IsVehicle())
 		{
-			Vector3 pos = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), TRUE);
+			Vector3 pos = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), TRUE, FALSE);
 			m_lastSpawned = VEHICLE::CREATE_VEHICLE(vehModel.GetHash(), pos.x, pos.y, pos.z, 0.0f,
-												    TRUE, m_attachVehicleToScript, FALSE);
+												    TRUE, m_attachVehicleToScript, FALSE, FALSE);
 			if (m_spawnInVehicle)
 				TASK::TASK_WARP_PED_INTO_VEHICLE(PLAYER::GET_PLAYER_PED(PLAYER::PLAYER_ID()), m_lastSpawned, -1); // -1: driver seat
 		}

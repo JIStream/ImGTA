@@ -3,19 +3,8 @@
 #include "nativeCaller.h"
 
 // Generated Wed, 11 Jan 2023 22:30:28 GMT
-// https://alloc8or.re/rdr3/nativedb/
 
-#ifndef static
-#if defined(_MSC_VER)
-	#define static __forceinline
-#elif defined(__clang__) || defined(__GNUC__)
-	#define static __attribute__((always_inline)) inline
-#else
-	#define static inline
-#endif
-#endif
-
-namespace BUILTIN
+namespace SYSTEM
 {
 	static void WAIT(int ms) { invoke<Void>(0x4EDE34FBADD967A6, ms); } // 0x4EDE34FBADD967A6 0x7715C03B b1207
 	// Counts up. Every 1000 is 1 real-time second. Use SETTIMERA(int value) to set the timer (e.g.: SETTIMERA(0)).

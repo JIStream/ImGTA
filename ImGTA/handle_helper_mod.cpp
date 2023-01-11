@@ -60,116 +60,116 @@ void HandleHelperMod::ResetData()
 	m_isMissionEntity = false;
 }
 
-void HandleHelperMod::ListPeds()
-{
-	nearbyEnts pedArr;
-	int ped = PLAYER::GET_PLAYER_PED(PLAYER::PLAYER_ID());
-	int maxCount = PED::GET_PED_NEARBY_PEDS(ped, (int*)&pedArr, ped);
-	int count = std::min<int>(maxCount, m_settings.nearbyObjectMax);
+//void HandleHelperMod::ListPeds()
+//{
+//	nearbyEnts pedArr;
+//	int ped = PLAYER::GET_PLAYER_PED(PLAYER::PLAYER_ID());
+//	int maxCount = PED::GET_PED_NEARBY_PEDS(ped, (int*)&pedArr, ped, false);
+//	int count = std::min<int>(maxCount, m_settings.nearbyObjectMax);
+//
+//	// Go through peds
+//	m_pedListMutex.lock();
+//	m_pedList = std::to_string(count) + ": ";
+//	for (int i = 0; i < count; i++)
+//		m_pedList += std::to_string(pedArr.entities[i].id) + ", ";
+//	m_pedListMutex.unlock();
+//
+//	if (m_dllObject.GetEnableHUD() && m_settings.common.showInGame)
+//	{
+//		const float twoLinesHeight = 2 * 1.2f * TextFontHeight(m_settings.common.inGameFontSize, m_font);
+//		std::unordered_map<int, int> pedIdInVehicle;
+//		char buf[112] = "";
+//		for (int i = 0; i < count; i++)
+//		{
+//			Vector3 worldPos = ENTITY::GET_ENTITY_COORDS(pedArr.entities[i].id, false, false);
+//			int vehId = PED::GET_VEHICLE_PED_IS_IN(pedArr.entities[i].id, false);
+//			float vehOffsetY = 0.0f;
+//			// If in a vehicle
+//			if (vehId != 0)
+//			{
+//				if (pedIdInVehicle.find(vehId) != pedIdInVehicle.end())
+//					pedIdInVehicle[vehId]++;
+//				else
+//					pedIdInVehicle.insert({ vehId, 0 });
+//				vehOffsetY = pedIdInVehicle[vehId] * twoLinesHeight;
+//			}
+//			float screenX, screenY;
+//			bool notOnScreen = HUD::GET_HUD_SCREEN_POSITION_FROM_WORLD_POSITION(worldPos.x, worldPos.y, worldPos.z + m_settings.drawOffsetZ,
+//				&screenX, &screenY);
+//			if (!m_settings.drawOnScreenEntityOnly || !notOnScreen)
+//			{
+//				int health = ENTITY::GET_ENTITY_HEALTH(pedArr.entities[i].id);
+//				int maxHealth = ENTITY::GET_ENTITY_MAX_HEALTH(pedArr.entities[i].id, false);
+//
+//				if (m_settings.drawId && m_settings.drawLife)
+//					std::snprintf(buf, sizeof(buf), "Ped ID: %d\nLife: %d/%d", pedArr.entities[i].id, health, maxHealth);
+//				else if (m_settings.drawId)
+//					std::snprintf(buf, sizeof(buf), "Ped: %d", pedArr.entities[i].id);
+//				else if (m_settings.drawLife)
+//					std::snprintf(buf, sizeof(buf), "Ped: %d/%d", health, maxHealth);
+//
+//				DrawTextToScreen(buf, screenX, screenY + vehOffsetY, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
+//			}
+//		}
+//	}
+//}
 
-	// Go through peds
-	m_pedListMutex.lock();
-	m_pedList = std::to_string(count) + ": ";
-	for (int i = 0; i < count; i++)
-		m_pedList += std::to_string(pedArr.entities[i].id) + ", ";
-	m_pedListMutex.unlock();
-
-	if (m_dllObject.GetEnableHUD() && m_settings.common.showInGame)
-	{
-		const float twoLinesHeight = 2 * 1.2f * TextFontHeight(m_settings.common.inGameFontSize, m_font);
-		std::unordered_map<int, int> pedIdInVehicle;
-		char buf[112] = "";
-		for (int i = 0; i < count; i++)
-		{
-			Vector3 worldPos = ENTITY::GET_ENTITY_COORDS(pedArr.entities[i].id, false);
-			int vehId = PED::GET_VEHICLE_PED_IS_IN(pedArr.entities[i].id, false);
-			float vehOffsetY = 0.0f;
-			// If in a vehicle
-			if (vehId != 0)
-			{
-				if (pedIdInVehicle.find(vehId) != pedIdInVehicle.end())
-					pedIdInVehicle[vehId]++;
-				else
-					pedIdInVehicle.insert({ vehId, 0 });
-				vehOffsetY = pedIdInVehicle[vehId] * twoLinesHeight;
-			}
-			float screenX, screenY;
-			bool notOnScreen = HUD::GET_HUD_SCREEN_POSITION_FROM_WORLD_POSITION(worldPos.x, worldPos.y, worldPos.z + m_settings.drawOffsetZ,
-				&screenX, &screenY);
-			if (!m_settings.drawOnScreenEntityOnly || !notOnScreen)
-			{
-				int health = ENTITY::GET_ENTITY_HEALTH(pedArr.entities[i].id);
-				int maxHealth = ENTITY::GET_ENTITY_MAX_HEALTH(pedArr.entities[i].id);
-
-				if (m_settings.drawId && m_settings.drawLife)
-					std::snprintf(buf, sizeof(buf), "Ped ID: %d\nLife: %d/%d", pedArr.entities[i].id, health, maxHealth);
-				else if (m_settings.drawId)
-					std::snprintf(buf, sizeof(buf), "Ped: %d", pedArr.entities[i].id);
-				else if (m_settings.drawLife)
-					std::snprintf(buf, sizeof(buf), "Ped: %d/%d", health, maxHealth);
-
-				DrawTextToScreen(buf, screenX, screenY + vehOffsetY, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
-			}
-		}
-	}
-}
-
-void HandleHelperMod::ListVehs()
-{
-	nearbyEnts vehArr;
-	int ped = PLAYER::GET_PLAYER_PED(PLAYER::PLAYER_ID());
-	int maxCount = PED::GET_PED_NEARBY_VEHICLES(ped, (int*)&vehArr);
-	int count = std::min<int>(maxCount, m_settings.nearbyObjectMax);
-
-	// Go through vehicles
-	m_vehListMutex.lock();
-	m_vehList = std::to_string(count) + ": ";
-	for (int i = 0; i < count; i++)
-		m_vehList += std::to_string(vehArr.entities[i].id) + ", ";
-	m_vehListMutex.unlock();
-
-	if (m_dllObject.GetEnableHUD() && m_settings.common.showInGame)
-	{
-		const float twoLinesHeight = 2 * 1.2f * TextFontHeight(m_settings.common.inGameFontSize, m_font);
-		char buf[112] = "";
-		for (int i = 0; i < count; i++)
-		{
-			Vector3 worldPos = ENTITY::GET_ENTITY_COORDS(vehArr.entities[i].id, false);
-			float screenX, screenY;
-			bool notOnScreen = HUD::GET_HUD_SCREEN_POSITION_FROM_WORLD_POSITION(worldPos.x, worldPos.y, worldPos.z + m_settings.drawOffsetZ,
-				&screenX, &screenY);
-			const bool driverSeatFree = VEHICLE::IS_VEHICLE_SEAT_FREE(vehArr.entities[i].id, -1, false);
-			int passengerCount = VEHICLE::GET_VEHICLE_NUMBER_OF_PASSENGERS(vehArr.entities[i].id);
-			float passengerOffsetY = 0.0f;
-			// Count the driver as passenger
-			if (!driverSeatFree || passengerCount > 0)
-				passengerOffsetY = -twoLinesHeight;
-			if (!m_settings.drawOnScreenEntityOnly || !notOnScreen)
-			{
-				int health = ENTITY::GET_ENTITY_HEALTH(vehArr.entities[i].id);
-				int maxHealth = ENTITY::GET_ENTITY_MAX_HEALTH(vehArr.entities[i].id);
-
-				if (m_settings.drawId && m_settings.drawLife)
-					std::snprintf(buf, sizeof(buf), "Veh ID: %d\nLife: %d/%d", vehArr.entities[i].id, health, maxHealth);
-				else if (m_settings.drawId)
-					std::snprintf(buf, sizeof(buf), "Veh: %d", vehArr.entities[i].id);
-				else if (m_settings.drawLife)
-					std::snprintf(buf, sizeof(buf), "Veh: %d/%d", health, maxHealth);
-				
-				DrawTextToScreen(buf, screenX, screenY + passengerOffsetY, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
-			}
-		}
-	}
-}
+//void HandleHelperMod::ListVehs()
+//{
+//	nearbyEnts vehArr;
+//	int ped = PLAYER::GET_PLAYER_PED(PLAYER::PLAYER_ID());
+//	//int maxCount = PED::GET_PED_NEARBY_VEHICLES(ped, (int*)&vehArr);
+//	//int count = std::min<int>(maxCount, m_settings.nearbyObjectMax);
+//
+//	// Go through vehicles
+//	m_vehListMutex.lock();
+//	m_vehList = std::to_string(count) + ": ";
+//	for (int i = 0; i < count; i++)
+//		m_vehList += std::to_string(vehArr.entities[i].id) + ", ";
+//	m_vehListMutex.unlock();
+//
+//	if (m_dllObject.GetEnableHUD() && m_settings.common.showInGame)
+//	{
+//		const float twoLinesHeight = 2 * 1.2f * TextFontHeight(m_settings.common.inGameFontSize, m_font);
+//		char buf[112] = "";
+//		for (int i = 0; i < count; i++)
+//		{
+//			Vector3 worldPos = ENTITY::GET_ENTITY_COORDS(vehArr.entities[i].id, false);
+//			float screenX, screenY;
+//			bool notOnScreen = HUD::GET_HUD_SCREEN_POSITION_FROM_WORLD_POSITION(worldPos.x, worldPos.y, worldPos.z + m_settings.drawOffsetZ,
+//				&screenX, &screenY);
+//			const bool driverSeatFree = VEHICLE::IS_VEHICLE_SEAT_FREE(vehArr.entities[i].id, -1, false);
+//			int passengerCount = VEHICLE::GET_VEHICLE_NUMBER_OF_PASSENGERS(vehArr.entities[i].id);
+//			float passengerOffsetY = 0.0f;
+//			// Count the driver as passenger
+//			if (!driverSeatFree || passengerCount > 0)
+//				passengerOffsetY = -twoLinesHeight;
+//			if (!m_settings.drawOnScreenEntityOnly || !notOnScreen)
+//			{
+//				int health = ENTITY::GET_ENTITY_HEALTH(vehArr.entities[i].id);
+//				int maxHealth = ENTITY::GET_ENTITY_MAX_HEALTH(vehArr.entities[i].id);
+//
+//				if (m_settings.drawId && m_settings.drawLife)
+//					std::snprintf(buf, sizeof(buf), "Veh ID: %d\nLife: %d/%d", vehArr.entities[i].id, health, maxHealth);
+//				else if (m_settings.drawId)
+//					std::snprintf(buf, sizeof(buf), "Veh: %d", vehArr.entities[i].id);
+//				else if (m_settings.drawLife)
+//					std::snprintf(buf, sizeof(buf), "Veh: %d/%d", health, maxHealth);
+//				
+//				DrawTextToScreen(buf, screenX, screenY + passengerOffsetY, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
+//			}
+//		}
+//	}
+//}
 
 void HandleHelperMod::UpdateHandleData()
 {
 	m_modelHash = ENTITY::GET_ENTITY_MODEL(m_handleInput);
 	m_type = ENTITY::GET_ENTITY_TYPE(m_handleInput);
 	m_health = ENTITY::GET_ENTITY_HEALTH(m_handleInput);
-	m_maxHealth = ENTITY::GET_ENTITY_MAX_HEALTH(m_handleInput);
+	m_maxHealth = ENTITY::GET_ENTITY_MAX_HEALTH(m_handleInput, false);
 	m_injured = PED::IS_PED_INJURED(m_handleInput);
-	m_position = ENTITY::GET_ENTITY_COORDS(m_handleInput, TRUE);
+	m_position = ENTITY::GET_ENTITY_COORDS(m_handleInput, TRUE, FALSE);
 	m_speed = ENTITY::GET_ENTITY_SPEED(m_handleInput) * 3.6f;
 	m_isMissionEntity = ENTITY::IS_ENTITY_A_MISSION_ENTITY(m_handleInput);
 
@@ -189,7 +189,7 @@ void HandleHelperMod::UpdateHandleData()
 			startY += step;
 
 			// Position
-			Vector3 pos = ENTITY::GET_ENTITY_COORDS(m_handleInput, TRUE);
+			Vector3 pos = ENTITY::GET_ENTITY_COORDS(m_handleInput, TRUE, false);
 			buffer << "Position (x, y, z): (";
 			DrawTextToScreen(buffer.str().c_str(), startX, startY, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
 			buffer.str("");
@@ -283,7 +283,7 @@ void HandleHelperMod::DrawMenuBar()
 							{
 								AnimDict dict(m_animDictInput);
 								if (dict.IsValid())
-									TASK::TASK_PLAY_ANIM(m_handleInput, m_animDictInput, m_animNameInput, 8.0f, 1.0f, -1, m_animFlags, 1.0f, FALSE, FALSE, FALSE);
+									TASK::TASK_PLAY_ANIM(m_handleInput, m_animDictInput, m_animNameInput, 8.0f, 1.0f, -1, m_animFlags, 1.0f, FALSE, FALSE, FALSE, "", false);
 							}
 						});
 					}

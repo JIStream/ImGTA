@@ -46,10 +46,10 @@ void ScriptsMod::Think()
 	{
 		std::lock_guard<std::mutex> lock(m_scriptsMutex);
 		m_scripts.clear();
-		SCRIPT::SCRIPT_THREAD_ITERATOR_RESET();
+		SCRIPTS::SCRIPT_THREAD_ITERATOR_RESET();
 		int id;
-		while ((id = SCRIPT::SCRIPT_THREAD_ITERATOR_GET_NEXT_THREAD_ID()) != 0)
-			m_scripts.push_back(ScriptObject(SCRIPT::_GET_NAME_OF_THREAD(id), id));
+		while ((id = SCRIPTS::SCRIPT_THREAD_ITERATOR_GET_NEXT_THREAD_ID()) != 0)
+			m_scripts.push_back(ScriptObject("MISSING FUNCTIONALITY CHECK CODE"));
 
 		if (m_settings.sortByName)
 			std::sort(m_scripts.begin(), m_scripts.end(), CompareScriptByName);
@@ -70,7 +70,7 @@ void ScriptsMod::Think()
 			}
 		}
 
-		m_noLoadingScreen = SCRIPT::GET_NO_LOADING_SCREEN();
+		m_noLoadingScreen = SCRIPTS::GET_NO_LOADING_SCREEN();
 		m_wantsUpdate = false;
 	}
 
@@ -141,7 +141,7 @@ void ScriptsMod::DrawMenuBar()
 					{
 						GTAScript script(m_startScriptName);
 						if (script.IsValid())
-							SYSTEM::START_NEW_SCRIPT(m_startScriptName, static_cast<int>(m_startFlags));
+							SCRIPTS::START_NEW_SCRIPT(m_startScriptName, static_cast<int>(m_startFlags));
 
 						m_wantsUpdate = true;
 					});
@@ -156,7 +156,7 @@ void ScriptsMod::DrawMenuBar()
 							{
 								GTAScript script(scriptNames[i]);
 								if (script.IsValid())
-									SYSTEM::START_NEW_SCRIPT(scriptNames[i], static_cast<int>(m_startFlags));
+									SCRIPTS::START_NEW_SCRIPT(scriptNames[i], static_cast<int>(m_startFlags));
 
 								m_wantsUpdate = true;
 							});
@@ -175,7 +175,7 @@ void ScriptsMod::DrawMenuBar()
 			{
 				m_dllObject.RunOnNativeThread([=]
 				{
-					SCRIPT::SHUTDOWN_LOADING_SCREEN();
+					SCRIPTS::SHUTDOWN_LOADING_SCREEN();
 				});
 			}
 			if (ImGui::BeginMenu("Set loading screen"))
@@ -185,7 +185,7 @@ void ScriptsMod::DrawMenuBar()
 				{
 					m_dllObject.RunOnNativeThread([=]
 					{
-						SCRIPT::SET_NO_LOADING_SCREEN(m_noLoadingScreenOption);
+						SCRIPTS::SET_NO_LOADING_SCREEN(m_noLoadingScreenOption);
 					});
 				}
 				ImGui::EndMenu();
@@ -237,7 +237,7 @@ void ScriptsMod::ShowSelectedPopup()
 		{
 			m_dllObject.RunOnNativeThread([=]
 			{
-				SCRIPT::TERMINATE_THREAD(m_selected->m_handle);
+				SCRIPTS::TERMINATE_THREAD(m_selected->m_handle);
 				m_wantsUpdate = true; // ask for the update only after this has actually been terminated.
 			});
 

@@ -28,7 +28,7 @@ const char *watchTypeNames[] = { "Int", "Float", "String", "Vector3", "Bitfield3
 void MemWatcherMod::Load()
 {
 	m_settings = m_dllObject.GetUserSettings().memWatcher;
-	m_onlineVersion = NETWORK::_GET_ONLINE_VERSION();
+	m_onlineVersion = "UNKNOWN VERSION";
 }
 
 void MemWatcherMod::Unload()
@@ -48,7 +48,7 @@ void MemWatcherMod::Think()
 
 		m_scriptHash = MISC::GET_HASH_KEY(m_scriptName.c_str());
 		// Check if script is still running
-		if (SCRIPT::_GET_NUMBER_OF_REFERENCES_OF_SCRIPT_WITH_NAME_HASH(m_scriptHash) > 0)
+		if (SCRIPTS::DOES_SCRIPT_WITH_NAME_HASH_EXIST(m_scriptHash) > 0)
 			m_scriptRunning = true;
 		else
 			m_scriptRunning = false;
@@ -64,7 +64,7 @@ void MemWatcherMod::Think()
 			// Re-check if script is still running
 			if (!w.IsGlobal())
 			{
-				if (SCRIPT::_GET_NUMBER_OF_REFERENCES_OF_SCRIPT_WITH_NAME_HASH(w.m_scriptHash) > 0)
+				if (SCRIPTS::DOES_SCRIPT_WITH_NAME_HASH_EXIST(w.m_scriptHash))
 					w.m_scriptRunning = true;
 				else
 					w.m_scriptRunning = false;
@@ -150,7 +150,7 @@ void MemWatcherMod::ShowAddAddress(bool isGlobal)
 			m_dllObject.RunOnNativeThread([&]
 			{
 				m_scriptHash = MISC::GET_HASH_KEY(m_scriptName.c_str());
-				if (SCRIPT::_GET_NUMBER_OF_REFERENCES_OF_SCRIPT_WITH_NAME_HASH(m_scriptHash) > 0)
+				if (SCRIPTS::DOES_SCRIPT_WITH_NAME_HASH_EXIST(m_scriptHash))
 					m_scriptRunning = true;
 				else
 					m_scriptRunning = false;
@@ -258,7 +258,7 @@ void MemWatcherMod::ShowSelectedPopup()
 				m_dllObject.RunOnNativeThread([&]
 				{
 					m_scriptHash = MISC::GET_HASH_KEY(m_scriptName.c_str());
-					if (SCRIPT::_GET_NUMBER_OF_REFERENCES_OF_SCRIPT_WITH_NAME_HASH(m_scriptHash) > 0)
+					if (SCRIPTS::DOES_SCRIPT_WITH_NAME_HASH_EXIST(m_scriptHash))
 						m_selectedWatchScriptRunning = true;
 					else
 						m_selectedWatchScriptRunning = false;

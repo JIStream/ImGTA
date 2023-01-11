@@ -11,11 +11,11 @@
 GTAScript::GTAScript(const char *scriptName, bool block)
 {
 	strcpy_s(m_scriptName, scriptName);
-	m_isValid = SCRIPT::DOES_SCRIPT_EXIST(m_scriptName);
+	m_isValid = SCRIPTS::DOES_SCRIPT_EXIST(m_scriptName);
 
 	if (IsValid())
 	{
-		SCRIPT::REQUEST_SCRIPT(m_scriptName);
+		SCRIPTS::REQUEST_SCRIPT(m_scriptName);
 		if (block)
 			WaitForLoad();
 	}
@@ -29,7 +29,7 @@ GTAScript::~GTAScript()
 
 void GTAScript::WaitForLoad()
 {
-	while (!SCRIPT::HAS_SCRIPT_LOADED(m_scriptName))
+	while (!SCRIPTS::HAS_SCRIPT_LOADED(m_scriptName))
 		WAIT(0);
 }
 
@@ -42,7 +42,7 @@ void GTAScript::Unload()
 {
 	if (IsValid())
 	{
-		SCRIPT::SET_SCRIPT_AS_NO_LONGER_NEEDED(m_scriptName);
+		SCRIPTS::SET_SCRIPT_AS_NO_LONGER_NEEDED(m_scriptName);
 		m_marked = true;
 	}
 }

@@ -31,18 +31,15 @@ void AudioMod::Think()
 {
 	Ped p = PLAYER::PLAYER_PED_ID();
 
-	m_isRingtonePlaying = AUDIO::IS_PED_RINGTONE_PLAYING(p);
-	m_isCallOngoing = AUDIO::IS_MOBILE_PHONE_CALL_ONGOING();
+	//m_isScriptedConversationLoaded = AUDIO::IS_SCRIPTED_CONVERSATION_LOADED();
+	//m_isScriptedConversationOngoing = AUDIO::IS_SCRIPTED_CONVERSATION_ONGOING();
+	//m_isInCurrentConversation = AUDIO::IS_PED_IN_CURRENT_CONVERSATION(p);
+	//m_currentScriptedConversationLine = AUDIO::GET_CURRENT_SCRIPTED_CONVERSATION_LINE();
 
-	m_isScriptedConversationLoaded = AUDIO::IS_SCRIPTED_CONVERSATION_LOADED();
-	m_isScriptedConversationOngoing = AUDIO::IS_SCRIPTED_CONVERSATION_ONGOING();
-	m_isInCurrentConversation = AUDIO::IS_PED_IN_CURRENT_CONVERSATION(p);
-	m_currentScriptedConversationLine = AUDIO::GET_CURRENT_SCRIPTED_CONVERSATION_LINE();
+	//m_isStreamPlaying = AUDIO::IS_STREAM_PLAYING();
+	//m_streamPlayTime = AUDIO::GET_STREAM_PLAY_TIME();
 
-	m_isStreamPlaying = AUDIO::IS_STREAM_PLAYING();
-	m_streamPlayTime = AUDIO::GET_STREAM_PLAY_TIME();
-
-	m_isScriptedMusicPlaying = AUDIO::AUDIO_IS_SCRIPTED_MUSIC_PLAYING();
+	//m_isScriptedMusicPlaying = AUDIO::AUDIO_IS_SCRIPTED_MUSIC_PLAYING();
 
 	m_isAmbientSpeechPlaying = AUDIO::IS_AMBIENT_SPEECH_PLAYING(p);
 	m_isScriptedSpeechPlaying = AUDIO::IS_SCRIPTED_SPEECH_PLAYING((Any)p);
@@ -67,7 +64,7 @@ void AudioMod::DrawMenuBar()
 			{
 				m_dllObject.RunOnNativeThread([]
 				{
-					AUDIO::RESTART_SCRIPTED_CONVERSATION();
+					//AUDIO::RESTART_SCRIPTED_CONVERSATION();
 				});
 			}
 
@@ -78,7 +75,7 @@ void AudioMod::DrawMenuBar()
 				{
 					m_dllObject.RunOnNativeThread([=]
 					{
-						AUDIO::STOP_SCRIPTED_CONVERSATION(m_stopConversationParam);
+						//AUDIO::STOP_SCRIPTED_CONVERSATION(m_stopConversationParam);
 					});
 				}
 
@@ -93,7 +90,7 @@ void AudioMod::DrawMenuBar()
 				{
 					m_dllObject.RunOnNativeThread([=]
 					{
-						AUDIO::PAUSE_SCRIPTED_CONVERSATION(m_pauseConversationParam);
+						//AUDIO::PAUSE_SCRIPTED_CONVERSATION(m_pauseConversationParam);
 					});
 				}
 
@@ -104,7 +101,7 @@ void AudioMod::DrawMenuBar()
 			{
 				m_dllObject.RunOnNativeThread([=]
 				{
-					AUDIO::SKIP_TO_NEXT_SCRIPTED_CONVERSATION_LINE();
+					//AUDIO::SKIP_TO_NEXT_SCRIPTED_CONVERSATION_LINE();
 				});
 			}
 
@@ -112,7 +109,7 @@ void AudioMod::DrawMenuBar()
 			{
 				m_dllObject.RunOnNativeThread([=]
 				{
-					AUDIO::START_PRELOADED_CONVERSATION();
+					//AUDIO::START_PRELOADED_CONVERSATION();
 				});
 			}
 

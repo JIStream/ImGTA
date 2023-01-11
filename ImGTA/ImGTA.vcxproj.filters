@@ -21,9 +21,6 @@
     <Filter Include="Modules\Cheats">
       <UniqueIdentifier>{b2db65e6-29cc-4eec-9083-d3f6885a62f9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Modules\Cutscene">
-      <UniqueIdentifier>{294114b7-0dd7-49bb-b29d-e3875e673358}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Modules\Audio">
       <UniqueIdentifier>{7564534f-44ac-4002-925a-6c74ce9b7e05}</UniqueIdentifier>
     </Filter>
@@ -38,9 +35,6 @@
     </Filter>
     <Filter Include="Modules\Switch">
       <UniqueIdentifier>{970081f7-4787-4f23-8afe-a7d85cf28caf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Modules\Synchronized Scene">
-      <UniqueIdentifier>{3db4fc1f-8a83-4b40-a3a8-f72e1897f188}</UniqueIdentifier>
     </Filter>
     <Filter Include="Modules\Test">
       <UniqueIdentifier>{be531a32-803d-4b9d-a264-0f9e44583bfa}</UniqueIdentifier>
@@ -74,9 +68,6 @@
     <ClCompile Include="cheats_mod.cpp">
       <Filter>Modules\Cheats</Filter>
     </ClCompile>
-    <ClCompile Include="cutscene_mod.cpp">
-      <Filter>Modules\Cutscene</Filter>
-    </ClCompile>
     <ClCompile Include="audio_mod.cpp">
       <Filter>Modules\Audio</Filter>
     </ClCompile>
@@ -100,9 +91,6 @@
     </ClCompile>
     <ClCompile Include="lua_engine.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sync_scene_mod.cpp">
-      <Filter>Modules\Synchronized Scene</Filter>
     </ClCompile>
     <ClCompile Include="player_switch_mod.cpp">
       <Filter>Modules\Switch</Filter>
@@ -169,9 +157,6 @@
     <ClInclude Include="cheats_mod.h">
       <Filter>Modules\Cheats</Filter>
     </ClInclude>
-    <ClInclude Include="cutscene_mod.h">
-      <Filter>Modules\Cutscene</Filter>
-    </ClInclude>
     <ClInclude Include="audio_mod.h">
       <Filter>Modules\Audio</Filter>
     </ClInclude>
@@ -198,12 +183,6 @@
     </ClInclude>
     <ClInclude Include="music_events.h">
       <Filter>Modules\Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="cutscene_names.h">
-      <Filter>Modules\Cutscene</Filter>
-    </ClInclude>
-    <ClInclude Include="sync_scene_mod.h">
-      <Filter>Modules\Synchronized Scene</Filter>
     </ClInclude>
     <ClInclude Include="player_switch_mod.h">
       <Filter>Modules\Switch</Filter>

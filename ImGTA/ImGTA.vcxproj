@@ -188,7 +188,6 @@ copy "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)
     <ClCompile Include="anim_dict.cpp" />
     <ClCompile Include="cheats_mod.cpp" />
     <ClCompile Include="comms_mod.cpp" />
-    <ClCompile Include="cutscene_mod.cpp" />
     <ClCompile Include="gta_script.cpp" />
     <ClCompile Include="handle_helper_mod.cpp" />
     <ClCompile Include="imgui_extras.cpp" />
@@ -205,7 +204,6 @@ copy "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)
     <ClCompile Include="audio_mod.cpp" />
     <ClCompile Include="scripts_mod.cpp" />
     <ClCompile Include="strangers_and_freaks_names.cpp" />
-    <ClCompile Include="sync_scene_mod.cpp" />
     <ClCompile Include="test_mod.cpp" />
     <ClCompile Include="user_settings.cpp" />
     <ClCompile Include="utils.cpp" />
@@ -225,8 +223,6 @@ copy "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)
     <ClInclude Include="audio_scenes.h" />
     <ClInclude Include="cheats_mod.h" />
     <ClInclude Include="comms_mod.h" />
-    <ClInclude Include="cutscene_mod.h" />
-    <ClInclude Include="cutscene_names.h" />
     <ClInclude Include="global_id.h" />
     <ClInclude Include="gta_script.h" />
     <ClInclude Include="handle_helper_mod.h" />
@@ -247,7 +243,6 @@ copy "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)
     <ClInclude Include="script_names.h" />
     <ClInclude Include="strangers_and_freaks_names.h" />
     <ClInclude Include="switch_anim_dict_names.h" />
-    <ClInclude Include="sync_scene_mod.h" />
     <ClInclude Include="test_mod.h" />
     <ClInclude Include="user_settings.h" />
     <ClInclude Include="utils.h" />
