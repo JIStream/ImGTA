@@ -161,7 +161,7 @@ copy "$(SolutionDir)lua\lua53.dll" "E:\Grand Theft Auto V"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookV_SDK\inc\;$(SolutionDir)Libraries\imgui\;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\lua\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookRDR2_SDK\inc\;$(SolutionDir)Libraries\imgui\;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\lua\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -186,7 +186,6 @@ copy "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)
     <ClCompile Include="..\Libraries\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="anim_dict.cpp" />
-    <ClCompile Include="area_mod.cpp" />
     <ClCompile Include="cheats_mod.cpp" />
     <ClCompile Include="comms_mod.cpp" />
     <ClCompile Include="cutscene_mod.cpp" />
@@ -223,14 +222,12 @@ copy "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)
     <ClInclude Include="..\Libraries\imgui\imstb_textedit.h" />
     <ClInclude Include="..\Libraries\imgui\imstb_truetype.h" />
     <ClInclude Include="anim_dict.h" />
-    <ClInclude Include="area_mod.h" />
     <ClInclude Include="audio_scenes.h" />
     <ClInclude Include="cheats_mod.h" />
     <ClInclude Include="comms_mod.h" />
     <ClInclude Include="cutscene_mod.h" />
     <ClInclude Include="cutscene_names.h" />
     <ClInclude Include="global_id.h" />
-    <ClInclude Include="graphics.h" />
     <ClInclude Include="gta_script.h" />
     <ClInclude Include="handle_helper_mod.h" />
     <ClInclude Include="imgui_extras.h" />

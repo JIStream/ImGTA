@@ -48,9 +48,6 @@
     <Filter Include="Modules\Mission">
       <UniqueIdentifier>{a282b88b-d789-4f69-abb6-96a8d521b600}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Modules\Area">
-      <UniqueIdentifier>{e1967f6c-73e3-450c-ae1f-2cf74d20cdca}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Modules\Memory Watcher">
       <UniqueIdentifier>{a8778da9-053a-49cd-9aef-c68360d37fbc}</UniqueIdentifier>
     </Filter>
@@ -118,9 +115,6 @@
     </ClCompile>
     <ClCompile Include="mission_helper.cpp">
       <Filter>Modules\Cheats</Filter>
-    </ClCompile>
-    <ClCompile Include="area_mod.cpp">
-      <Filter>Modules\Area</Filter>
     </ClCompile>
     <ClCompile Include="watch_entry.cpp">
       <Filter>Modules\Memory Watcher</Filter>
@@ -226,9 +220,6 @@
     <ClInclude Include="input_controls.h">
       <Filter>Modules\Cheats</Filter>
     </ClInclude>
-    <ClInclude Include="area_mod.h">
-      <Filter>Modules\Area</Filter>
-    </ClInclude>
     <ClInclude Include="script_infos.h">
       <Filter>Modules\Scripts</Filter>
     </ClInclude>
@@ -288,9 +279,6 @@
     </ClInclude>
     <ClInclude Include="widgets.h">
       <Filter>UI</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vectors.h">
       <Filter>Header Files</Filter>

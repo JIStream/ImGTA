@@ -41,7 +41,7 @@ void CheatsMod::Load()
 		std::vector<int> tmpAvailableVehicles;
 		for (int i = 0; i < category.second.size(); ++i)
 		{
-			if (STREAMING::IS_MODEL_A_VEHICLE(MISC::GET_HASH_KEY(category.second.at(i).c_str())))
+			if (STREAMING::IS_MODEL_A_VEHICLE((category.second.at(i).c_str())))
 				tmpAvailableVehicles.push_back(i);
 		}
 		m_availableVehicles.insert({ category.first, tmpAvailableVehicles });
@@ -59,8 +59,6 @@ void CheatsMod::Think()
 	int playerPedID = PLAYER::PLAYER_PED_ID();
 	int playerID = PLAYER::PLAYER_ID();
 	char buf[112] = "";
-	if (m_explosiveBullets)
-		MISC::SET_EXPLOSIVE_AMMO_THIS_FRAME(playerPedID);
 
 	if (m_dllObject.GetEnableHUD() && m_settings.common.showInGame)
 	{
@@ -100,12 +98,6 @@ void CheatsMod::Think()
 			int health = ENTITY::GET_ENTITY_HEALTH(playerPedID);
 			int maxHealth = ENTITY::GET_ENTITY_MAX_HEALTH(playerPedID);
 			std::snprintf(buf, sizeof(buf), "Health: %d / %d", health, maxHealth);
-			DrawTextToScreen(buf, startX, startY, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
-			startY += step;
-
-			int armour = PED::GET_PED_ARMOUR(playerPedID);
-			int maxArmour = PLAYER::GET_PLAYER_MAX_ARMOUR(PLAYER::PLAYER_ID());
-			std::snprintf(buf, sizeof(buf), "Armour: %d / %d", armour, maxArmour);
 			DrawTextToScreen(buf, startX, startY, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
 			startY += step;
 
@@ -442,81 +434,6 @@ void CheatsMod::DrawPlayerMenu()
 
 			ImGui::EndMenu();
 		}
-		ImGui::EndMenu();
-	}
-}
-
-void CheatsMod::DrawVehicleMenu()
-{
-	if (ImGui::BeginMenu("Vehicle"))
-	{
-		if (ImGui::MenuItem("Repair"))
-		{
-			m_dllObject.RunOnNativeThread([]
-			{
-				Vehicle v = PED::GET_VEHICLE_PED_IS_IN(PLAYER::PLAYER_PED_ID(), FALSE);
-				if (v != NULL)
-					VEHICLE::SET_VEHICLE_FIXED(v);
-			});
-		}
-
-		if (ImGui::BeginMenu("Pimp my ride"))
-		{
-			ImGui::InputFloat("Power percent", &m_powerPercent);
-			ClipFloat(m_powerPercent, 0.0f, 10000.0f);
-			if (ImGui::Button("Pimp it!"))
-			{
-				m_dllObject.RunOnNativeThread([=]
-				{
-					if (PED::IS_PED_SITTING_IN_ANY_VEHICLE(PLAYER::PLAYER_PED_ID()))
-						VEHICLE::MODIFY_VEHICLE_TOP_SPEED(PED::GET_VEHICLE_PED_IS_IN(PLAYER::PLAYER_PED_ID(), FALSE), m_powerPercent);
-				});
-			}
-			if (ImGui::Button("Can't handle it? Reset!"))
-			{
-				m_dllObject.RunOnNativeThread([=]
-				{
-					if (PED::IS_PED_SITTING_IN_ANY_VEHICLE(PLAYER::PLAYER_PED_ID()))
-						VEHICLE::MODIFY_VEHICLE_TOP_SPEED(PED::GET_VEHICLE_PED_IS_IN(PLAYER::PLAYER_PED_ID(), FALSE), 100.0f);
-				});
-			}
-			ImGui::EndMenu();
-		}
-
-		if (ImGui::BeginMenu("Destroy##Vehicle"))
-		{
-			if (ImGui::MenuItem("Kill"))
-			{
-				m_dllObject.RunOnNativeThread([]
-				{
-					Vehicle v = PED::GET_VEHICLE_PED_IS_IN(PLAYER::PLAYER_PED_ID(), FALSE);
-					if (v != NULL)
-					{
-						VEHICLE::SET_VEHICLE_ENGINE_HEALTH(v, 0.0f);
-						VEHICLE::SET_VEHICLE_BODY_HEALTH(v, 0.0f);
-						ENTITY::SET_ENTITY_HEALTH(v, 0, true);
-					}
-				});
-			}
-
-			if (ImGui::MenuItem("Explode"))
-			{
-				m_dllObject.RunOnNativeThread([]
-				{
-					Vehicle v = PED::GET_VEHICLE_PED_IS_IN(PLAYER::PLAYER_PED_ID(), FALSE);
-					if (v != NULL)
-						VEHICLE::EXPLODE_VEHICLE(v, TRUE, FALSE);
-				});
-			}
-
-			ImGui::EndMenu();
-		}
-		/*
-		if ( ImGui::MenuItem( "Customize" ) )
-		{
-			// TODO: show customization window
-		}
-		*/
 		ImGui::EndMenu();
 	}
 }
