@@ -6,11 +6,8 @@
  */
 
 #include "script.h"
-
 #include "main.h"
-
 #include "imgui_impl_win32.h"
-
 #include <Windows.h>
 
 DLLObject object{};
@@ -27,12 +24,7 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 		scriptRegister(inst, Load);
 		break;
 	case DLL_PROCESS_DETACH:
-		// If unloaded dynamically
-		if (lpReserved == NULL)
-		{
-			object.Unload();
-			scriptUnregister(inst);
-		}
+		scriptUnregister(inst);
 		break;
 	}
 	return TRUE;
