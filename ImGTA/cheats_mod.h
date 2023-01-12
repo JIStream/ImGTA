@@ -34,7 +34,6 @@ public:
 
 private:
 	void DrawPlayerMenu();
-	void DrawVehicleMenu();
 	void DrawWorldMenu();
 	void DrawMissionMenu();
 	void DrawHUDMenu();

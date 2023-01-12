@@ -16,7 +16,7 @@ Model::Model(Hash modelHash, bool block) : m_hash(modelHash)
 
 	if (IsValid())
 	{
-		STREAMING::REQUEST_MODEL(m_hash);
+		STREAMING::REQUEST_MODEL(m_hash, false);
 		if (block)
 			WaitForLoad();
 	}

@@ -613,7 +613,6 @@ bool CheatsMod::Draw()
 	if (ImGui::BeginMainMenuBar())
 	{
 		DrawPlayerMenu();
-		DrawVehicleMenu();
 		DrawWorldMenu();
 		//DrawMissionMenu();
 		DrawHUDMenu();

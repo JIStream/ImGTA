@@ -37,9 +37,6 @@ void HandleHelperMod::Think()
 {
 	if (m_settings.common.autoUpdate || m_wantsUpdate)
 	{
-		ListPeds();
-		ListVehs();
-
 		if (ENTITY::DOES_ENTITY_EXIST(m_handleInput))
 			UpdateHandleData();
 		else

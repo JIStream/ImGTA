@@ -43,8 +43,6 @@ private:
 	void DrawMenuBar();
 	void UpdateHandleData();
 	void ResetData();
-	void ListPeds();
-	void ListVehs();
 	CommonSettings & GetCommonSettings() override { return m_settings.common; }
 
 	HandleHelperSettings m_settings;

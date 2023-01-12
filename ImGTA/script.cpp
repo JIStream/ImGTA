@@ -10,15 +10,11 @@
 #include "mod.h"
 #include "mem_watcher_mod.h"
 #include "cheats_mod.h"
-#include "cutscene_mod.h"
 #include "audio_mod.h"
-#include "handle_helper_mod.h"
 #include "scripts_mod.h"
-#include "sync_scene_mod.h"
 #include "player_switch_mod.h"
 #include "comms_mod.h"
 #include "mission_mod.h"
-#include "area_mod.h"
 #include "test_mod.h"
 #include "lua_console_mod.h"
 #include "utils.h"
@@ -55,13 +51,9 @@ void DLLObject::InitMods()
 
 	m_modsLoaded.push_back(new MemWatcherMod(*this, supportGlobals));
 	m_modsLoaded.push_back(new CheatsMod(*this, supportGlobals));
-	m_modsLoaded.push_back(new CutsceneMod(*this, supportGlobals));
 	m_modsLoaded.push_back(new AudioMod(*this, supportGlobals));
 	m_modsLoaded.push_back(new ScriptsMod(*this, supportGlobals));
-	m_modsLoaded.push_back(new HandleHelperMod(*this, supportGlobals));
-	m_modsLoaded.push_back(new SyncSceneMod(*this, supportGlobals));
 	m_modsLoaded.push_back(new PlayerSwitchMod(*this, supportGlobals));
-	m_modsLoaded.push_back(new AreaMod(*this, supportGlobals));
 	m_modsLoaded.push_back(new LuaConsoleMod(*this, supportGlobals, m_luaEngine));
 	if (supportGlobals)
 	{

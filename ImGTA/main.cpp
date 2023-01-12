@@ -18,7 +18,6 @@ DLLObject object{};
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 void Load();
-void OnPresent(IDXGISwapChain *swap);
 
 BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 {
@@ -26,13 +25,11 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 	{
 	case DLL_PROCESS_ATTACH:
 		scriptRegister(inst, Load);
-		presentCallbackRegister((PresentCallback)OnPresent);
 		break;
 	case DLL_PROCESS_DETACH:
 		// If unloaded dynamically
 		if (lpReserved == NULL)
 		{
-			presentCallbackUnregister((PresentCallback)OnPresent);
 			object.Unload();
 			scriptUnregister(inst);
 		}
@@ -58,9 +55,4 @@ LRESULT __stdcall WndProc(HWND hand, UINT msg, WPARAM wParam, LPARAM lParam)
 		ImGui_ImplWin32_WndProcHandler(hand, msg, wParam, lParam);
 
 	return CallWindowProcW((WNDPROC)object.GetOldProc(), hand, msg, wParam, lParam);
-}
-
-void OnPresent(IDXGISwapChain *swap)
-{
-	object.OnPresent(swap);
 }
