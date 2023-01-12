@@ -24,7 +24,7 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "imgui_impl_win32.h"
-#include "imgui_impl_dx11.h"
+#include "imgui_impl_vulkan.h"
 
 #include <d3d11.h>
 #include <vector>
@@ -106,7 +106,7 @@ void DLLObject::Update()
 
 void DLLObject::UpdateWindows()
 {
-	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
@@ -119,7 +119,7 @@ void DLLObject::UpdateWindows()
 	}
 
 	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData());
 }
 
 void DLLObject::RunOnNativeThread(std::function<void()> func)
@@ -199,7 +199,7 @@ void DLLObject::Unload()
 		// Save settings
 		m_userSettings.Save(m_userSettingsFile);
 
-		ImGui_ImplDX11_Shutdown();
+		ImGui_ImplVulkan_Shutdown();
 		ImGui_ImplWin32_Shutdown();
 		ImGui::DestroyContext();
 		if (m_oldProc)
@@ -233,7 +233,7 @@ void DLLObject::OnPresent(IDXGISwapChain *swap)
 
 		HWND window = FindMainWindow(GetCurrentProcessId());
 		ImGui_ImplWin32_Init(window);
-		ImGui_ImplDX11_Init(device, context);
+		ImGui_ImplVulkan_Init(device, context);
 
 
 		m_oldProc = SetWindowLongPtr(window, GWLP_WNDPROC, (LONG_PTR)WndProc);
