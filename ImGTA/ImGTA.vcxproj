@@ -137,8 +137,7 @@
       <AdditionalOptions>..\Libraries\ScriptHookRDR2_SDK\lib\ScriptHookRDR2.lib ..\Libraries\lua\liblua53.a%(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>if not exist "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(ProjectName)\$(ProjectName)\" mkdir "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(ProjectName)\$(ProjectName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
