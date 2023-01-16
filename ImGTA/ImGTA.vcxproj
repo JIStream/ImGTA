@@ -137,7 +137,11 @@
       <AdditionalOptions>..\Libraries\ScriptHookRDR2_SDK\lib\ScriptHookRDR2.lib ..\Libraries\lua\liblua53.a%(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>if not exist "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(ProjectName)\$(ProjectName)\" mkdir "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(ProjectName)\$(ProjectName)"</Command>
+      <Command>if not exist "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(ProjectName)\$(ProjectName)\" mkdir "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(ProjectName)\$(ProjectName)"
+copy "$(SolutionDir)$(ProjectName)\Lua\*.lua" "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(ProjectName)\$(ProjectName)\"
+copy "$(SolutionDir)Config\*" "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(ProjectName)\$(ProjectName)\"
+copy "$(SolutionDir)Libraries\lua\lua53.dll" "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(ProjectName)\"
+copy "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(ProjectName)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
