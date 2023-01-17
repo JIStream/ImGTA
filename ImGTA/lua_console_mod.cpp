@@ -202,7 +202,7 @@ int LuaConsoleMod::InputTextCallback(ImGuiInputTextCallbackData * data)
 		else
 		{
 			// Rotate the candidates ID
-			if (data->EventFlag == ImGuiKeyModFlags_Shift)
+			if (data->EventFlag == ImGuiMod_Shift)
 				m_lastCandidatesId = (m_lastCandidatesId - 1) % m_lastCandidates.size();
 			else
 				m_lastCandidatesId = (m_lastCandidatesId + 1) % m_lastCandidates.size();
