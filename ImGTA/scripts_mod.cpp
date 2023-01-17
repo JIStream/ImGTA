@@ -49,7 +49,7 @@ void ScriptsMod::Think()
 		SCRIPTS::SCRIPT_THREAD_ITERATOR_RESET();
 		int id;
 		while ((id = SCRIPTS::SCRIPT_THREAD_ITERATOR_GET_NEXT_THREAD_ID()) != 0)
-			m_scripts.push_back(ScriptObject("MISSING FUNCTIONALITY CHECK CODE"));
+			m_scripts.push_back(ScriptObject("MISSING FUNCTIONALITY CHECK CODE", id));
 
 		if (m_settings.sortByName)
 			std::sort(m_scripts.begin(), m_scripts.end(), CompareScriptByName);
