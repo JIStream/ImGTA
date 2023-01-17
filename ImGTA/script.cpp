@@ -187,7 +187,6 @@ void DLLObject::Unload()
 	{
 		m_isOpen = false;
 
-
 		// Unload mods
 		for (auto &m : m_modsLoaded)
 		{
@@ -214,6 +213,28 @@ void DLLObject::ToggleOpen()
 	ImGui::GetIO().MouseDrawCursor = m_isOpen;
 }
 
+void DLLObject::InitContext(HWND hwnd)
+{
+	if (ImGui::GetCurrentContext())
+		return;
+
+	ImGui::CreateContext();
+	ImGui_ImplWin32_Init(hwnd);
+
+	ImGui::GetIO().ConfigFlags = ImGuiConfigFlags_NavEnableGamepad;
+	ImGui::GetIO().IniFilename = m_fileImGuiIni.c_str();
+	ImGui::GetIO().LogFilename = m_fileImGuiLog.c_str();
+}
+
+void DLLObject::Draw()
+{
+	if (ImGui::GetCurrentContext())
+		return;
+
+	if (m_isOpen)
+		UpdateWindows();
+}
+
 void DLLObject::OnPresent(IDXGISwapChain *swap)
 {
 	if (!m_hasInitializedImgui)
@@ -227,9 +248,7 @@ void DLLObject::OnPresent(IDXGISwapChain *swap)
 
 		ImGui::CreateContext();
 		ImGui::StyleColorsDark();
-		ImGui::GetIO().ConfigFlags = ImGuiConfigFlags_NavEnableGamepad;
-		ImGui::GetIO().IniFilename = m_fileImGuiIni.c_str();
-		ImGui::GetIO().LogFilename = m_fileImGuiLog.c_str();
+		
 
 		HWND window = FindMainWindow(GetCurrentProcessId());
 		ImGui_ImplWin32_Init(window);

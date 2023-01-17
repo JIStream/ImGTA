@@ -13,9 +13,16 @@ enum RenderingBackend_t {
 };
 
 namespace Utils {
+	typedef void(*InitCallback)(HWND hwnd);
+	typedef void(*RenderCallback)();
+
 	void SetRenderingBackend(RenderingBackend_t eRenderingBackend);
 	RenderingBackend_t GetRenderingBackend( );
 	const char* RenderingBackendToStr( );
+	void SetInitCallback(InitCallback newInitCallback);
+	void SetRenderCallback(RenderCallback newRenderCallback);
+	RenderCallback GetRenderCallback();
+	InitCallback GetInitCallback();
 
 	HWND GetProcessWindow( );
 	void UnloadDLL( );

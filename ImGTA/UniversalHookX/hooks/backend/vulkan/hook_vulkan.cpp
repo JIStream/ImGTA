@@ -16,10 +16,9 @@
 #include "imgui_impl_vulkan.h"
 #include "imgui_impl_win32.h"
 #include "MinHook.h"
+#include "../../../utils/utils.hpp"
 
 #include "../../hooks.hpp"
-
-#include "../../../menu/menu.hpp"
 
 static VkAllocationCallbacks* g_Allocator = NULL;
 static VkInstance g_Instance = VK_NULL_HANDLE;
@@ -372,7 +371,7 @@ static void RenderImGui_Vulkan(VkQueue queue, const VkPresentInfoKHR* pPresentIn
     if (!g_Device || H::bShuttingDown)
         return;
 
-    Menu::InitializeContext(g_Hwnd);
+    U::GetInitCallback()(g_Hwnd);
 
     for (uint32_t i = 0; i < pPresentInfo->swapchainCount; ++i) {
         VkSwapchainKHR swapchain = pPresentInfo->pSwapchains[i];
@@ -429,7 +428,7 @@ static void RenderImGui_Vulkan(VkQueue queue, const VkPresentInfoKHR* pPresentIn
         ImGui_ImplWin32_NewFrame( );
         ImGui::NewFrame( );
 
-        Menu::Render( );
+        U::GetRenderCallback()();
 
         ImGui::Render( );
 

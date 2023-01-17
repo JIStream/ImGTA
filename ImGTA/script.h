@@ -39,6 +39,8 @@ public:
 	void Unload();
 	void ToggleOpen();
 	void OnPresent(IDXGISwapChain *swap);
+	void InitContext(HWND hwnd);
+	void Draw();
 	
 	std::chrono::time_point<std::chrono::high_resolution_clock> GetLastGameTime() { return m_lastGameTime; }
 	std::string GetSettingsFolder() { return m_settingsFolder; }

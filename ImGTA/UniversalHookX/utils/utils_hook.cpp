@@ -13,7 +13,9 @@
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
 static RenderingBackend_t g_eRenderingBackend = NONE;
-static DLLObject menu = DLLObject();
+
+static U::InitCallback initCallback;
+static U::RenderCallback renderCallback;
 
 static BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
 	const auto isMainWindow = [ handle ]( ) {
@@ -41,12 +43,20 @@ namespace Utils {
 		g_eRenderingBackend = eRenderingBackground;
 	}
 
-	void SetMenu(DLLObject newMenu) {
-		menu = newMenu;
+	void SetInitCallback(InitCallback newInitCallback) {
+		initCallback = newInitCallback;
 	}
 
-	void SetRenderingBackend(RenderingBackend_t eRenderingBackground) {
-		g_eRenderingBackend = eRenderingBackground;
+	void SetRenderCallback(RenderCallback newRenderCallback) {
+		renderCallback = newRenderCallback;
+	}
+
+	RenderCallback GetRenderCallback() {
+		return renderCallback;
+	}
+
+	InitCallback GetInitCallback() {
+		return initCallback;
 	}
 
 	RenderingBackend_t GetRenderingBackend( ) {

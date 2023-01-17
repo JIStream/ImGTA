@@ -21,8 +21,6 @@
 #include "../../../utils/utils.hpp"
 #include "../../hooks.hpp"
 
-#include "../../../menu/menu.hpp"
-
 // Data
 static int const NUM_BACK_BUFFERS = 3;
 static IDXGIFactory4* g_dxgiFactory = NULL;
@@ -204,7 +202,7 @@ namespace DX12 {
         LOG("[+] DirectX12: g_pSwapChain: 0x%p\n", g_pSwapChain);
 
         if (g_pd3dDevice) {
-            Menu::InitializeContext(hwnd);
+            //Menu::InitializeContext(hwnd);
 
             // Hook
             void** pVTable = *reinterpret_cast<void***>(g_pSwapChain);
@@ -369,7 +367,7 @@ static void RenderImGui_DX12(IDXGISwapChain3* pSwapChain) {
             ImGui_ImplWin32_NewFrame( );
             ImGui::NewFrame( );
 
-            Menu::Render( );
+            //Menu::Render( );
 
             ImGui::Render( );
 

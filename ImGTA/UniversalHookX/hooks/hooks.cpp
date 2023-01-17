@@ -12,7 +12,6 @@
 #include "backend/vulkan/hook_vulkan.hpp"
 
 #include "../console/console.hpp"
-#include "../menu/menu.hpp"
 #include "../utils/utils.hpp"
 
 #include "MinHook.h"
@@ -33,7 +32,7 @@ static DWORD WINAPI ReinitializeGraphicalHooks(LPVOID lpParam) {
     H::Init( );
 
     H::bShuttingDown = false;
-    Menu::bShowMenu = true;
+    //Menu::bShowMenu = true;
 
     return 0;
 }

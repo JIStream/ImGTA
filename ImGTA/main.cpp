@@ -23,6 +23,21 @@ void Load();
 DWORD WINAPI OnProcessAttach(LPVOID lpParam);
 DWORD WINAPI OnProcessDetach(LPVOID lpParam);
 
+void Draw()
+{
+	object.Draw();
+}
+
+void InitContext(HWND hwnd)
+{
+	object.InitContext(hwnd);
+}
+
+void Load()
+{
+	object.Load();
+}
+
 BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 {
 	switch (reason)
@@ -32,6 +47,8 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 		scriptRegister(inst, Load);
 
 		U::SetRenderingBackend(VULKAN);
+		U::SetInitCallback(InitContext);
+		U::SetRenderCallback(Draw);
 
 		HANDLE hHandle = CreateThread(NULL, 0, OnProcessAttach, inst, 0, NULL);
 		if (hHandle != NULL) {
@@ -44,11 +61,6 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 		break;
 	}
 	return TRUE;
-}
-
-void Load()
-{
-	object.Load();
 }
 
 LRESULT __stdcall WndProc(HWND hand, UINT msg, WPARAM wParam, LPARAM lParam)
