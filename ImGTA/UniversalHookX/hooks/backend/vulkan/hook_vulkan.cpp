@@ -8,14 +8,14 @@
 #include <unordered_map>
 
 // https://vulkan.lunarg.com/
-#include <vulkan/vulkan.h>
+#include <vulkan.h>
 #pragma comment(lib, "vulkan-1.lib")
 
 #include "hook_vulkan.hpp"
 
-#include "../../../dependencies/imgui/imgui_impl_vulkan.h"
-#include "../../../dependencies/imgui/imgui_impl_win32.h"
-#include "../../../dependencies/minhook/MinHook.h"
+#include "imgui_impl_vulkan.h"
+#include "imgui_impl_win32.h"
+#include "MinHook.h"
 
 #include "../../hooks.hpp"
 

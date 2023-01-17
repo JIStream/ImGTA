@@ -40,7 +40,6 @@
     <ClCompile Include="strangers_and_freaks_names.cpp" />
     <ClCompile Include="test_mod.cpp" />
     <ClCompile Include="UniversalHookX\console\console.cpp" />
-    <ClCompile Include="UniversalHookX\dllmain.cpp" />
     <ClCompile Include="UniversalHookX\hooks\backend\dx10\hook_directx10.cpp" />
     <ClCompile Include="UniversalHookX\hooks\backend\dx11\hook_directx11.cpp" />
     <ClCompile Include="UniversalHookX\hooks\backend\dx12\hook_directx12.cpp" />
@@ -148,7 +147,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;Pools_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookRDR2_SDK\inc\;$(SolutionDir)Libraries\imgui;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\lua\include\;C:\Users\activ\OneDrive\Рабочий стол\ImGTA\Libraries\minhook;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookRDR2_SDK\inc\;$(SolutionDir)Libraries\imgui;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\lua\include\;$(SolutionDir)Libraries\minhook;$(SolutionDir)Libraries\VulkanSDK\1.3.236.0\Include\vulkan;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
