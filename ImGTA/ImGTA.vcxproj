@@ -148,7 +148,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;Pools_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookRDR2_SDK\inc\;$(SolutionDir)Libraries\imgui;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\lua\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookRDR2_SDK\inc\;$(SolutionDir)Libraries\imgui;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\lua\include\;C:\Users\activ\OneDrive\Рабочий стол\ImGTA\Libraries\minhook;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>

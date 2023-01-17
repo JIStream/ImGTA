@@ -7,7 +7,7 @@
 #include "hooks/hooks.hpp"
 #include "utils/utils.hpp"
 
-#include "dependencies/minhook/MinHook.h"
+#include "Minhook.h"
 
 DWORD WINAPI OnProcessAttach(LPVOID lpParam);
 DWORD WINAPI OnProcessDetach(LPVOID lpParam);
