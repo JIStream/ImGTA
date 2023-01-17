@@ -15,7 +15,7 @@
 #include "../menu/menu.hpp"
 #include "../utils/utils.hpp"
 
-#include "../dependencies/minhook/MinHook.h"
+#include "MinHook.h"
 
 static HWND g_hWindow = NULL;
 
@@ -41,10 +41,11 @@ static DWORD WINAPI ReinitializeGraphicalHooks(LPVOID lpParam) {
 static WNDPROC oWndProc;
 static LRESULT WINAPI WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (uMsg == WM_KEYDOWN) {
-        if (wParam == VK_INSERT) {
+        /*if (wParam == VK_INSERT) {
             Menu::bShowMenu = !Menu::bShowMenu;
             return 0;
-        } else if (wParam == VK_HOME) {
+        } else*/
+            if (wParam == VK_HOME) {
             HANDLE hHandle = CreateThread(NULL, 0, ReinitializeGraphicalHooks, NULL, 0, NULL);
             if (hHandle != NULL)
                 CloseHandle(hHandle);
@@ -60,21 +61,21 @@ static LRESULT WINAPI WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
             CloseHandle(hHandle);
     }
 
-    LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    if (Menu::bShowMenu) {
-        ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
+    //LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    //if (Menu::bShowMenu) {
+    //    ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
 
-        // (Doesn't work for some games like 'Sid Meier's Civilization VI')
-        // Window may not maximize from taskbar because 'H::bShowDemoWindow' is set to true by default. ('hooks.hpp')
-        //
-        // return ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam) == 0;
-    }
+    //    // (Doesn't work for some games like 'Sid Meier's Civilization VI')
+    //    // Window may not maximize from taskbar because 'H::bShowDemoWindow' is set to true by default. ('hooks.hpp')
+    //    //
+    //    // return ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam) == 0;
+    //}
 
     return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
 }
 
 namespace Hooks {
-    void Init( ) {
+    void Init() {
         g_hWindow = U::GetProcessWindow( );
 
 #ifdef DISABLE_LOGGING_CONSOLE

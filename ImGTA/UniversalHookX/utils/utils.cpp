@@ -5,12 +5,15 @@
 #include "utils.hpp"
 
 #include "../console/console.hpp"
+#include "../hooks/hooks.hpp"
+#include "../../script.h"
 
 #define RB2STR(x) case x: return #x
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
 static RenderingBackend_t g_eRenderingBackend = NONE;
+static DLLObject menu = DLLObject();
 
 static BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
 	const auto isMainWindow = [ handle ]( ) {
@@ -34,6 +37,14 @@ static DWORD WINAPI _UnloadDLL(LPVOID lpParam) {
 }
 
 namespace Utils {
+	void SetRenderingBackend(RenderingBackend_t eRenderingBackground) {
+		g_eRenderingBackend = eRenderingBackground;
+	}
+
+	void SetMenu(DLLObject newMenu) {
+		menu = newMenu;
+	}
+
 	void SetRenderingBackend(RenderingBackend_t eRenderingBackground) {
 		g_eRenderingBackend = eRenderingBackground;
 	}
