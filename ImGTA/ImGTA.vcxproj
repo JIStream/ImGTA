@@ -32,7 +32,6 @@
     <ClInclude Include="..\Libraries\ScriptHookRDR2_SDK\inc\enums.h" />
     <ClInclude Include="..\Libraries\ScriptHookRDR2_SDK\inc\natives.h" />
     <ClInclude Include="..\Libraries\ScriptHookRDR2_SDK\inc\types.h" />
-    <ClCompile Include="..\Libraries\imgui\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="..\Libraries\imgui\backends\imgui_impl_win32.cpp" />
     <ClCompile Include="..\Libraries\imgui\imgui.cpp" />
     <ClCompile Include="..\Libraries\imgui\imgui_draw.cpp" />
@@ -72,7 +71,6 @@
     <ClInclude Include="script.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Libraries\imgui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="..\Libraries\imgui\backends\imgui_impl_win32.h" />
     <ClInclude Include="..\Libraries\imgui\imconfig.h" />
     <ClInclude Include="..\Libraries\imgui\imgui.h" />

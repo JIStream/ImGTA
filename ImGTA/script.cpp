@@ -24,7 +24,6 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "imgui_impl_win32.h"
-#include "imgui_impl_dx11.h"
 
 #include <d3d11.h>
 #include <vector>
@@ -106,10 +105,6 @@ void DLLObject::Update()
 
 void DLLObject::UpdateWindows()
 {
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-
 	for (auto &m : m_modsLoaded)
 	{
 		if (m->HasWindow())
@@ -117,9 +112,6 @@ void DLLObject::UpdateWindows()
 		if (m->Draw() && m->HasWindow())
 			ImGui::End();
 	}
-
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
 void DLLObject::RunOnNativeThread(std::function<void()> func)
@@ -198,7 +190,7 @@ void DLLObject::Unload()
 		// Save settings
 		m_userSettings.Save(m_userSettingsFile);
 
-		ImGui_ImplDX11_Shutdown();
+		//ImGui_ImplDX11_Shutdown();
 		ImGui_ImplWin32_Shutdown();
 		ImGui::DestroyContext();
 		if (m_oldProc)
@@ -235,29 +227,29 @@ void DLLObject::Draw()
 		UpdateWindows();
 }
 
-void DLLObject::OnPresent(IDXGISwapChain *swap)
-{
-	if (!m_hasInitializedImgui)
-	{
-		m_hasInitializedImgui = true;
-		ID3D11Device *device;
-		ID3D11DeviceContext *context;
-
-		swap->GetDevice(__uuidof(ID3D11Device), (void **)&device);
-		device->GetImmediateContext(&context);
-
-		ImGui::CreateContext();
-		ImGui::StyleColorsDark();
-		
-
-		HWND window = FindMainWindow(GetCurrentProcessId());
-		ImGui_ImplWin32_Init(window);
-		ImGui_ImplDX11_Init(device, context);
-
-
-		m_oldProc = SetWindowLongPtr(window, GWLP_WNDPROC, (LONG_PTR)WndProc);
-	}
-
-	if (m_isOpen)
-		UpdateWindows();
-}
+//void DLLObject::OnPresent(IDXGISwapChain *swap)
+//{
+//	if (!m_hasInitializedImgui)
+//	{
+//		m_hasInitializedImgui = true;
+//		ID3D11Device *device;
+//		ID3D11DeviceContext *context;
+//
+//		swap->GetDevice(__uuidof(ID3D11Device), (void **)&device);
+//		device->GetImmediateContext(&context);
+//
+//		ImGui::CreateContext();
+//		ImGui::StyleColorsDark();
+//		
+//
+//		HWND window = FindMainWindow(GetCurrentProcessId());
+//		ImGui_ImplWin32_Init(window);
+//		ImGui_ImplDX11_Init(device, context);
+//
+//
+//		m_oldProc = SetWindowLongPtr(window, GWLP_WNDPROC, (LONG_PTR)WndProc);
+//	}
+//
+//	if (m_isOpen)
+//		UpdateWindows();
+//}
