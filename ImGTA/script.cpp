@@ -31,7 +31,7 @@
 #include <cstdio>
 #include <iostream>
 
-LRESULT __stdcall WndProc(HWND hand, UINT msg, WPARAM wParam, LPARAM lParam);
+//LRESULT __stdcall WndProc(HWND hand, UINT msg, WPARAM wParam, LPARAM lParam);
 
 DLLObject::DLLObject()
 {
