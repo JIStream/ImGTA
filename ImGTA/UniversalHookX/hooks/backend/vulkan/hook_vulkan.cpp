@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 // https://vulkan.lunarg.com/
-#include <vulkan.h>
+#include <vulkan/vulkan.h>
 #pragma comment(lib, "vulkan-1.lib")
 
 #include "hook_vulkan.hpp"

@@ -7,10 +7,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Libraries\imgui\backends\imgui_impl_dx12.cpp" />
+    <ClCompile Include="..\Libraries\imgui\backends\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="..\Libraries\minhook\buffer.c" />
+    <ClCompile Include="..\Libraries\minhook\hde\hde32.c" />
+    <ClCompile Include="..\Libraries\minhook\hde\hde64.c" />
+    <ClCompile Include="..\Libraries\minhook\hook.c" />
+    <ClCompile Include="..\Libraries\minhook\trampoline.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="script.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Libraries\imgui\backends\imgui_impl_dx12.h" />
+    <ClInclude Include="..\Libraries\imgui\backends\imgui_impl_vulkan.h" />
+    <ClInclude Include="..\Libraries\minhook\buffer.h" />
+    <ClInclude Include="..\Libraries\minhook\hde\hde32.h" />
+    <ClInclude Include="..\Libraries\minhook\hde\hde64.h" />
+    <ClInclude Include="..\Libraries\minhook\hde\pstdint.h" />
+    <ClInclude Include="..\Libraries\minhook\hde\table32.h" />
+    <ClInclude Include="..\Libraries\minhook\hde\table64.h" />
+    <ClInclude Include="..\Libraries\minhook\MinHook.h" />
+    <ClInclude Include="..\Libraries\minhook\trampoline.h" />
     <ClInclude Include="..\Libraries\ScriptHookRDR2_SDK\inc\main.h" />
     <ClInclude Include="..\Libraries\ScriptHookRDR2_SDK\inc\enums.h" />
     <ClInclude Include="..\Libraries\ScriptHookRDR2_SDK\inc\natives.h" />
@@ -134,6 +151,8 @@
     <TargetExt>.asi</TargetExt>
     <OutDir>$(SolutionDir)Build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>tmp\$(Configuration)\</IntDir>
+    <LibraryPath>$(VULKAN_SDK)\Lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>$(VULKAN_SDK)\Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -145,7 +164,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;Pools_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookRDR2_SDK\inc\;$(SolutionDir)Libraries\imgui;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\lua\include\;$(SolutionDir)Libraries\minhook;$(SolutionDir)Libraries\VulkanSDK\1.3.236.0\Include\vulkan;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookRDR2_SDK\inc\;$(SolutionDir)Libraries\imgui;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\lua\include\;$(SolutionDir)Libraries\minhook;$(SolutionDir)Libraries\VulkanSDK\1.3.236.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>

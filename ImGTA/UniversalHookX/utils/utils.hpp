@@ -12,7 +12,7 @@ enum RenderingBackend_t {
 	VULKAN,
 };
 
-namespace Utils {
+namespace UtilsHook {
 	typedef void(*InitCallback)(HWND hwnd);
 	typedef void(*RenderCallback)();
 
@@ -32,4 +32,4 @@ namespace Utils {
 	int GetCorrectDXGIFormat(int eCurrentFormat);
 }
 
-namespace U = Utils;
+namespace U = UtilsHook;

@@ -34,11 +34,11 @@ static BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
 }
 
 static DWORD WINAPI _UnloadDLL(LPVOID lpParam) {
-	FreeLibraryAndExitThread(Utils::GetCurrentImageBase( ), 0);
+	FreeLibraryAndExitThread(UtilsHook::GetCurrentImageBase( ), 0);
 	return 0;
 }
 
-namespace Utils {
+namespace UtilsHook {
 	void SetRenderingBackend(RenderingBackend_t eRenderingBackground) {
 		g_eRenderingBackend = eRenderingBackground;
 	}

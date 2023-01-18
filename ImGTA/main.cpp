@@ -40,9 +40,8 @@ void Load()
 
 BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 {
-	switch (reason)
+	if (reason == DLL_PROCESS_ATTACH)
 	{
-	case DLL_PROCESS_ATTACH:
 		DisableThreadLibraryCalls(inst);
 		scriptRegister(inst, Load);
 
@@ -54,11 +53,11 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 		if (hHandle != NULL) {
 			CloseHandle(hHandle);
 		}
-		break;
-	case DLL_PROCESS_DETACH:
+	}
+	else if (reason == DLL_PROCESS_DETACH) 
+	{
 		scriptUnregister(inst);
 		OnProcessDetach(NULL);
-		break;
 	}
 	return TRUE;
 }

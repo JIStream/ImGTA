@@ -67,7 +67,7 @@ private:
 	std::vector<Mod *> m_modsLoaded;
 	bool m_hasInitializedImgui;
 	LONG_PTR m_oldProc = 0;
-	bool m_isOpen = false;
+	bool m_isOpen = true;
 	bool m_isLoaded = false;
 	bool m_floatingMenu = false;
 	bool m_enableHUD = true;
