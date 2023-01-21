@@ -16,8 +16,6 @@
 
 DLLObject object{};
 
-//extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
 void Load();
 
 DWORD WINAPI OnProcessAttach(LPVOID lpParam);
@@ -63,7 +61,6 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 	{
 		DisableThreadLibraryCalls(inst);
 		scriptRegister(inst, Load);
-		//scriptRegisterAdditionalThread(inst, OnProcessAttach);
 
 		U::SetRenderingBackend(VULKAN);
 		U::SetInitCallback(InitContext);
@@ -81,20 +78,6 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 	}
 	return TRUE;
 }
-
-//LRESULT __stdcall WndProc(HWND hand, UINT msg, WPARAM wParam, LPARAM lParam)
-//{
-//	if (msg == WM_KEYDOWN)
-//	{
-//		if (wParam == VK_INSERT)
-//			object.ToggleOpen();
-//	}
-//
-//	if (object.GetIsOpen())
-//		ImGui_ImplWin32_WndProcHandler(hand, msg, wParam, lParam);
-//
-//	return CallWindowProcW((WNDPROC)object.GetOldProc(), hand, msg, wParam, lParam);
-//}
 
 DWORD WINAPI OnProcessDetach(LPVOID lpParam) {
 
