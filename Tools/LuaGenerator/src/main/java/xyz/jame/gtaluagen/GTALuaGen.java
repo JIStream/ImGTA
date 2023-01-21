@@ -66,7 +66,11 @@ public class GTALuaGen
                     String nativeName = jsonNative.get( "name" ).getAsString();
                     if ( nativeName.isEmpty() )
                         nativeName = "_" + nativeAddr;
-                    String nativeJenkins = jsonNative.get( "jhash" ).getAsString();
+                    
+                    JsonElement nativeElement = jsonNative.get( "gta_jhash" );
+                    if(nativeElement != null)
+                    {
+                    String nativeJenkins = nativeElement.getAsString();
                     // Skip functions that don't have 4 bytes hash
                     if ( nativeJenkins.isEmpty() )
                     	continue;
@@ -125,6 +129,7 @@ public class GTALuaGen
                     writer.write( ")\n" );
                     writer.write( "end\n\n" );
                     nativeCount++;
+                    }
                 }
             }
             System.out.println( "Created natives.lua for " + nativeCount + " functions." );
