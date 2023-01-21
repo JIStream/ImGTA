@@ -84,14 +84,15 @@ namespace UtilsHook {
 		EnumWindows(::EnumWindowsCallback, reinterpret_cast<LPARAM>(&hwnd));
 
 		while (!hwnd) {
+			//hwnd = GetForegroundWindow();
 			EnumWindows(::EnumWindowsCallback, reinterpret_cast<LPARAM>(&hwnd));
 			LOG("[!] Waiting for window to appear.\n");
 			std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		}
 
-		/*char name[128];
+		char name[128];
 		GetWindowTextA(hwnd, name, RTL_NUMBER_OF(name));
-		LOG("[+] Got window with name: '%s'\n", name);*/
+		LOG("[+] Got window with name: '%s'\n", name);
 
 		return hwnd;
 	}

@@ -19,6 +19,7 @@
 #include "../../../utils/utils.hpp"
 
 #include "../../hooks.hpp"
+#include "../../ImGTA/menu.hpp"
 
 static VkAllocationCallbacks* g_Allocator = NULL;
 static VkInstance g_Instance = VK_NULL_HANDLE;
@@ -262,6 +263,15 @@ static VkResult VKAPI_CALL hkAcquireNextImageKHR(VkDevice device,
     return oAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
 }
 
+static std::add_pointer_t<VkResult VKAPI_CALL(VkDevice, const VkAcquireNextImageInfoKHR*, uint32_t*)> oAcquireNextImage2KHR;
+static VkResult VKAPI_CALL hkAcquireNextImage2KHR(VkDevice device,
+    const VkAcquireNextImageInfoKHR* pAcquireInfo,
+    uint32_t* pImageIndex) {
+    g_Device = device;
+
+    return oAcquireNextImage2KHR(device, pAcquireInfo, pImageIndex);
+}
+
 static std::add_pointer_t<VkResult VKAPI_CALL(VkQueue, const VkPresentInfoKHR*)> oQueuePresentKHR;
 static VkResult VKAPI_CALL hkQueuePresentKHR(VkQueue queue,
                                              const VkPresentInfoKHR* pPresentInfo) {
@@ -290,6 +300,7 @@ namespace VK {
 
         void* fnAcquireNextImageKHR = reinterpret_cast<void*>(vkGetDeviceProcAddr(g_FakeDevice, "vkAcquireNextImageKHR"));
         void* fnQueuePresentKHR = reinterpret_cast<void*>(vkGetDeviceProcAddr(g_FakeDevice, "vkQueuePresentKHR"));
+        void* fnAcquireNextImage2KHR = reinterpret_cast<void*>(vkGetDeviceProcAddr(g_FakeDevice, "vkAcquireNextImage2KHR"));
         void* fnCreateSwapchainKHR = reinterpret_cast<void*>(vkGetDeviceProcAddr(g_FakeDevice, "vkCreateSwapchainKHR"));
 
         if (g_FakeDevice) {
@@ -307,9 +318,11 @@ namespace VK {
 
             static MH_STATUS aniStatus = MH_CreateHook(reinterpret_cast<void**>(fnAcquireNextImageKHR), &hkAcquireNextImageKHR, reinterpret_cast<void**>(&oAcquireNextImageKHR));
             static MH_STATUS qpStatus = MH_CreateHook(reinterpret_cast<void**>(fnQueuePresentKHR), &hkQueuePresentKHR, reinterpret_cast<void**>(&oQueuePresentKHR));
+            static MH_STATUS ani2Status = MH_CreateHook(reinterpret_cast<void**>(fnAcquireNextImage2KHR), &hkAcquireNextImage2KHR, reinterpret_cast<void**>(&oAcquireNextImage2KHR));
             static MH_STATUS csStatus = MH_CreateHook(reinterpret_cast<void**>(fnCreateSwapchainKHR), &hkCreateSwapchainKHR, reinterpret_cast<void**>(&oCreateSwapchainKHR));
 
             MH_EnableHook(fnAcquireNextImageKHR);
+            MH_EnableHook(fnAcquireNextImage2KHR);
             MH_EnableHook(fnQueuePresentKHR);
             MH_EnableHook(fnCreateSwapchainKHR);
         }
@@ -371,7 +384,10 @@ static void RenderImGui_Vulkan(VkQueue queue, const VkPresentInfoKHR* pPresentIn
     if (!g_Device || H::bShuttingDown)
         return;
 
-    U::GetInitCallback()(g_Hwnd);
+    LOG("Render Func");
+
+    //U::GetInitCallback()(g_Hwnd);
+    Menu::InitializeContext(g_Hwnd);
 
     for (uint32_t i = 0; i < pPresentInfo->swapchainCount; ++i) {
         VkSwapchainKHR swapchain = pPresentInfo->pSwapchains[i];
@@ -428,7 +444,9 @@ static void RenderImGui_Vulkan(VkQueue queue, const VkPresentInfoKHR* pPresentIn
         ImGui_ImplWin32_NewFrame( );
         ImGui::NewFrame( );
 
-        U::GetRenderCallback()();
+        //U::GetRenderCallback()();
+        Menu::Render();
+        LOG("Present Callback\n");
 
         ImGui::Render( );
 

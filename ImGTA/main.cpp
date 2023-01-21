@@ -16,7 +16,7 @@
 
 DLLObject object{};
 
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+//extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 void Load();
 
@@ -38,47 +38,8 @@ void Load()
 	object.Load();
 }
 
-BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
-{
-	if (reason == DLL_PROCESS_ATTACH)
-	{
-		DisableThreadLibraryCalls(inst);
-		scriptRegister(inst, Load);
-
-		U::SetRenderingBackend(VULKAN);
-		U::SetInitCallback(InitContext);
-		U::SetRenderCallback(Draw);
-
-		HANDLE hHandle = CreateThread(NULL, 0, OnProcessAttach, inst, 0, NULL);
-		if (hHandle != NULL) {
-			CloseHandle(hHandle);
-		}
-	}
-	else if (reason == DLL_PROCESS_DETACH) 
-	{
-		scriptUnregister(inst);
-		OnProcessDetach(NULL);
-	}
-	return TRUE;
-}
-
-LRESULT __stdcall WndProc(HWND hand, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	if (msg == WM_KEYDOWN)
-	{
-		if (wParam == VK_INSERT)
-			object.ToggleOpen();
-	}
-
-	if (object.GetIsOpen())
-		ImGui_ImplWin32_WndProcHandler(hand, msg, wParam, lParam);
-
-	return CallWindowProcW((WNDPROC)object.GetOldProc(), hand, msg, wParam, lParam);
-}
-
-
 DWORD WINAPI OnProcessAttach(LPVOID lpParam) {
-	MH_Initialize();
+	std::this_thread::sleep_for(std::chrono::seconds(5));
 
 	Console::Alloc();
 	LOG("[+] Rendering backend: %s\n", U::RenderingBackendToStr());
@@ -90,19 +51,55 @@ DWORD WINAPI OnProcessAttach(LPVOID lpParam) {
 		return 0;
 	}
 
+	MH_Initialize();
 	H::Init();
 
 	return 0;
 }
 
-DWORD WINAPI OnProcessDetach(LPVOID lpParam) {
-	// If the process quits leave memory management to the OS.
-	// H::bShuttingDown == true means we pressed end an must free them by ourself.
-	if (H::bShuttingDown) {
-		H::Free();
-		MH_Uninitialize();
-	}
+BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
+{
+	if (reason == DLL_PROCESS_ATTACH)
+	{
+		DisableThreadLibraryCalls(inst);
+		scriptRegister(inst, Load);
+		//scriptRegisterAdditionalThread(inst, OnProcessAttach);
 
+		U::SetRenderingBackend(VULKAN);
+		U::SetInitCallback(InitContext);
+		U::SetRenderCallback(Draw);
+
+		HANDLE hHandle = CreateThread(NULL, 0, OnProcessAttach, inst, 0, NULL);
+		if (hHandle != NULL) {
+			CloseHandle(hHandle);
+		}
+	}
+	else if (reason == DLL_PROCESS_DETACH && !lpReserved)
+	{
+		scriptUnregister(inst);
+		OnProcessDetach(NULL);
+	}
+	return TRUE;
+}
+
+//LRESULT __stdcall WndProc(HWND hand, UINT msg, WPARAM wParam, LPARAM lParam)
+//{
+//	if (msg == WM_KEYDOWN)
+//	{
+//		if (wParam == VK_INSERT)
+//			object.ToggleOpen();
+//	}
+//
+//	if (object.GetIsOpen())
+//		ImGui_ImplWin32_WndProcHandler(hand, msg, wParam, lParam);
+//
+//	return CallWindowProcW((WNDPROC)object.GetOldProc(), hand, msg, wParam, lParam);
+//}
+
+DWORD WINAPI OnProcessDetach(LPVOID lpParam) {
+
+	H::Free();
+	MH_Uninitialize();
 	Console::Free();
 
 	return 0;

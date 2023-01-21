@@ -9,12 +9,14 @@
   <ItemGroup>
     <ClCompile Include="..\Libraries\imgui\backends\imgui_impl_dx12.cpp" />
     <ClCompile Include="..\Libraries\imgui\backends\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="..\Libraries\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\Libraries\minhook\buffer.c" />
     <ClCompile Include="..\Libraries\minhook\hde\hde32.c" />
     <ClCompile Include="..\Libraries\minhook\hde\hde64.c" />
     <ClCompile Include="..\Libraries\minhook\hook.c" />
     <ClCompile Include="..\Libraries\minhook\trampoline.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="menu.cpp" />
     <ClCompile Include="script.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +70,7 @@
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="watch_entry.cpp" />
     <ClCompile Include="widgets.cpp" />
+    <ClInclude Include="menu.hpp" />
     <ClInclude Include="script.h" />
   </ItemGroup>
   <ItemGroup>

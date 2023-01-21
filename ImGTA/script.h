@@ -37,7 +37,7 @@ public:
 	void SetAllInGameFontColor(int red, int green, int blue);
 	void Load();
 	void Unload();
-	void ToggleOpen();
+	static void ToggleOpen();
 	void OnPresent(IDXGISwapChain *swap);
 	void InitContext(HWND hwnd);
 	void Draw();
@@ -48,8 +48,8 @@ public:
 	LONG_PTR GetOldProc() { return m_oldProc; }
 	void SetOldProc(LONG_PTR proc) { m_oldProc = proc; }
 	UserSettings & GetUserSettings() { return m_userSettings.Get(); }
-	bool GetIsOpen() { return m_isOpen; }
-	void SetIsOpen(bool open) { m_isOpen = open; }
+	static bool GetIsOpen() { return m_isOpen; }
+	static void SetIsOpen(bool open) { m_isOpen = open; }
 	bool GetFloatingMenu() { return m_floatingMenu; }
 	void SetFloatingMenu(bool isFloating) { m_floatingMenu = isFloating; }
 	void SetEnableHUD(bool enable) { m_enableHUD = enable; }
@@ -67,7 +67,7 @@ private:
 	std::vector<Mod *> m_modsLoaded;
 	bool m_hasInitializedImgui;
 	LONG_PTR m_oldProc = 0;
-	bool m_isOpen = true;
+	inline static bool m_isOpen = false;
 	bool m_isLoaded = false;
 	bool m_floatingMenu = false;
 	bool m_enableHUD = true;

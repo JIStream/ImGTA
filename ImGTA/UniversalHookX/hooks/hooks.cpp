@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <mutex>
 #include <thread>
 
 #include "hooks.hpp"
@@ -16,9 +17,15 @@
 
 #include "MinHook.h"
 
+#include "../../script.h"
+#include "../../menu.hpp"
+
 static HWND g_hWindow = NULL;
+static std::mutex g_mReinitHooksGuard;
 
 static DWORD WINAPI ReinitializeGraphicalHooks(LPVOID lpParam) {
+    std::lock_guard<std::mutex> guard{ g_mReinitHooksGuard };
+
     LOG("[!] Hooks will reinitialize!\n");
 
     HWND hNewWindow = U::GetProcessWindow( );
@@ -40,10 +47,12 @@ static DWORD WINAPI ReinitializeGraphicalHooks(LPVOID lpParam) {
 static WNDPROC oWndProc;
 static LRESULT WINAPI WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (uMsg == WM_KEYDOWN) {
-        /*if (wParam == VK_INSERT) {
+        if (wParam == VK_INSERT) {
+            LOG("Insert pressed");
+            //DLLObject::ToggleOpen();
             Menu::bShowMenu = !Menu::bShowMenu;
             return 0;
-        } else*/
+        } else
             if (wParam == VK_HOME) {
             HANDLE hHandle = CreateThread(NULL, 0, ReinitializeGraphicalHooks, NULL, 0, NULL);
             if (hHandle != NULL)
@@ -60,15 +69,15 @@ static LRESULT WINAPI WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
             CloseHandle(hHandle);
     }
 
-    //LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    //if (Menu::bShowMenu) {
-    //    ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
+    LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    if (DLLObject::GetIsOpen()) {
+        ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
 
-    //    // (Doesn't work for some games like 'Sid Meier's Civilization VI')
-    //    // Window may not maximize from taskbar because 'H::bShowDemoWindow' is set to true by default. ('hooks.hpp')
-    //    //
-    //    // return ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam) == 0;
-    //}
+        // (Doesn't work for some games like 'Sid Meier's Civilization VI')
+        // Window may not maximize from taskbar because 'H::bShowDemoWindow' is set to true by default. ('hooks.hpp')
+        //
+        // return ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam) == 0;
+    }
 
     return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
 }
