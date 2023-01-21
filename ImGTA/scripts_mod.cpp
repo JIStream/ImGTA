@@ -148,15 +148,15 @@ void ScriptsMod::DrawMenuBar()
 				}
 				if (ImGui::BeginMenu("Name"))
 				{
-					for (int i = 0; i < IM_ARRAYSIZE(scriptNames); i++)
+					for (auto const& script : scriptNames)
 					{
-						if (ImGui::MenuItem(scriptNames[i]))
+						if (ImGui::MenuItem(script.second))
 						{
 							m_dllObject.RunOnNativeThread([=]
 							{
-								GTAScript script(scriptNames[i]);
-								if (script.IsValid())
-									SCRIPTS::START_NEW_SCRIPT(scriptNames[i], static_cast<int>(m_startFlags));
+								GTAScript gtaScript(script.second);
+								if (gtaScript.IsValid())
+									SCRIPTS::START_NEW_SCRIPT(script.second, static_cast<int>(m_startFlags));
 
 								m_wantsUpdate = true;
 							});
