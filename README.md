@@ -2,8 +2,10 @@
 
 This is WIP port for RDR 2. A lot of features don't\won't work because either they simply don't exist in RDR or natives are too different between RDR and GTA V. Notably, scripts menu and local variable watcher are not yet on par with GTA V, this should be fixed soon.
 
-Dependencies:
-Since ScriptHookRDR2 doesn't provide onPresent() hook, the project uses [UniversalHookX](https://github.com/bruhmoment21/UniversalHookX) to display ImGUI menus. Because of that you'd need to install [Vulkan SDK](https://vulkan.lunarg.com/) (this project only works with Vulkan for now but DX12 support should be trivial to add). Just install it, reload the project and everything should work.
+## Dependencies:
+Since ScriptHookRDR2 doesn't provide onPresent() hook, the project uses [UniversalHookX](https://github.com/bruhmoment21/UniversalHookX) to display ImGUI menus. Because of that you'd need to install [Vulkan SDK](https://vulkan.lunarg.com/). Simply install it, reload the project and everything should work.
+
+To use with DX12, use U::SetRenderingBackend(DIRECTX12); instead of VULKAN in main.cpp. Be aware that DX12 was not tested and might not work. API hooking selection could be automated\improved later.
 
 Everything else should be the same as the base version.
 
