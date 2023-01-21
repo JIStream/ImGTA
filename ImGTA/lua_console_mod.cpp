@@ -69,7 +69,7 @@ bool LuaConsoleMod::Draw()
 	{
 		ImGui::TextColored(ImVec4(255, 0, 0, 255), "If trying out random functions,\n"
 						   "be aware that some listed in your 'natives.lua' may not be available\n"
-						   "in ScriptHookV and it will crash.");
+						   "in ScriptHookRDR2 and it will crash.");
 		ImGui::TextColored(ImVec4(0, 25, 0, 255), "Look at natives.lua for function names or tab for autocompletion. Examples:");
 		ImGui::TextColored(ImVec4(0, 25, 0, 255), "val = entity.get_entity_health(2)");
 		ImGui::TextColored(ImVec4(0, 25, 0, 255), "print(val)");

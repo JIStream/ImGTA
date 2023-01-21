@@ -49,7 +49,7 @@ void ScriptsMod::Think()
 		SCRIPTS::SCRIPT_THREAD_ITERATOR_RESET();
 		int id;
 		while ((id = SCRIPTS::SCRIPT_THREAD_ITERATOR_GET_NEXT_THREAD_ID()) != 0)
-			m_scripts.push_back(ScriptObject("MISSING FUNCTIONALITY", id));
+			m_scripts.push_back(ScriptObject(scriptsMap.at(SCRIPTS::_GET_HASH_OF_THREAD(id)), id));
 
 		if (m_settings.sortByName)
 			std::sort(m_scripts.begin(), m_scripts.end(), CompareScriptByName);
@@ -148,7 +148,7 @@ void ScriptsMod::DrawMenuBar()
 				}
 				if (ImGui::BeginMenu("Name"))
 				{
-					for (auto const& script : scriptNames)
+					for (auto const& script : scriptsMap)
 					{
 						if (ImGui::MenuItem(script.second))
 						{
