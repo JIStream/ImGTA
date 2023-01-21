@@ -48,7 +48,6 @@ static WNDPROC oWndProc;
 static LRESULT WINAPI WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (uMsg == WM_KEYDOWN) {
         if (wParam == VK_INSERT) {
-            LOG("Insert pressed");
             //DLLObject::ToggleOpen();
             Menu::bShowMenu = !Menu::bShowMenu;
             return 0;

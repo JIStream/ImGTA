@@ -11,8 +11,6 @@ namespace Menu {
         if (ig::GetCurrentContext( ))
             return;
 
-        LOG("Init Context!");
-
         ImGui::CreateContext( );
         ImGui_ImplWin32_Init(hwnd);
 
@@ -24,7 +22,6 @@ namespace Menu {
         if (!bShowMenu)
             return;
 
-        LOG("Drawing!");
         ig::ShowDemoWindow( );
     }
 } // namespace Menu

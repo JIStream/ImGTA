@@ -143,9 +143,6 @@
     <ClCompile Include="..\Libraries\imgui\backends\imgui_impl_win32.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\imgui\backends\imgui_impl_dx11.cpp">
-      <Filter>ImGui</Filter>
-    </ClCompile>
     <ClCompile Include="widgets.cpp">
       <Filter>UI</Filter>
     </ClCompile>
@@ -196,6 +193,12 @@
     </ClCompile>
     <ClCompile Include="..\Libraries\minhook\hde\hde64.c">
       <Filter>MinHook\hde</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\imgui\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="menu.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -298,9 +301,6 @@
     <ClInclude Include="..\Libraries\imgui\imgui.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\Libraries\imgui\backends\imgui_impl_dx11.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
     <ClInclude Include="..\Libraries\imgui\backends\imgui_impl_win32.h">
       <Filter>ImGui</Filter>
     </ClInclude>
@@ -387,6 +387,9 @@
     </ClInclude>
     <ClInclude Include="..\Libraries\minhook\hde\table64.h">
       <Filter>MinHook\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="menu.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

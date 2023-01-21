@@ -384,8 +384,6 @@ static void RenderImGui_Vulkan(VkQueue queue, const VkPresentInfoKHR* pPresentIn
     if (!g_Device || H::bShuttingDown)
         return;
 
-    LOG("Render Func");
-
     //U::GetInitCallback()(g_Hwnd);
     Menu::InitializeContext(g_Hwnd);
 
@@ -446,7 +444,6 @@ static void RenderImGui_Vulkan(VkQueue queue, const VkPresentInfoKHR* pPresentIn
 
         //U::GetRenderCallback()();
         Menu::Render();
-        LOG("Present Callback\n");
 
         ImGui::Render( );
 
