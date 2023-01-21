@@ -21,18 +21,15 @@ void Load();
 DWORD WINAPI OnProcessAttach(LPVOID lpParam);
 DWORD WINAPI OnProcessDetach(LPVOID lpParam);
 
-void Draw()
-{
+void Draw(){
 	object.Draw();
 }
 
-void InitContext(HWND hwnd)
-{
+void InitContext(HWND hwnd){
 	object.InitContext(hwnd);
 }
 
-void Load()
-{
+void Load(){
 	object.Load();
 }
 
@@ -55,8 +52,7 @@ DWORD WINAPI OnProcessAttach(LPVOID lpParam) {
 	return 0;
 }
 
-BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
-{
+BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved){
 	if (reason == DLL_PROCESS_ATTACH)
 	{
 		DisableThreadLibraryCalls(inst);
@@ -80,7 +76,6 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 }
 
 DWORD WINAPI OnProcessDetach(LPVOID lpParam) {
-
 	H::Free();
 	MH_Uninitialize();
 	Console::Free();
