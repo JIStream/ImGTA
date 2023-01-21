@@ -32,8 +32,6 @@
 #include <iostream>
 #include "UniversalHookX/console/console.hpp"
 
-//LRESULT __stdcall WndProc(HWND hand, UINT msg, WPARAM wParam, LPARAM lParam);
-
 DLLObject::DLLObject()
 {
 	
@@ -190,9 +188,6 @@ void DLLObject::Unload()
 
 		// Save settings
 		m_userSettings.Save(m_userSettingsFile);
-
-		if (m_oldProc)
-			SetWindowLongPtr(FindMainWindow(GetCurrentProcessId()), GWLP_WNDPROC, m_oldProc);
 		m_isLoaded = false;
 	}
 }
