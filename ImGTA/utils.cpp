@@ -54,7 +54,7 @@ int GetTextDrawCount()
 
 float TextFontHeight(float size, eFont font)
 {
-	return 3;
+	return 1;
 }
 
 void DrawTextToScreen(const char* text, float x, float y, float scale, eFont font, bool alignRight, int red, int green, int blue)
