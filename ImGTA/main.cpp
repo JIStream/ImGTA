@@ -39,7 +39,7 @@ void Load()
 }
 
 DWORD WINAPI OnProcessAttach(LPVOID lpParam) {
-	std::this_thread::sleep_for(std::chrono::seconds(5));
+	std::this_thread::sleep_for(std::chrono::seconds(5)); //can't hook vulkan right away
 
 	Console::Alloc();
 	LOG("[+] Rendering backend: %s\n", U::RenderingBackendToStr());
