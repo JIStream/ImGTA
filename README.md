@@ -1,3 +1,12 @@
+# RDR 2
+
+This is WIP port for RDR 2. A lot of features don't\won't work because either they simply don't exist in RDR or natives are too different between RDR and GTA V. Notably, scripts menu and local variable watcher are not yet on par with GTA V, this should be fixed soon.
+
+Dependencies:
+Since ScriptHookRDR2 doesn't provide onPresent() hook, the project uses [UniversalHookX](https://github.com/bruhmoment21/UniversalHookX) to display ImGUI menus. Because of that you'd need to install [Vulkan SDK](https://vulkan.lunarg.com/) (this project only works with Vulkan for now but DX12 support should be trivial to add). Just install it, reload the project and everything should work.
+
+Everything else should be the same as the base version.
+
 # ImGTA
 This mod helps you debug GTA V scripts by watching and interacting with internal local and global variables.<br />
 Some of the functionalities are only available to GTA V build version 372 (online 1.27) because they use global addresses directly and these are dependent on version.<br />
