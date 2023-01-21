@@ -384,8 +384,8 @@ static void RenderImGui_Vulkan(VkQueue queue, const VkPresentInfoKHR* pPresentIn
     if (!g_Device || H::bShuttingDown)
         return;
 
-    //U::GetInitCallback()(g_Hwnd);
-    Menu::InitializeContext(g_Hwnd);
+    U::GetInitCallback()(g_Hwnd);
+    //Menu::InitializeContext(g_Hwnd);
 
     for (uint32_t i = 0; i < pPresentInfo->swapchainCount; ++i) {
         VkSwapchainKHR swapchain = pPresentInfo->pSwapchains[i];
@@ -442,8 +442,8 @@ static void RenderImGui_Vulkan(VkQueue queue, const VkPresentInfoKHR* pPresentIn
         ImGui_ImplWin32_NewFrame( );
         ImGui::NewFrame( );
 
-        //U::GetRenderCallback()();
-        Menu::Render();
+        U::GetRenderCallback()();
+        //Menu::Render();
 
         ImGui::Render( );
 

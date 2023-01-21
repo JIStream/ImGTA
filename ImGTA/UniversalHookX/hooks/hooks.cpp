@@ -19,6 +19,7 @@
 
 #include "../../script.h"
 #include "../../menu.hpp"
+#include "imgui.h"
 
 static HWND g_hWindow = NULL;
 static std::mutex g_mReinitHooksGuard;
@@ -48,8 +49,9 @@ static WNDPROC oWndProc;
 static LRESULT WINAPI WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (uMsg == WM_KEYDOWN) {
         if (wParam == VK_INSERT) {
-            //DLLObject::ToggleOpen();
-            Menu::bShowMenu = !Menu::bShowMenu;
+            DLLObject::ToggleOpen();
+            /*Menu::bShowMenu = !Menu::bShowMenu;
+            ImGui::GetIO().MouseDrawCursor = Menu::bShowMenu;*/
             return 0;
         } else
             if (wParam == VK_HOME) {

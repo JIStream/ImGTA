@@ -130,7 +130,7 @@ void MemWatcherMod::ShowAddAddress(bool isGlobal)
 	{
 		if (ImGui::InputInt("Decimal Index##AddAddress", &m_inputAddressIndex, 1, 100))
 		{
-			ClipInt(m_inputAddressIndex, 0, 999999);
+			ClipInt(m_inputAddressIndex, 0, INT32_MAX); //rdr2 indexes are much bigger than V
 			m_indexRange = 1;
 			m_inputsUpdated = true;
 		}
@@ -246,7 +246,6 @@ void MemWatcherMod::ShowSelectedPopup()
 		if (m_selectedEntry->IsGlobal())
 		{
 			val = GetGlobalPtr(m_selectedEntry->m_addressIndex);
-			
 		}
 		else
 		{

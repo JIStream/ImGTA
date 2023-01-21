@@ -30,6 +30,7 @@
 #include <mutex>
 #include <cstdio>
 #include <iostream>
+#include "UniversalHookX/console/console.hpp"
 
 //LRESULT __stdcall WndProc(HWND hand, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -105,7 +106,7 @@ void DLLObject::Update()
 
 void DLLObject::UpdateWindows()
 {
-	for (auto &m : m_modsLoaded)
+	for (auto& m : m_modsLoaded)
 	{
 		if (m->HasWindow())
 			ImGui::Begin(m->GetName().c_str(), nullptr, m->m_windowFlags);
@@ -216,11 +217,13 @@ void DLLObject::InitContext(HWND hwnd)
 	ImGui::GetIO().ConfigFlags = ImGuiConfigFlags_NavEnableGamepad;
 	ImGui::GetIO().IniFilename = m_fileImGuiIni.c_str();
 	ImGui::GetIO().LogFilename = m_fileImGuiLog.c_str();
+
+	LOG("ImGUI Init!");
 }
 
 void DLLObject::Draw()
 {
-	if (ImGui::GetCurrentContext())
+	if (!ImGui::GetCurrentContext())
 		return;
 
 	if (m_isOpen)
