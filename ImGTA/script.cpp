@@ -34,7 +34,7 @@
 
 DLLObject::DLLObject()
 {
-	
+
 }
 
 DLLObject::~DLLObject()
@@ -64,21 +64,18 @@ void DLLObject::InitMods()
 void DLLObject::Update()
 {
 	ResetTextDrawCount();
-	//if (m_isOpen)
-	//{
-	//	if (!m_floatingMenu)
-	//		//PAD::ENABLE_ALL_CONTROL_ACTIONS(0);
-	//	//else
-	//		//PAD::DISABLE_ALL_CONTROL_ACTIONS(0);
-	//}
+	if (m_isOpen) {
+		if (!m_floatingMenu)
+			PAD::DISABLE_ALL_CONTROL_ACTIONS(0);
+	}
 
 	m_toRunMutex.lock();
-	for (auto &f : m_toRun)
+	for (auto& f : m_toRun)
 		f();
 	m_toRun.clear();
 	m_toRunMutex.unlock();
 
-	for (Mod * m : m_modsLoaded)
+	for (Mod* m : m_modsLoaded)
 		m->Think();
 
 	// Display a warning message if too much calls to DrawTextToScreen
@@ -120,31 +117,31 @@ void DLLObject::RunOnNativeThread(std::function<void()> func)
 
 void DLLObject::SetAllWindowCollapsed(bool collapse)
 {
-	for (auto &m : m_modsLoaded)
+	for (auto& m : m_modsLoaded)
 		m->SetWindowCollapsed(collapse);
 }
 
 void DLLObject::SetShowAllInGame(bool show)
 {
-	for (auto &m : m_modsLoaded)
+	for (auto& m : m_modsLoaded)
 		m->SetShowInGame(show);
 }
 
 void DLLObject::SetTextDrawMaxWarning(bool toggle)
 {
-	for (auto &m : m_modsLoaded)
+	for (auto& m : m_modsLoaded)
 		m->SetTextDrawMaxWarning(toggle);
 }
 
 void DLLObject::SetAllFontSize(float menuSize, float contentSize, float inGameSize)
 {
-	for (auto &m : m_modsLoaded)
+	for (auto& m : m_modsLoaded)
 		m->SetFontSize(menuSize, contentSize, inGameSize);
 }
 
 void DLLObject::SetAllInGameFontColor(int red, int green, int blue)
 {
-	for (auto &m : m_modsLoaded)
+	for (auto& m : m_modsLoaded)
 		m->SetInGameFontColor(red, green, blue);
 }
 
@@ -155,12 +152,12 @@ void DLLObject::Load()
 	{
 		m_userSettings.Load(m_userSettingsFile);
 		InitMods();
-		for (auto &m : m_modsLoaded)
+		for (auto& m : m_modsLoaded)
 			m->Load();
 		MISC::SET_THIS_SCRIPT_CAN_BE_PAUSED(false);
 		m_isLoaded = true;
 	}
-		
+
 	// After loading a save, ScriptHookV does not call ProcessDetach,
 	// but ProcessAttach again
 
@@ -179,7 +176,7 @@ void DLLObject::Unload()
 		m_isOpen = false;
 
 		// Unload mods
-		for (auto &m : m_modsLoaded)
+		for (auto& m : m_modsLoaded)
 		{
 			m->Unload();
 			delete m;
