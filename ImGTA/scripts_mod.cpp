@@ -79,7 +79,7 @@ void ScriptsMod::Think()
 		char buf[112] = "";
 		float xOff = m_settings.common.inGameOffsetX;
 		float yOff = m_settings.common.inGameOffsetY;
-		const float step = 0.01f;
+		const float step = 0.02f;
 
 		std::snprintf(buf, sizeof(buf), "Constant updates: %s", BoolToStr(m_settings.common.autoUpdate));
 		DrawTextToScreen(buf, xOff, yOff, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
