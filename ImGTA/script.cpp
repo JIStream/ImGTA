@@ -191,9 +191,6 @@ void DLLObject::Unload()
 		// Save settings
 		m_userSettings.Save(m_userSettingsFile);
 
-		//ImGui_ImplDX11_Shutdown();
-		ImGui_ImplWin32_Shutdown();
-		ImGui::DestroyContext();
 		if (m_oldProc)
 			SetWindowLongPtr(FindMainWindow(GetCurrentProcessId()), GWLP_WNDPROC, m_oldProc);
 		m_isLoaded = false;
@@ -218,7 +215,7 @@ void DLLObject::InitContext(HWND hwnd)
 	ImGui::GetIO().IniFilename = m_fileImGuiIni.c_str();
 	ImGui::GetIO().LogFilename = m_fileImGuiLog.c_str();
 
-	LOG("ImGUI Init!");
+	LOG("ImGUI Init!\n");
 }
 
 void DLLObject::Draw()
@@ -229,30 +226,3 @@ void DLLObject::Draw()
 	if (m_isOpen)
 		UpdateWindows();
 }
-
-//void DLLObject::OnPresent(IDXGISwapChain *swap)
-//{
-//	if (!m_hasInitializedImgui)
-//	{
-//		m_hasInitializedImgui = true;
-//		ID3D11Device *device;
-//		ID3D11DeviceContext *context;
-//
-//		swap->GetDevice(__uuidof(ID3D11Device), (void **)&device);
-//		device->GetImmediateContext(&context);
-//
-//		ImGui::CreateContext();
-//		ImGui::StyleColorsDark();
-//		
-//
-//		HWND window = FindMainWindow(GetCurrentProcessId());
-//		ImGui_ImplWin32_Init(window);
-//		ImGui_ImplDX11_Init(device, context);
-//
-//
-//		m_oldProc = SetWindowLongPtr(window, GWLP_WNDPROC, (LONG_PTR)WndProc);
-//	}
-//
-//	if (m_isOpen)
-//		UpdateWindows();
-//}

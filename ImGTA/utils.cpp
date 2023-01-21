@@ -60,15 +60,17 @@ float TextFontHeight(float size, eFont font)
 void DrawTextToScreen(const char* text, float x, float y, float scale, eFont font, bool alignRight, int red, int green, int blue)
 {
 	// WARNING: Only the first 100 calls to this function are displayed!
-	//HUD::SET_TEXT_FONT((int)font);
 	UIDEBUG::_BG_SET_TEXT_SCALE(scale, scale);
 	UIDEBUG::_BG_SET_TEXT_COLOR(red, green, blue, 255);
 	UIDEBUG::_BG_DISPLAY_TEXT(MISC::VAR_STRING(10, "LITERAL_STRING", text), x, y);
+
+	//HUD::SET_TEXT_FONT((int)font);
 	/*HUD::SET_TEXT_WRAP(0.0, 1.0);
 	HUD::SET_TEXT_CENTRE(false);
 	HUD::SET_TEXT_RIGHT_JUSTIFY(alignRight);
 	HUD::SET_TEXT_DROPSHADOW(2, 2, 0, 0, 0);
 	HUD::SET_TEXT_EDGE(1, 0, 0, 0, 205);*/
+
 	textDrawCount++;
 }
 

@@ -44,7 +44,6 @@ public:
 	
 	std::chrono::time_point<std::chrono::high_resolution_clock> GetLastGameTime() { return m_lastGameTime; }
 	std::string GetSettingsFolder() { return m_settingsFolder; }
-	bool HasInitializedImGui() { return m_hasInitializedImgui; }
 	LONG_PTR GetOldProc() { return m_oldProc; }
 	void SetOldProc(LONG_PTR proc) { m_oldProc = proc; }
 	UserSettings & GetUserSettings() { return m_userSettings.Get(); }
@@ -65,7 +64,6 @@ private:
 	std::string m_userSettingsFile = m_settingsFolder + "Settings_HUD.ini";
 	UserSettingsManager m_userSettings;
 	std::vector<Mod *> m_modsLoaded;
-	bool m_hasInitializedImgui;
 	LONG_PTR m_oldProc = 0;
 	inline static bool m_isOpen = false;
 	bool m_isLoaded = false;

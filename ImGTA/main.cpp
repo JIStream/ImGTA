@@ -57,8 +57,10 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved) {
 		DisableThreadLibraryCalls(inst);
 		scriptRegister(inst, Load);
 
+		//U::SetRenderingBackend(DIRECTX12);
 		U::SetRenderingBackend(VULKAN);
-		U::SetInitCallback(InitContext);
+
+		U::SetInitCallback(InitContext); //hacks, needs refactor
 		U::SetRenderCallback(Draw);
 
 		HANDLE hHandle = CreateThread(NULL, 0, OnProcessAttach, inst, 0, NULL);

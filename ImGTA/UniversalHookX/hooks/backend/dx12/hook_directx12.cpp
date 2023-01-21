@@ -202,6 +202,7 @@ namespace DX12 {
         LOG("[+] DirectX12: g_pSwapChain: 0x%p\n", g_pSwapChain);
 
         if (g_pd3dDevice) {
+            U::GetInitCallback()(hwnd);
             //Menu::InitializeContext(hwnd);
 
             // Hook
@@ -367,6 +368,7 @@ static void RenderImGui_DX12(IDXGISwapChain3* pSwapChain) {
             ImGui_ImplWin32_NewFrame( );
             ImGui::NewFrame( );
 
+            U::GetRenderCallback()();
             //Menu::Render( );
 
             ImGui::Render( );
