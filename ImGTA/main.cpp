@@ -7,7 +7,6 @@
 
 #include "script.h"
 #include "main.h"
-#include "imgui_impl_win32.h"
 #include <Windows.h>
 #include <MinHook.h>
 #include "UniversalHookX/console/console.hpp"
