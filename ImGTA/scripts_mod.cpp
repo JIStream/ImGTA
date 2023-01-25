@@ -295,10 +295,10 @@ bool ScriptsMod::Draw()
 			m_selected = &s;
 			ImGui::OpenPopup("ScriptPropertiesPopup");
 		}
+		ImGui::PopID();
 		ImGui::NextColumn();
 
 		ImGui::Text("%d (0x%x)", s.m_handle, s.m_handle); ImGui::NextColumn();
-		ImGui::PopID();
 	}
 	ImGui::Columns(1);
 	ImGui::Separator();
