@@ -12,6 +12,7 @@
 #include "scanner.h"
 #include <bitset>
 #include "atArray.h"
+#include "UniversalHookX/console/console.hpp"
 
 rage::atArray<ScrThread*>* m_ThreadMap{};
 int textDrawCount = 0;
@@ -134,12 +135,22 @@ uint64_t* GetThreadAddress(int localId, int scriptHash)
 
 	uint64_t* localAddress = nullptr;
 
+	LOG("GetThread m_ThreadMap count: %d\n", m_ThreadMap->count());
 	for (const auto& thread : *m_ThreadMap)
 	{
-		if (thread != nullptr && (uint64_t*)thread->m_stack != nullptr)
+		if (thread != nullptr)
 		{
 			if (thread->m_scriptHash == scriptHash)
 			{
+				LOG("KEK");
+			}
+		}
+		//LOG("thread %d stack %d \n", thread, thread->m_stack);
+		if (thread != nullptr && reinterpret_cast<uint64_t*>(thread->m_stack) != nullptr)
+		{
+			if (thread->m_scriptHash == scriptHash)
+			{
+				LOG("Found script \n");
 				localAddress = (uint64_t*)(thread->m_stack + (localId * sizeof(uintptr_t)));
 				break;
 			}
