@@ -136,11 +136,11 @@ uint64_t* GetThreadAddress(int localId, int scriptHash)
 
 	for (const auto& thread : *m_ThreadMap)
 	{
-		if (thread != nullptr && (uint64_t*)thread->m_context.m_stackPointer != nullptr)
+		if (thread != nullptr && (uint64_t*)thread->m_stack != nullptr)
 		{
 			if (thread->m_scriptHash == scriptHash)
 			{
-				localAddress = (uint64_t*)thread->m_context.m_stackPointer + (localId * sizeof(uintptr_t));
+				localAddress = (uint64_t*)(thread->m_stack + (localId * sizeof(uintptr_t)));
 				break;
 			}
 		}
