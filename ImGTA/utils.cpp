@@ -138,15 +138,8 @@ uint64_t* GetThreadAddress(int localId, int scriptHash)
 	LOG("GetThread m_ThreadMap count: %d\n", m_ThreadMap->count());
 	for (const auto& thread : *m_ThreadMap)
 	{
-		if (thread != nullptr)
-		{
-			if (thread->m_scriptHash == scriptHash)
-			{
-				LOG("KEK");
-			}
-		}
 		//LOG("thread %d stack %d \n", thread, thread->m_stack);
-		if (thread != nullptr && reinterpret_cast<uint64_t*>(thread->m_stack) != nullptr)
+		if (thread != nullptr && (uint64_t*)thread->m_stack != nullptr)
 		{
 			if (thread->m_scriptHash == scriptHash)
 			{
