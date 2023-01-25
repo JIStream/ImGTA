@@ -29,6 +29,7 @@ void MemWatcherMod::Load()
 {
 	m_settings = m_dllObject.GetUserSettings().memWatcher;
 	m_onlineVersion = "UNKNOWN VERSION";
+	InitThreadBasket();
 }
 
 void MemWatcherMod::Unload()
@@ -323,13 +324,10 @@ void MemWatcherMod::DrawMenuBar()
 				ShowAddAddress(true);
 				ImGui::EndMenu();
 			}
-			if (m_supportGlobals)
+			if (ImGui::BeginMenu("Add Local Index"))
 			{
-				if (ImGui::BeginMenu("Add Local Index"))
-				{
-					ShowAddAddress(false);
-					ImGui::EndMenu();
-				}
+				ShowAddAddress(false);
+				ImGui::EndMenu();
 			}
 			if (ImGui::MenuItem("Sort all watches"))
 				SortWatches();
