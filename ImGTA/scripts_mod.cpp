@@ -289,13 +289,12 @@ bool ScriptsMod::Draw()
 
 	for (auto& s : m_scripts)
 	{
-		ImGui::PushID(s.m_handle); //prevent id conflicts (scripts with the same name)
-		if (ImGui::Selectable(s.m_scriptName.c_str(), false, ImGuiSelectableFlags_SpanAllColumns))
+		//##s.m_handle prevents id conflicts (scripts with the same name)
+		if (ImGui::Selectable((s.m_scriptName + "##" + std::to_string(s.m_handle)).c_str(), false, ImGuiSelectableFlags_SpanAllColumns))
 		{
 			m_selected = &s;
 			ImGui::OpenPopup("ScriptPropertiesPopup");
 		}
-		ImGui::PopID();
 		ImGui::NextColumn();
 
 		ImGui::Text("%d (0x%x)", s.m_handle, s.m_handle); ImGui::NextColumn();
