@@ -13,23 +13,11 @@
 #include "UniversalHookX/utils/utils.hpp"
 #include "UniversalHookX/hooks/hooks.hpp"
 
-DLLObject object{};
-
-void Load();
-
 DWORD WINAPI OnProcessAttach(LPVOID lpParam);
 DWORD WINAPI OnProcessDetach(LPVOID lpParam);
 
-void Draw() {
-	object.Draw();
-}
-
-void InitContext(HWND hwnd) {
-	object.InitContext(hwnd);
-}
-
 void Load() {
-	object.Load();
+	DLLObject::getInstance()->Load();
 }
 
 DWORD WINAPI OnProcessAttach(LPVOID lpParam) {
@@ -58,9 +46,6 @@ BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved) {
 
 		//U::SetRenderingBackend(DIRECTX12);
 		U::SetRenderingBackend(VULKAN);
-
-		U::SetInitCallback(InitContext); //hacks, needs refactor
-		U::SetRenderCallback(Draw);
 
 		HANDLE hHandle = CreateThread(NULL, 0, OnProcessAttach, inst, 0, NULL);
 		if (hHandle != NULL) {

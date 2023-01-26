@@ -14,9 +14,6 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
 static RenderingBackend_t g_eRenderingBackend = NONE;
 
-static U::InitCallback initCallback;
-static U::RenderCallback renderCallback;
-
 static BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam) {
 	const auto isMainWindow = [ handle ]( ) {
 		return GetWindow(handle, GW_OWNER) == nullptr && IsWindowVisible(handle);
@@ -41,22 +38,6 @@ static DWORD WINAPI _UnloadDLL(LPVOID lpParam) {
 namespace UtilsHook {
 	void SetRenderingBackend(RenderingBackend_t eRenderingBackground) {
 		g_eRenderingBackend = eRenderingBackground;
-	}
-
-	void SetInitCallback(InitCallback newInitCallback) {
-		initCallback = newInitCallback;
-	}
-
-	void SetRenderCallback(RenderCallback newRenderCallback) {
-		renderCallback = newRenderCallback;
-	}
-
-	RenderCallback GetRenderCallback() {
-		return renderCallback;
-	}
-
-	InitCallback GetInitCallback() {
-		return initCallback;
 	}
 
 	RenderingBackend_t GetRenderingBackend( ) {

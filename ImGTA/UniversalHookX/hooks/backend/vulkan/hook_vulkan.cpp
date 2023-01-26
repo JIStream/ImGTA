@@ -20,6 +20,7 @@
 
 #include "../../hooks.hpp"
 #include "../../ImGTA/menu.hpp"
+#include "../../../../script.h"
 
 static VkAllocationCallbacks* g_Allocator = NULL;
 static VkInstance g_Instance = VK_NULL_HANDLE;
@@ -384,8 +385,7 @@ static void RenderImGui_Vulkan(VkQueue queue, const VkPresentInfoKHR* pPresentIn
     if (!g_Device || H::bShuttingDown)
         return;
 
-    U::GetInitCallback()(g_Hwnd);
-    //Menu::InitializeContext(g_Hwnd);
+    DLLObject::getInstance()->InitContext(g_Hwnd);
 
     for (uint32_t i = 0; i < pPresentInfo->swapchainCount; ++i) {
         VkSwapchainKHR swapchain = pPresentInfo->pSwapchains[i];
@@ -442,8 +442,7 @@ static void RenderImGui_Vulkan(VkQueue queue, const VkPresentInfoKHR* pPresentIn
         ImGui_ImplWin32_NewFrame( );
         ImGui::NewFrame( );
 
-        U::GetRenderCallback()();
-        //Menu::Render();
+        DLLObject::getInstance()->Draw();
 
         ImGui::Render( );
 

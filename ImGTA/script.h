@@ -23,6 +23,12 @@ public:
 	DLLObject();
 	~DLLObject();
 
+	static DLLObject* getInstance() {
+		if (!instance)
+			instance = new DLLObject;
+		return instance;
+	}
+
 	void InitMods();
 	void Update();
 	void UpdateWindows();
@@ -58,6 +64,7 @@ public:
 	bool m_timerThreadAlive = false;
 
 private:
+	inline static DLLObject* instance = nullptr; //let's use singleton
 	std::string m_settingsFolder = "ImGTA/";
 	std::string m_fileImGuiIni = m_settingsFolder + "Settings_imgui.ini";
 	std::string m_fileImGuiLog = m_settingsFolder + "Log_imgui.txt";
