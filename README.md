@@ -8,7 +8,7 @@ Local script variable watcher should work on any version thanks to memory scanni
 ## Dependencies:
 Since ScriptHookRDR2 doesn't provide onPresent() hook, the project uses [UniversalHookX](https://github.com/bruhmoment21/UniversalHookX) to display ImGUI menus. Because of that you'd need to install [Vulkan SDK](https://vulkan.lunarg.com/). Simply install it, reload the project and everything should work.
 
-To use with DX12, use U::SetRenderingBackend(DIRECTX12); instead of VULKAN in main.cpp. Be aware that DX12 was not tested and might not work. API hooking selection could be automated\improved later.
+To use with DX12, use ``U::SetRenderingBackend(DIRECTX12);`` instead of ``VULKAN`` in ``main.cpp``. Be aware that DX12 was not tested and might not work. API hooking selection could be automated\improved later.
 
 Everything else should be the same as the base version.
 
