@@ -78,9 +78,7 @@ bool IsVersionSupportedForGlobals(eGameVersion ver);
 char* GetCommsCharacterName(int characterId);
 char* GetTextMessageName(int textId);
 char* GetCallName(int callID);
-// Thanks Parik (explanation on where and how to find addresses as well as thread structures...
-//				 everything you see in these two functions)
-// Thanks Gogsi123 (how to get the value from addresses in C++)
+//https://github.com/kepmehz/RDR3-Script-Manager
 void InitThreadBasket();
-uint64_t* GetThreadAddress(int localId, int scriptHash);
+uint64_t* GetThreadAddress(int localId, uint32_t scriptHash);
 uint64_t* GetGlobalPtr(int globalId);

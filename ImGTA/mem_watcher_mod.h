@@ -48,7 +48,7 @@ protected:
 	std::string m_scriptName = "";
 	std::string m_watchInfo = "";
 	bool m_autoScrollDown = false;
-	int m_scriptHash = 0;
+	uint32_t m_scriptHash = 0;
 	bool m_scriptRunning = false;
 	bool m_selectedWatchScriptRunning = false;
 	bool m_addressAvailable = true;
