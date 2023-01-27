@@ -16,7 +16,6 @@
     <ClCompile Include="..\Libraries\minhook\hook.c" />
     <ClCompile Include="..\Libraries\minhook\trampoline.c" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="menu.cpp" />
     <ClCompile Include="scanner.cpp" />
     <ClCompile Include="script.cpp" />
   </ItemGroup>
@@ -72,7 +71,6 @@
     <ClCompile Include="watch_entry.cpp" />
     <ClCompile Include="widgets.cpp" />
     <ClInclude Include="atArray.h" />
-    <ClInclude Include="menu.hpp" />
     <ClInclude Include="rage.h" />
     <ClInclude Include="scanner.h" />
     <ClInclude Include="script.h" />

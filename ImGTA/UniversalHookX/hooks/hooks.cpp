@@ -18,7 +18,6 @@
 #include "MinHook.h"
 
 #include "../../script.h"
-#include "../../menu.hpp"
 #include "imgui.h"
 
 static HWND g_hWindow = NULL;

@@ -19,7 +19,6 @@
 #include "../../../utils/utils.hpp"
 
 #include "../../hooks.hpp"
-#include "../../ImGTA/menu.hpp"
 #include "../../../../script.h"
 
 static VkAllocationCallbacks* g_Allocator = NULL;
