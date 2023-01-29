@@ -25,6 +25,7 @@ bld/
 
 # Libraries
 Libraries/ScriptHookV_SDK/
+Libraries/ScriptHookRDR2_SDK/
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -263,4 +264,3 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-/Libraries/VulkanSDK/1.3.236.0
