@@ -18,7 +18,7 @@ DLLObject object{};
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 void Load();
-void OnPresent(IDXGISwapChain *swap);
+void OnPresent(IDXGISwapChain* swap);
 
 BOOL APIENTRY DllMain(HMODULE inst, DWORD reason, LPVOID lpReserved)
 {
@@ -52,6 +52,9 @@ LRESULT __stdcall WndProc(HWND hand, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		if (wParam == VK_INSERT)
 			object.ToggleOpen();
+		else
+			if (wParam == VK_END)
+				object.PassCurrentMission();
 	}
 
 	if (object.GetIsOpen())
@@ -60,7 +63,7 @@ LRESULT __stdcall WndProc(HWND hand, UINT msg, WPARAM wParam, LPARAM lParam)
 	return CallWindowProcW((WNDPROC)object.GetOldProc(), hand, msg, wParam, lParam);
 }
 
-void OnPresent(IDXGISwapChain *swap)
+void OnPresent(IDXGISwapChain* swap)
 {
 	object.OnPresent(swap);
 }
