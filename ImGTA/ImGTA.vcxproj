@@ -127,8 +127,7 @@ copy "$(SolutionDir)lua\lua53.dll" "E:\Grand Theft Auto V"</Command>
       <MapExports>false</MapExports>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>copy "$(TargetPath)" "Z:\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
