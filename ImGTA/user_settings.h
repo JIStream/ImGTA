@@ -23,6 +23,20 @@ struct CommonSettings {
 	int inGameFontBlue = 255;
 	float inGameOffsetX = 0.0f;
 	float inGameOffsetY = 0.0f;
+
+	
+	/*Show menus
+		bool showMemWatcherModMenu = true;
+		bool showCheatsModMenu = true;
+		bool showCutsceneModMenu = true;
+		bool showAudioModMenu = true;
+		bool showScriptsModMenu = true;
+		bool showHandleHelperModMenu = true;
+		bool showSyncSceneModMenu = true;
+		bool showPlayerSwitchModMenu = true;
+		bool showAreaModMenu = true;
+		bool showLuaConsoleModMenu = true;
+		bool showCommsModMenu = true;*/
 };
 
 struct AreaSettings {
@@ -44,6 +58,23 @@ struct CheatsSettings {
 	bool showAvailableInputs = false;
 	bool floatingMenu = true;
 	bool displayKMH = true;
+	// What to show on the cheats menu
+	bool showPosition = true;
+	bool showEntityHealth = true;
+	bool showEntityArmour = true;
+	bool showCurrentSpeed = true;
+	bool showCurrentAcceleration = true;
+	bool showMaxSpeed = true;
+	bool showMaxAcceleration = true;
+	bool showSpeedVector = false;
+	bool showSprintTimeRemaining = false;
+	bool showUnderwaterTimeRemaining = false;
+	bool showInvincible = true;
+	bool showCanRagdoll = false;
+	bool showStreamingRequests = false;
+	bool showPedHandle = false;
+	bool showGameTime = false;
+	bool showGameDateTime = true;
 };
 
 struct CommsSettings {

@@ -16,6 +16,7 @@
 
 struct IDXGISwapChain;
 class Mod;
+class MissionMod;
 
 class DLLObject
 {
@@ -38,6 +39,7 @@ public:
 	void Load();
 	void Unload();
 	void ToggleOpen();
+	void PassCurrentMission();
 	void OnPresent(IDXGISwapChain *swap);
 	
 	std::chrono::time_point<std::chrono::high_resolution_clock> GetLastGameTime() { return m_lastGameTime; }
@@ -64,6 +66,7 @@ private:
 	std::string m_userSettingsFile = m_settingsFolder + "Settings_HUD.ini";
 	UserSettingsManager m_userSettings;
 	std::vector<Mod *> m_modsLoaded;
+	MissionMod* missionMod;
 	bool m_hasInitializedImgui;
 	LONG_PTR m_oldProc = 0;
 	bool m_isOpen = false;
