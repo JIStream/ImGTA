@@ -7,6 +7,8 @@
 
 #pragma once
 #include <string>
+#include <json.hpp>
+using json = nlohmann::json;
 
 enum WatchType
 {
@@ -42,6 +44,8 @@ public:
 				&& this->m_scriptHash == other->m_scriptHash
 				&& this->m_type == other->m_type);
 	}
+	void ToJson();
+	void FromJson(json& j);
 
 private:
 };
