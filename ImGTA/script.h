@@ -14,6 +14,7 @@
 #include <mutex>
 #include <chrono>
 
+
 struct IDXGISwapChain;
 class Mod;
 class MissionMod;
@@ -56,9 +57,9 @@ public:
 	bool disableAction = false;
 	bool m_updatedPauseMenuOn = false;
 	bool m_updatedPauseMenuOff = false;
+	std::string m_settingsFolder = "ImGTA/";
 
 private:
-	std::string m_settingsFolder = "ImGTA/";
 	std::string m_fileImGuiIni = m_settingsFolder + "Settings_imgui.ini";
 	std::string m_fileImGuiLog = m_settingsFolder + "Log_imgui.txt";
 	std::string m_fileMemWatch = m_settingsFolder + "Mem_Watch.json";
