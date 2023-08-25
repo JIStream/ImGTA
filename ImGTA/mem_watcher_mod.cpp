@@ -36,6 +36,20 @@ void MemWatcherMod::Unload()
 	m_dllObject.GetUserSettings().memWatcher = m_settings;
 }
 
+void MemWatcherMod::LoadWatches()
+{
+	std::ifstream f(m_dllObject.m_settingsFolder + m_fileMemWatch);
+	json data = json::parse(f);
+	data.at(getGameVersion()).get_to(m_watches);
+}
+
+void MemWatcherMod::SaveWatches()
+{
+	std::ofstream f(m_dllObject.m_settingsFolder + m_fileMemWatch);
+	json j = *m_selectedEntry;
+	f << j.dump();
+}
+
 void MemWatcherMod::Think()
 {
 	if (m_watches.size() > 0)

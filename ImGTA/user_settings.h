@@ -106,6 +106,7 @@ struct MemWatcherSettings {
 	bool inputHexIndex = false;
 	bool displayHudInfo = true;
 	bool saveGlobals = true;
+	bool ignoreGameVersion = false;
 };
 
 struct MissionSettings {

@@ -260,6 +260,7 @@ copy "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)
     <ClInclude Include="widgets.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="lua_engine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
