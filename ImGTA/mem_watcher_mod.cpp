@@ -44,7 +44,7 @@ std::string GetGameVersionString() {
 
 void MemWatcherMod::LoadWatches()
 {
-	if(m_settings.saveGlobals)
+	if (m_settings.saveGlobals)
 	{
 		auto fileName = m_dllObject.m_settingsFolder + m_fileMemWatch;
 		std::ifstream f_in(fileName);
@@ -73,11 +73,12 @@ void MemWatcherMod::SaveWatches()
 {
 	if (m_settings.saveGlobals)
 	{
-		std::ofstream f_Out(m_dllObject.m_settingsFolder + m_fileMemWatch);
-		json j{
-			{GetGameVersionString(), m_watches}
-		};
-		f_Out << j;
+		auto fileName = m_dllObject.m_settingsFolder + m_fileMemWatch;
+		std::ifstream f_In(fileName);
+		json jsonOld = json::parse(f_In);
+		jsonOld.update({ { GetGameVersionString(), m_watches } });
+		std::ofstream f_Out(fileName);
+		f_Out << jsonOld;
 	}
 }
 
