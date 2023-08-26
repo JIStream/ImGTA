@@ -28,16 +28,6 @@ void WatchEntry::UpdateValue(int scriptHash)
 	m_value = GetDisplayForType(scriptHash, m_addressIndex, m_type);
 }
 
-//void to_json(json& j, const WatchEntry& p)
-//{
-	//j = json{{"value", p.m_value}};
-//}
-
-//void from_json(const json& j, WatchEntry& p)
-//{
-//	j.at("value").get_to(p.m_value);
-//}
-
 std::string GetDisplayForType(uint64_t *globalAddr, WatchType type)
 {
 	if (globalAddr == nullptr)
