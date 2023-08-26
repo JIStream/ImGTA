@@ -401,6 +401,7 @@ void MemWatcherMod::DrawMenuBar()
 
 			ImGui::EndMenu();
 		}
+		ImGui::Checkbox("Save to JSON", &m_settings.saveGlobals);
 
 		ImGui::EndMenuBar();
 	}
