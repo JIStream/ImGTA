@@ -19,7 +19,6 @@ enum WatchType
 	kBitfield32
 };
 
-// map TaskState values to JSON as strings
 NLOHMANN_JSON_SERIALIZE_ENUM(WatchType, {
 	{kInt, "int"},
 	{kFloat, "float"},
