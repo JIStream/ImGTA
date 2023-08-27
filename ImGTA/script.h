@@ -14,7 +14,6 @@
 #include <mutex>
 #include <chrono>
 
-
 struct IDXGISwapChain;
 class Mod;
 class MissionMod;
