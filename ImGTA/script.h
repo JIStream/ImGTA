@@ -62,7 +62,6 @@ public:
 private:
 	std::string m_fileImGuiIni = m_settingsFolder + "Settings_imgui.ini";
 	std::string m_fileImGuiLog = m_settingsFolder + "Log_imgui.txt";
-	std::string m_fileMemWatch = m_settingsFolder + "Mem_Watch.json";
 	std::string m_userSettingsFile = m_settingsFolder + "Settings_HUD.ini";
 	UserSettingsManager m_userSettings;
 	std::vector<Mod *> m_modsLoaded;

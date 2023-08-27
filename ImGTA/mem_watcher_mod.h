@@ -32,7 +32,9 @@ protected:
 	void ShowSelectedPopup();
 	void DrawMenuBar();
 	void SaveWatches();
+	void ClearSavedWatches();
 	void LoadWatches();
+	std::string GetMemWatchFilePath();
 	CommonSettings & GetCommonSettings() override { return m_settings.common; }
 
 	MemWatcherSettings m_settings;

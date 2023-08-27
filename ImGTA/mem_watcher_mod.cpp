@@ -38,34 +38,34 @@ void MemWatcherMod::Unload()
 	SaveWatches();
 }
 
-std::string GetGameVersionString() {
-	return std::to_string(getGameVersion());
+std::string MemWatcherMod::GetMemWatchFilePath()
+{
+	return m_dllObject.m_settingsFolder + m_fileMemWatch;
+}
+
+json GetDefaultJson() {
+	json j{ {GetGameVersionString(), std::vector<WatchEntry>()} };
+	return j;
 }
 
 void MemWatcherMod::LoadWatches()
 {
-	if (m_settings.saveGlobals)
+	std::ifstream f_in(GetMemWatchFilePath());
+	if (!f_in)
 	{
-		auto fileName = m_dllObject.m_settingsFolder + m_fileMemWatch;
-		std::ifstream f_in(fileName);
-		if (!f_in)
-		{
-			//create new file with default empty value
-			std::ofstream f_out(fileName);
-			json j{
-				{GetGameVersionString(), std::vector<WatchEntry>()}
-			};
-			f_out << j;
-			f_in.open(fileName);
-		}
-		if (json::accept(f_in))
-		{
-			//parse to watches
-			f_in.clear();
-			f_in.seekg(0);
-			json j = json::parse(f_in);
-			m_watches = j.value(GetGameVersionString(), std::vector<WatchEntry>());
-		}
+		//create new file with default empty values
+		std::ofstream f_out(GetMemWatchFilePath());
+		f_out << GetDefaultJson();
+		f_in.open(GetMemWatchFilePath());
+	}
+	if (json::accept(f_in))
+	{
+		//reset stream
+		f_in.clear();
+		f_in.seekg(0);
+		//parse to m_watches
+		json j = json::parse(f_in);
+		m_watches = j.value(GetGameVersionString(), std::vector<WatchEntry>());
 	}
 }
 
@@ -73,13 +73,30 @@ void MemWatcherMod::SaveWatches()
 {
 	if (m_settings.saveGlobals)
 	{
-		auto fileName = m_dllObject.m_settingsFolder + m_fileMemWatch;
-		std::ifstream f_In(fileName);
-		json jsonOld = json::parse(f_In);
-		jsonOld.update({ { GetGameVersionString(), m_watches } });
-		std::ofstream f_Out(fileName);
-		f_Out << jsonOld;
+		std::ifstream f_in(GetMemWatchFilePath());
+		std::ofstream f_out(GetMemWatchFilePath());
+		json jsonNew{ { GetGameVersionString(), m_watches } };
+		if (json::accept(f_in))
+		{
+			f_in.clear();
+			f_in.seekg(0);
+			//get previous json data and update with the current one to 
+			//prevent losing watches for other game versions
+			json jsonOld = json::parse(f_in);
+			jsonOld.update(jsonNew);
+			f_out << jsonOld;
+		}
+		else {
+			//fail safe if user fucked the json
+			f_out << jsonNew;
+		}
 	}
+}
+
+void MemWatcherMod::ClearSavedWatches()
+{
+	std::ofstream f_out(GetMemWatchFilePath());
+	f_out << GetDefaultJson();
 }
 
 void MemWatcherMod::Think()
@@ -360,6 +377,7 @@ void MemWatcherMod::ShowSelectedPopup()
 
 void MemWatcherMod::DrawMenuBar()
 {
+	bool openPopup = false;
 	if (ImGui::BeginMenuBar())
 	{
 		if (ImGui::BeginMenu("Watch"))
@@ -386,7 +404,28 @@ void MemWatcherMod::DrawMenuBar()
 				m_watches.clear();
 			}
 
+			if (ImGui::MenuItem("Clear JSON"))
+				openPopup = true;
+
 			ImGui::EndMenu();
+		}
+
+		//https://github.com/ocornut/imgui/issues/331#issuecomment-140055181
+		if (openPopup)
+			ImGui::OpenPopup("Are you sure?");
+
+		if (ImGui::BeginPopupModal("Are you sure?", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text("Are you sure you want to clear JSON?");
+			if (ImGui::Button("Yes"))
+			{
+				ClearSavedWatches();
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("No"))
+				ImGui::CloseCurrentPopup();
+			ImGui::EndPopup();
 		}
 
 		ImGui::Separator();
