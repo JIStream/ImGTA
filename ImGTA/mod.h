@@ -15,7 +15,6 @@
 class DLLObject;
 struct CommonSettings;
 
-
 class Mod
 {
 public:

@@ -27,7 +27,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(WatchType, {
 	{kBitfield32, "bitfield32"},
 	})
 
-	class WatchEntry
+class WatchEntry
 {
 public:
 	WatchEntry(int addressIndex, WatchType type, std::string scriptName, int scriptHash, std::string info = std::string("")) : m_addressIndex(addressIndex), m_type(type), m_scriptName(scriptName), m_scriptHash(scriptHash), m_info(info), m_showInGame(true)
