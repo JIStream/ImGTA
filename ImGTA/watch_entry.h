@@ -16,7 +16,8 @@ enum WatchType
 	kFloat,
 	kString,
 	kVector3,
-	kBitfield32
+	kBitfield32,
+	kArray
 };
 
 NLOHMANN_JSON_SERIALIZE_ENUM(WatchType, {
@@ -25,12 +26,14 @@ NLOHMANN_JSON_SERIALIZE_ENUM(WatchType, {
 	{kString, "string"},
 	{kVector3, "vector3"},
 	{kBitfield32, "bitfield32"},
+	{kArray, "array"},
 	})
 
-class WatchEntry
+	class WatchEntry
 {
 public:
-	WatchEntry(int addressIndex, WatchType type, std::string scriptName, int scriptHash, std::string info = std::string("")) : m_addressIndex(addressIndex), m_type(type), m_scriptName(scriptName), m_scriptHash(scriptHash), m_info(info), m_showInGame(true)
+	WatchEntry(int addressIndex, WatchType type, WatchType arrayItemtype, std::string scriptName, int scriptHash, std::string info = std::string(""), int itemSizeQWORD = 0) :
+		m_addressIndex(addressIndex), m_type(type), m_arrayItemType(arrayItemtype), m_scriptName(scriptName), m_scriptHash(scriptHash), m_info(info), m_showInGame(true), m_itemSizeQWORD(itemSizeQWORD)
 	{}
 
 	WatchEntry() = default;
@@ -42,6 +45,11 @@ public:
 	std::string m_info;
 	std::string m_value;
 	bool m_showInGame;
+	//array
+	int m_itemSizeQWORD = 0;
+	int m_arrayIndexInItem = 0;
+	WatchType m_arrayItemType = kInt;
+	std::vector<WatchEntry> m_arrayWatches;
 
 	bool IsGlobal() { return m_scriptHash == 0; }
 	void UpdateValue();
@@ -50,9 +58,9 @@ public:
 	{
 		return (this->m_addressIndex == other->m_addressIndex
 			&& this->m_scriptHash == other->m_scriptHash
-			&& this->m_type == other->m_type);
+			&& this->m_type == other->m_type && this->m_type != kArray);
 	}
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(WatchEntry, m_addressIndex, m_type, m_scriptName, m_scriptHash, m_info, m_value, m_showInGame)
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(WatchEntry, m_addressIndex, m_type, m_scriptName, m_scriptHash, m_info, m_value, m_showInGame, m_itemSizeQWORD, m_arrayIndexInItem, m_arrayItemType, m_arrayWatches)
 };
 
 std::string GetDisplayForType(uint64_t* globalAddr, WatchType type);
