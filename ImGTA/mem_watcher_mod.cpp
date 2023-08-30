@@ -23,7 +23,7 @@
 #include <algorithm>
 #include <bitset>
 
-const char* watchTypeNames[] = { "Int", "Float", "String", "Vector3", "Bitfield32", "Array"};
+const char* watchTypeNames[] = { "Int", "Float", "String", "Vector3", "Bitfield32", "Array" };
 
 void MemWatcherMod::Load()
 {
@@ -167,11 +167,12 @@ void MemWatcherMod::Think()
 					if (i % bufferLinesCount == 0)
 						bufferLines = "";
 
+					std::string memberIndex = w.m_arrayIndexInItem > 0 ? ".f_" + std::to_string(w.m_arrayIndexInItem) : "";
 					std::string infoDetail = (m_settings.displayHudInfo && arrayWatch.m_info.size() > 0) ? (" (" + arrayWatch.m_info + ")") : "";
 					std::snprintf(buf, sizeof(buf), strFormat,
 						arrayWatch.m_scriptRunning ? "" : "(STOPPED) ",
 						arrayWatch.m_scriptName.c_str(),
-						(std::to_string(w.m_addressIndex) + "[" + std::to_string(index) + "]").c_str(),
+						(std::to_string(w.m_addressIndex) + "[" + std::to_string(index) + "]" + memberIndex).c_str(),
 						infoDetail.c_str(),
 						arrayWatch.m_value.c_str());
 					bufferLines += std::string(buf) + "\n";
@@ -240,10 +241,10 @@ void MemWatcherMod::ShowAddAddress(bool isGlobal)
 			m_inputsUpdated = true;
 
 		if (ImGui::InputInt("Item Size QWORD##AddAddress", &m_inputItemSizeQWORD, 1, 100))
-		{
-			ClipInt(m_inputAddressIndex, 0, 999999);
 			m_inputsUpdated = true;
-		}
+
+		if (ImGui::InputInt("Index in Item##AddAddress", &m_inputIndexInItem, 1, 100))
+			m_inputsUpdated = true;
 	}
 
 	if (!isGlobal)
@@ -305,9 +306,9 @@ void MemWatcherMod::ShowAddAddress(bool isGlobal)
 					for (int i = 0; i < m_indexRange; i++)
 					{
 						if (isGlobal)
-							m_watches.push_back(WatchEntry(m_inputAddressIndex + i, (WatchType)m_inputType, (WatchType)m_inputArrayItemType, "Global", 0, m_watchInfo, m_inputItemSizeQWORD));
+							m_watches.push_back(WatchEntry(m_inputAddressIndex + i, (WatchType)m_inputType, (WatchType)m_inputArrayItemType, "Global", 0, m_watchInfo, m_inputItemSizeQWORD, m_inputIndexInItem));
 						else
-							m_watches.push_back(WatchEntry(m_inputAddressIndex + i, (WatchType)m_inputType, (WatchType)m_inputArrayItemType, m_scriptName, m_scriptHash, m_watchInfo, m_inputItemSizeQWORD));
+							m_watches.push_back(WatchEntry(m_inputAddressIndex + i, (WatchType)m_inputType, (WatchType)m_inputArrayItemType, m_scriptName, m_scriptHash, m_watchInfo, m_inputItemSizeQWORD, m_inputIndexInItem));
 					}
 					m_autoScrollDown = true;
 				}
@@ -337,14 +338,30 @@ void MemWatcherMod::ShowSelectedPopup()
 {
 	if (ImGui::BeginPopup("PopupEntryProperties"))
 	{
-		ImGui::Combo("Type##EntryProperties", (int*)&m_selectedEntry->m_type, watchTypeNames, IM_ARRAYSIZE(watchTypeNames));
+		if (ImGui::Combo("Type##EntryProperties", (int*)&m_selectedEntry->m_type, watchTypeNames, IM_ARRAYSIZE(watchTypeNames)))
+		{
+			if (m_selectedEntry->m_type != kArray)
+				m_selectedEntry->m_arrayWatches.clear();
+		}
 		ImGui::Checkbox("Show Ingame##EntryProperties", &m_selectedEntry->m_showInGame);
-
 
 		if (ImGui::InputText("Info##AddAddress", m_watchInfoModifyBuf, sizeof(m_watchInfoModifyBuf)))
 			m_selectedEntry->m_info = std::string(m_watchInfoModifyBuf);
 		else if (std::string(m_watchInfoModifyBuf) != m_selectedEntry->m_info)
 			strncpy_s(m_watchInfoModifyBuf, sizeof(m_watchInfoModifyBuf), m_selectedEntry->m_info.c_str(), sizeof(m_watchInfoModifyBuf));
+
+		if (m_selectedEntry->m_type == kArray)
+		{
+			ImGui::InputInt("Index In Item##AddAddress", &m_watchModifyIndexInItem);
+			ImGui::Combo("Array Item Type##AddAddress", &m_watchModifyType, watchTypeNames, IM_ARRAYSIZE(watchTypeNames));
+			ImGui::InputInt("Item Size QWORD##AddAddress", &m_watchModifySizeQWORD, 1, 100);
+			if (ImGui::Button("Save##AddAddress"))
+			{
+				m_selectedEntry->m_arrayIndexInItem = m_watchModifyIndexInItem;
+				m_selectedEntry->m_arrayItemType = (WatchType)m_watchModifyType;
+				m_selectedEntry->m_itemSizeQWORD = m_watchModifySizeQWORD;
+			}
+		}
 
 		uint64_t* val = nullptr;
 		if (m_selectedEntry->IsGlobal())
@@ -405,11 +422,14 @@ void MemWatcherMod::ShowSelectedPopup()
 			}
 		}
 
-		if (ImGui::Button("Remove##EntryProperties"))
+		if (!m_selectedEntry->m_isArrayItem)
 		{
-			std::lock_guard<std::mutex> lock(m_watchesMutex);
-			m_watches.erase(std::remove(m_watches.begin(), m_watches.end(), m_selectedEntry), m_watches.end());
-			ImGui::CloseCurrentPopup();
+			if (ImGui::Button("Remove##EntryProperties"))
+			{
+				std::lock_guard<std::mutex> lock(m_watchesMutex);
+				m_watches.erase(std::remove(m_watches.begin(), m_watches.end(), m_selectedEntry), m_watches.end());
+				ImGui::CloseCurrentPopup();
+			}
 		}
 
 		ImGui::EndPopup();
@@ -527,7 +547,7 @@ bool MemWatcherMod::Draw()
 			ImGui::Text("%s (%d)", w.m_scriptName.c_str(), w.m_scriptHash); ImGui::NextColumn();
 			ImGui::Text("%s", w.m_info.c_str()); ImGui::NextColumn();
 			ImGui::Text("%s", w.m_value.c_str()); ImGui::NextColumn();
-			
+
 			int index = 0;
 			for (auto& arrayItem : w.m_arrayWatches)
 			{

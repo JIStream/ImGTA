@@ -29,14 +29,17 @@ NLOHMANN_JSON_SERIALIZE_ENUM(WatchType, {
 	{kArray, "array"},
 	})
 
-	class WatchEntry
+class WatchEntry
 {
 public:
-	WatchEntry(int addressIndex, WatchType type, WatchType arrayItemtype, std::string scriptName, int scriptHash, std::string info = std::string(""), int itemSizeQWORD = 0) :
-		m_addressIndex(addressIndex), m_type(type), m_arrayItemType(arrayItemtype), m_scriptName(scriptName), m_scriptHash(scriptHash), m_info(info), m_showInGame(true), m_itemSizeQWORD(itemSizeQWORD)
+	WatchEntry(int addressIndex, WatchType type, WatchType arrayItemtype, std::string scriptName,
+		int scriptHash, std::string info = std::string(""), int itemSizeQWORD = 0, int indexInItem = 0,
+		bool isArrayItem = false) : m_addressIndex(addressIndex), m_type(type), m_arrayItemType(arrayItemtype),
+		m_scriptName(scriptName), m_scriptHash(scriptHash), m_info(info), m_showInGame(true),
+		m_itemSizeQWORD(itemSizeQWORD), m_isArrayItem(isArrayItem), m_arrayIndexInItem(indexInItem)
 	{}
-
 	WatchEntry() = default;
+
 	int m_addressIndex;
 	std::string m_scriptName;
 	int m_scriptHash = 0;
@@ -49,6 +52,7 @@ public:
 	int m_itemSizeQWORD = 0;
 	int m_arrayIndexInItem = 0;
 	WatchType m_arrayItemType = kInt;
+	bool m_isArrayItem = false;
 	std::vector<WatchEntry> m_arrayWatches;
 
 	bool IsGlobal() { return m_scriptHash == 0; }
@@ -58,9 +62,10 @@ public:
 	{
 		return (this->m_addressIndex == other->m_addressIndex
 			&& this->m_scriptHash == other->m_scriptHash
-			&& this->m_type == other->m_type && this->m_type != kArray);
+			&& this->m_type == other->m_type);
 	}
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(WatchEntry, m_addressIndex, m_type, m_scriptName, m_scriptHash, m_info, m_value, m_showInGame, m_itemSizeQWORD, m_arrayIndexInItem, m_arrayItemType, m_arrayWatches)
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(WatchEntry, m_addressIndex, m_type, m_scriptName, m_scriptHash, m_info, m_value, m_showInGame,
+		m_itemSizeQWORD, m_arrayIndexInItem, m_arrayItemType, m_arrayWatches, m_isArrayItem)
 };
 
 std::string GetDisplayForType(uint64_t* globalAddr, WatchType type);
