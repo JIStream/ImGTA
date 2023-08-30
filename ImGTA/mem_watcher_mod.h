@@ -44,6 +44,7 @@ protected:
 	WatchEntry *m_selectedEntry = nullptr;
 	int m_inputAddressIndex = 0;
 	int m_inputItemSizeQWORD = 0;
+	int m_inputIndexInItem = 0;
 	int m_inputType = 0;
 	int m_inputArrayItemType = 0;
 	int m_indexRange = 1;
@@ -51,6 +52,9 @@ protected:
 	char m_scriptNameBuf[128] = { 0 };
 	char m_watchInfoBuf[512] = { 0 };
 	char m_watchInfoModifyBuf[512] = { 0 };
+	int m_watchModifyIndexInItem = 0;
+	int m_watchModifyType = 0;
+	int m_watchModifySizeQWORD = 0;
 	std::string m_scriptName = "";
 	std::string m_watchInfo = "";
 	bool m_autoScrollDown = false;

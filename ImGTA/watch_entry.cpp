@@ -23,13 +23,15 @@ void WatchEntry::UpdateValue()
 		m_value = GetDisplayForType(m_addressIndex, m_scriptHash, m_type);
 
 	if (m_type == kArray) {
-		m_arrayWatches.clear();
 		for (int i = 0; i < std::stoi(m_value); i++)
 		{
-			if (IsGlobal())
-				m_arrayWatches.push_back(WatchEntry(m_addressIndex + 1 + i * m_itemSizeQWORD, m_arrayItemType, kInt, "Global", 0, ""));
-			else
-				m_arrayWatches.push_back(WatchEntry(m_addressIndex + 1 + i * m_itemSizeQWORD, m_arrayItemType, kInt, m_scriptName, m_scriptHash, ""));
+			if (m_arrayWatches.size() <= i)
+			{
+				if (IsGlobal())
+					m_arrayWatches.push_back(WatchEntry(m_addressIndex + 1 + i * m_itemSizeQWORD + m_arrayIndexInItem, m_arrayItemType, kInt, "Global", 0, "", 0, true));
+				else
+					m_arrayWatches.push_back(WatchEntry(m_addressIndex + 1 + i * m_itemSizeQWORD + m_arrayIndexInItem, m_arrayItemType, kInt, m_scriptName, m_scriptHash, "", 0, true));
+			}
 		}
 	}
 
