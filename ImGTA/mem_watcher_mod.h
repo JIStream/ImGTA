@@ -43,7 +43,9 @@ protected:
 
 	WatchEntry *m_selectedEntry = nullptr;
 	int m_inputAddressIndex = 0;
+	int m_inputItemSizeQWORD = 0;
 	int m_inputType = 0;
+	int m_inputArrayItemType = 0;
 	int m_indexRange = 1;
 
 	char m_scriptNameBuf[128] = { 0 };
