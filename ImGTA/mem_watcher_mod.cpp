@@ -117,7 +117,7 @@ void MemWatcherMod::Think()
 			m_scriptRunning = false;
 
 		const float step = 1.2f * TextFontHeight(m_settings.common.inGameFontSize, m_font);
-		const char* strFormat = m_settings.inputHexIndex ? "%s%s (0x%x) %s: %s" : "%s%s (%d) %s: %s";
+		const char* strFormat = m_settings.inputHexIndex ? "%s%s (0x%x) %s: %s" : "%s%s (%s) %s: %s";
 		std::string bufferLines;
 		const int bufferLinesCount = 2;
 		int i = 0;
@@ -144,7 +144,7 @@ void MemWatcherMod::Think()
 				std::snprintf(buf, sizeof(buf), strFormat,
 					w.m_scriptRunning ? "" : "(STOPPED) ",
 					w.m_scriptName.c_str(),
-					w.m_addressIndex,
+					std::to_string(w.m_addressIndex),
 					infoDetail.c_str(),
 					w.m_value.c_str());
 				bufferLines += std::string(buf) + "\n";
@@ -161,6 +161,35 @@ void MemWatcherMod::Think()
 
 				yOff += step;
 				i++;
+
+				int index = 0;
+				for (auto& arrayWatch : w.m_arrayWatches) {
+					if (i % bufferLinesCount == 0)
+						bufferLines = "";
+
+					std::string infoDetail = (m_settings.displayHudInfo && arrayWatch.m_info.size() > 0) ? (" (" + arrayWatch.m_info + ")") : "";
+					std::snprintf(buf, sizeof(buf), strFormat,
+						arrayWatch.m_scriptRunning ? "" : "(STOPPED) ",
+						arrayWatch.m_scriptName.c_str(),
+						(std::to_string(w.m_addressIndex) + "[" + std::to_string(index) + "]").c_str(),
+						infoDetail.c_str(),
+						arrayWatch.m_value.c_str());
+					bufferLines += std::string(buf) + "\n";
+
+					if (i % bufferLinesCount == (bufferLinesCount - 1))
+						DrawTextToScreen(bufferLines.c_str(), xOff, yOff, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
+
+					// Change column
+					if (i % 30 == 29)
+					{
+						xOff += (m_settings.common.columnSpacing + step);
+						yOff -= step * 30;
+					}
+
+					yOff += step;
+					i++;
+					index++;
+				}
 			}
 		}
 		if (m_dllObject.GetEnableHUD() && m_settings.common.showInGame)
