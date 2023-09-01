@@ -117,7 +117,7 @@ void MemWatcherMod::Think()
 			m_scriptRunning = false;
 
 		const float step = 1.2f * TextFontHeight(m_settings.common.inGameFontSize, m_font);
-		const char* strFormat = m_settings.inputHexIndex ? "%s%s (0x%x) %s: %s" : "%s%s (%s) %s: %s";
+		const char* strFormat = m_settings.inputHexIndex ? "%s%s (0x%x%s) %s: %s" : "%s%s (%d%s) %s: %s";
 		std::string bufferLines;
 		const int bufferLinesCount = 2;
 		int i = 0;
@@ -144,7 +144,8 @@ void MemWatcherMod::Think()
 				std::snprintf(buf, sizeof(buf), strFormat,
 					w.m_scriptRunning ? "" : "(STOPPED) ",
 					w.m_scriptName.c_str(),
-					std::to_string(w.m_addressIndex),
+					w.m_addressIndex,
+					"",
 					infoDetail.c_str(),
 					w.m_value.c_str());
 				bufferLines += std::string(buf) + "\n";
@@ -164,32 +165,36 @@ void MemWatcherMod::Think()
 
 				int index = 0;
 				for (auto& arrayWatch : w.m_arrayWatches) {
-					if (i % bufferLinesCount == 0)
-						bufferLines = "";
-
-					std::string memberIndex = w.m_arrayIndexInItem > 0 ? ".f_" + std::to_string(w.m_arrayIndexInItem) : "";
-					std::string infoDetail = (m_settings.displayHudInfo && arrayWatch.m_info.size() > 0) ? (" (" + arrayWatch.m_info + ")") : "";
-					std::snprintf(buf, sizeof(buf), strFormat,
-						arrayWatch.m_scriptRunning ? "" : "(STOPPED) ",
-						arrayWatch.m_scriptName.c_str(),
-						(std::to_string(w.m_addressIndex) + "[" + std::to_string(index) + "]" + memberIndex).c_str(),
-						infoDetail.c_str(),
-						arrayWatch.m_value.c_str());
-					bufferLines += std::string(buf) + "\n";
-
-					if (i % bufferLinesCount == (bufferLinesCount - 1))
-						DrawTextToScreen(bufferLines.c_str(), xOff, yOff, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
-
-					// Change column
-					if (i % 30 == 29)
+					if(arrayWatch.m_showInGame)
 					{
-						xOff += (m_settings.common.columnSpacing + step);
-						yOff -= step * 30;
-					}
+						if (i % bufferLinesCount == 0)
+							bufferLines = "";
 
-					yOff += step;
-					i++;
-					index++;
+						std::string memberIndex = w.m_arrayIndexInItem > 0 ? ".f_" + std::to_string(w.m_arrayIndexInItem) : "";
+						std::string infoDetail = (m_settings.displayHudInfo && arrayWatch.m_info.size() > 0) ? (" (" + arrayWatch.m_info + ")") : "";
+						std::snprintf(buf, sizeof(buf), strFormat,
+							arrayWatch.m_scriptRunning ? "" : "(STOPPED) ",
+							arrayWatch.m_scriptName.c_str(),
+							w.m_addressIndex,
+							("[" + std::to_string(index) + "]" + memberIndex).c_str(),
+							infoDetail.c_str(),
+							arrayWatch.m_value.c_str());
+						bufferLines += std::string(buf) + "\n";
+
+						if (i % bufferLinesCount == (bufferLinesCount - 1))
+							DrawTextToScreen(bufferLines.c_str(), xOff, yOff, m_settings.common.inGameFontSize, m_font, false, m_settings.common.inGameFontRed, m_settings.common.inGameFontGreen, m_settings.common.inGameFontBlue);
+
+						// Change column
+						if (i % 30 == 29)
+						{
+							xOff += (m_settings.common.columnSpacing + step);
+							yOff -= step * 30;
+						}
+
+						yOff += step;
+						i++;
+						index++;
+					}
 				}
 			}
 		}
@@ -353,7 +358,8 @@ void MemWatcherMod::ShowSelectedPopup()
 		if (m_selectedEntry->m_type == kArray)
 		{
 			ImGui::InputInt("Index In Item##AddAddress", &m_watchModifyIndexInItem);
-			ImGui::Combo("Array Item Type##AddAddress", &m_watchModifyType, watchTypeNames, IM_ARRAYSIZE(watchTypeNames));
+			//same types but without array, no nesting arrays
+			ImGui::Combo("Array Item Type##AddAddress", &m_watchModifyType, watchTypeNames, IM_ARRAYSIZE(watchTypeNames) - 1);
 			ImGui::InputInt("Item Size QWORD##AddAddress", &m_watchModifySizeQWORD, 1, 100);
 			if (ImGui::Button("Save##AddAddress"))
 			{
@@ -518,7 +524,7 @@ bool MemWatcherMod::Draw()
 		"Variable indexes are dependent on the game version.", m_onlineVersion.c_str());
 
 	char buf[112] = "";
-	const char* indexFormat = m_settings.inputHexIndex ? "0x%x##%d%d" : "%s##%d%d";
+	const char* indexFormat = m_settings.inputHexIndex ? "0x%x%s##%d%d" : "%d%s##%d%d";
 
 	ImGui::Columns(5);
 	ImGui::Separator();
@@ -534,36 +540,26 @@ bool MemWatcherMod::Draw()
 	{
 		for (auto& w : m_watches)
 		{
-			std::snprintf(buf, sizeof(buf), indexFormat, std::to_string(w.m_addressIndex), w.m_addressIndex, w.m_scriptHash, w.m_type);
-
+			std::snprintf(buf, sizeof(buf), indexFormat, w.m_addressIndex, "", w.m_addressIndex, w.m_scriptHash);
+			//can't move to DrawWatchColumn, for some reason popup becomes unresponsive that way
 			if (ImGui::Selectable(buf, false, ImGuiSelectableFlags_SpanAllColumns))
 			{
 				m_selectedEntry = &w;
 				ImGui::OpenPopup("PopupEntryProperties");
 			}
-
-			ImGui::NextColumn();
-			ImGui::Text("%s", watchTypeNames[w.m_type]); ImGui::NextColumn();
-			ImGui::Text("%s (%d)", w.m_scriptName.c_str(), w.m_scriptHash); ImGui::NextColumn();
-			ImGui::Text("%s", w.m_info.c_str()); ImGui::NextColumn();
-			ImGui::Text("%s", w.m_value.c_str()); ImGui::NextColumn();
+			DrawWatchRow(buf, w);
 
 			int index = 0;
 			for (auto& arrayItem : w.m_arrayWatches)
 			{
-				std::snprintf(buf, sizeof(buf), indexFormat, std::to_string(w.m_addressIndex) + "[" + std::to_string(index) + "]", arrayItem.m_addressIndex, arrayItem.m_scriptHash, arrayItem.m_type);
-
+				std::string memberIndex = w.m_arrayIndexInItem > 0 ? ".f_" + std::to_string(w.m_arrayIndexInItem) : "";
+				std::snprintf(buf, sizeof(buf), indexFormat, w.m_addressIndex, "[" + std::to_string(index) + "]" + memberIndex, arrayItem.m_addressIndex, arrayItem.m_scriptHash);
 				if (ImGui::Selectable(buf, false, ImGuiSelectableFlags_SpanAllColumns))
 				{
 					m_selectedEntry = &arrayItem;
 					ImGui::OpenPopup("PopupEntryProperties");
 				}
-
-				ImGui::NextColumn();
-				ImGui::Text("%s", watchTypeNames[arrayItem.m_type]); ImGui::NextColumn();
-				ImGui::Text("%s (%d)", arrayItem.m_scriptName.c_str(), arrayItem.m_scriptHash); ImGui::NextColumn();
-				ImGui::Text("%s", arrayItem.m_info.c_str()); ImGui::NextColumn();
-				ImGui::Text("%s", arrayItem.m_value.c_str()); ImGui::NextColumn();
+				DrawWatchRow(buf, arrayItem);
 				index++;
 			}
 		}
@@ -580,6 +576,14 @@ bool MemWatcherMod::Draw()
 
 	ShowSelectedPopup();
 	return true;
+}
+
+void MemWatcherMod::DrawWatchRow(char buf[], WatchEntry watch) {
+	ImGui::NextColumn();
+	ImGui::Text("%s", watchTypeNames[watch.m_type]); ImGui::NextColumn();
+	ImGui::Text("%s (%d)", watch.m_scriptName.c_str(), watch.m_scriptHash); ImGui::NextColumn();
+	ImGui::Text("%s", watch.m_info.c_str()); ImGui::NextColumn();
+	ImGui::Text("%s", watch.m_value.c_str()); ImGui::NextColumn();
 }
 
 bool CompareWatch(WatchEntry a, WatchEntry b)
