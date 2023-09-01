@@ -32,6 +32,7 @@ protected:
 	void ShowSelectedPopup();
 	void DrawMenuBar();
 	void DrawWatchRow(char buf[], WatchEntry watch);
+	void DrawWatchToScreen(WatchEntry w, int addressIndex, std::string watchText);
 	void SaveWatches();
 	void ClearSavedWatches();
 	void LoadWatches();
@@ -67,6 +68,15 @@ protected:
 	bool m_variableAlreadyWatched = false;
 	std::string m_onlineVersion = "";
 	std::string m_fileMemWatch = "Mem_Watch.json";
+	//drawing to screen
+	std::string bufferLines;
+	const int bufferLinesCount = 2;
+	int linesCount = 0;
+	float xOff = m_settings.common.inGameOffsetX;
+	float yOff = m_settings.common.inGameOffsetY;
+	float step = 0;
+	const char* strFormat = m_settings.inputHexIndex ? "%s%s (0x%x%s) %s: %s" : "%s%s (%d%s) %s: %s";
+	char watchOnScreenInfoBuf[112] = "";
 };
 
 bool CompareWatch(WatchEntry a, WatchEntry b);
