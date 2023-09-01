@@ -28,9 +28,9 @@ void WatchEntry::UpdateValue()
 			if (m_arrayWatches.size() <= i)
 			{
 				if (IsGlobal())
-					m_arrayWatches.push_back(WatchEntry(m_addressIndex + 1 + i * m_itemSizeQWORD + m_arrayIndexInItem, m_arrayItemType, kInt, "Global", 0, "", 0, true));
+					m_arrayWatches.push_back(WatchEntry(m_addressIndex + 1 + i * m_itemSizeQWORD + m_arrayIndexInItem, m_arrayItemType, kInt, "Global", 0, "", 0, 0, true));
 				else
-					m_arrayWatches.push_back(WatchEntry(m_addressIndex + 1 + i * m_itemSizeQWORD + m_arrayIndexInItem, m_arrayItemType, kInt, m_scriptName, m_scriptHash, "", 0, true));
+					m_arrayWatches.push_back(WatchEntry(m_addressIndex + 1 + i * m_itemSizeQWORD + m_arrayIndexInItem, m_arrayItemType, kInt, m_scriptName, m_scriptHash, "", 0, 0, true));
 			}
 		}
 	}
