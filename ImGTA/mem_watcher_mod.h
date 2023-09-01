@@ -31,6 +31,7 @@ protected:
 	void ShowAddAddress(bool isGlobal);
 	void ShowSelectedPopup();
 	void DrawMenuBar();
+	void DrawWatchRow(char buf[], WatchEntry watch);
 	void SaveWatches();
 	void ClearSavedWatches();
 	void LoadWatches();
