@@ -345,6 +345,14 @@ void MemWatcherMod::ShowSelectedPopup()
 				m_selectedEntry->m_arrayIndexInItem = m_watchModifyIndexInItem;
 				m_selectedEntry->m_arrayItemType = (WatchType)m_watchModifyType;
 				m_selectedEntry->m_itemSizeQWORD = m_watchModifySizeQWORD;
+				//update sub watches
+				int index = 0;
+				for (auto& watch : m_selectedEntry->m_arrayWatches)
+				{
+					watch.m_addressIndex = m_selectedEntry->m_addressIndex + 1 + index * m_selectedEntry->m_itemSizeQWORD + m_selectedEntry->m_arrayIndexInItem;
+					watch.m_type = m_selectedEntry->m_arrayItemType;
+					index++;
+				}
 			}
 		}
 
