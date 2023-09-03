@@ -336,15 +336,11 @@ void MemWatcherMod::ShowSelectedPopup()
 
 		if (m_selectedEntry->m_type == kArray)
 		{
-			ImGui::InputInt("Index In Item##EntryProperties", &m_watchModifyIndexInItem);
-			//same types but without array, no nesting arrays
-			ImGui::Combo("Array Item Type##EntryProperties", &m_watchModifyType, watchTypeNames, IM_ARRAYSIZE(watchTypeNames) - 1);
-			ImGui::InputInt("Item Size QWORD##EntryProperties", &m_watchModifySizeQWORD, 1, 100);
-			if (ImGui::Button("Save##EntryProperties"))
+			if (ImGui::InputInt("Index In Item##EntryProperties", &m_selectedEntry->m_arrayIndexInItem) ||
+				//same types but without array, no nesting arrays
+				ImGui::Combo("Array Item Type##EntryProperties", (int*)&m_selectedEntry->m_arrayItemType, watchTypeNames, IM_ARRAYSIZE(watchTypeNames) - 1) ||
+				ImGui::InputInt("Item Size QWORD##EntryProperties", &m_selectedEntry->m_itemSizeQWORD, 1, 100))
 			{
-				m_selectedEntry->m_arrayIndexInItem = m_watchModifyIndexInItem;
-				m_selectedEntry->m_arrayItemType = (WatchType)m_watchModifyType;
-				m_selectedEntry->m_itemSizeQWORD = m_watchModifySizeQWORD;
 				//update sub watches
 				int index = 0;
 				for (auto& watch : m_selectedEntry->m_arrayWatches)
@@ -354,6 +350,7 @@ void MemWatcherMod::ShowSelectedPopup()
 					index++;
 				}
 			}
+
 		}
 
 		uint64_t* val = nullptr;
