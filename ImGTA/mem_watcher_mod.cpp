@@ -329,18 +329,18 @@ void MemWatcherMod::ShowSelectedPopup()
 		}
 		ImGui::Checkbox("Show Ingame##EntryProperties", &m_selectedEntry->m_showInGame);
 
-		if (ImGui::InputText("Info##AddAddress", m_watchInfoModifyBuf, sizeof(m_watchInfoModifyBuf)))
+		if (ImGui::InputText("Info##EntryProperties", m_watchInfoModifyBuf, sizeof(m_watchInfoModifyBuf)))
 			m_selectedEntry->m_info = std::string(m_watchInfoModifyBuf);
 		else if (std::string(m_watchInfoModifyBuf) != m_selectedEntry->m_info)
 			strncpy_s(m_watchInfoModifyBuf, sizeof(m_watchInfoModifyBuf), m_selectedEntry->m_info.c_str(), sizeof(m_watchInfoModifyBuf));
 
 		if (m_selectedEntry->m_type == kArray)
 		{
-			ImGui::InputInt("Index In Item##AddAddress", &m_watchModifyIndexInItem);
+			ImGui::InputInt("Index In Item##EntryProperties", &m_watchModifyIndexInItem);
 			//same types but without array, no nesting arrays
-			ImGui::Combo("Array Item Type##AddAddress", &m_watchModifyType, watchTypeNames, IM_ARRAYSIZE(watchTypeNames) - 1);
-			ImGui::InputInt("Item Size QWORD##AddAddress", &m_watchModifySizeQWORD, 1, 100);
-			if (ImGui::Button("Save##AddAddress"))
+			ImGui::Combo("Array Item Type##EntryProperties", &m_watchModifyType, watchTypeNames, IM_ARRAYSIZE(watchTypeNames) - 1);
+			ImGui::InputInt("Item Size QWORD##EntryProperties", &m_watchModifySizeQWORD, 1, 100);
+			if (ImGui::Button("Save##EntryProperties"))
 			{
 				m_selectedEntry->m_arrayIndexInItem = m_watchModifyIndexInItem;
 				m_selectedEntry->m_arrayItemType = (WatchType)m_watchModifyType;
