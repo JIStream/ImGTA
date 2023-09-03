@@ -319,10 +319,13 @@ void MemWatcherMod::ShowSelectedPopup()
 {
 	if (ImGui::BeginPopup("PopupEntryProperties"))
 	{
-		if (ImGui::Combo("Type##EntryProperties", (int*)&m_selectedEntry->m_type, watchTypeNames, IM_ARRAYSIZE(watchTypeNames)))
+		if (!m_selectedEntry->m_isArrayItem)
 		{
-			if (m_selectedEntry->m_type != kArray)
-				m_selectedEntry->m_arrayWatches.clear();
+			if (ImGui::Combo("Type##EntryProperties", (int*)&m_selectedEntry->m_type, watchTypeNames, IM_ARRAYSIZE(watchTypeNames)))
+			{
+				if (m_selectedEntry->m_type != kArray)
+					m_selectedEntry->m_arrayWatches.clear();
+			}
 		}
 		ImGui::Checkbox("Show Ingame##EntryProperties", &m_selectedEntry->m_showInGame);
 
