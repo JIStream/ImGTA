@@ -127,6 +127,7 @@ void UserSettingsManager::Save(const std::string & filename) {
 	SaveCommon(file, s.scripts.common, "scripts.");
 	SaveCommon(file, s.playerSwitch.common, "playerSwitch.");
 	SaveCommon(file, s.syncScene.common, "syncScene.");
+	SaveCommon(file, s.memWatcher.common, "memWatcher.");
 	
 	// Area
 	file << "area.drawOffsetZ = " << s.area.drawOffsetZ << std::endl;
