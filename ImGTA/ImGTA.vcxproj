@@ -118,6 +118,7 @@ copy "$(SolutionDir)lua\lua53.dll" "E:\Grand Theft Auto V"</Command>
       <ShowIncludes>
       </ShowIncludes>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)Libraries\ScriptHookV_SDK\lib\;$(SolutionDir)Libraries\lua\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -162,6 +163,7 @@ copy "$(SolutionDir)lua\lua53.dll" "E:\Grand Theft Auto V"</Command>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookV_SDK\inc\;$(SolutionDir)Libraries\imgui\;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\lua\include\;$(SolutionDir)Libraries\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -201,10 +203,12 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClCompile Include="mission_mod.cpp" />
     <ClCompile Include="mod.cpp" />
     <ClCompile Include="model.cpp" />
+    <ClCompile Include="Patterns.cpp" />
     <ClCompile Include="player_switch_mod.cpp" />
     <ClCompile Include="script.cpp" />
     <ClCompile Include="audio_mod.cpp" />
     <ClCompile Include="scripts_mod.cpp" />
+    <ClCompile Include="scrThread.cpp" />
     <ClCompile Include="strangers_and_freaks_names.cpp" />
     <ClCompile Include="sync_scene_mod.cpp" />
     <ClCompile Include="test_mod.cpp" />
@@ -224,6 +228,7 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClInclude Include="..\Libraries\imgui\imstb_truetype.h" />
     <ClInclude Include="anim_dict.h" />
     <ClInclude Include="area_mod.h" />
+    <ClInclude Include="atArray.hh" />
     <ClInclude Include="audio_scenes.h" />
     <ClInclude Include="cheats_mod.h" />
     <ClInclude Include="comms_mod.h" />
@@ -234,11 +239,13 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClInclude Include="gta_script.h" />
     <ClInclude Include="handle_helper_mod.h" />
     <ClInclude Include="imgui_extras.h" />
+    <ClInclude Include="injector\injector.hpp" />
     <ClInclude Include="input_controls.h" />
     <ClInclude Include="lua_console_mod.h" />
     <ClInclude Include="mem_watcher_mod.h" />
     <ClInclude Include="mission_helper.h" />
     <ClInclude Include="mission_mod.h" />
+    <ClInclude Include="Patterns.hh" />
     <ClInclude Include="script_infos.h" />
     <ClInclude Include="mod.h" />
     <ClInclude Include="model.h" />
@@ -248,6 +255,7 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClInclude Include="script.h" />
     <ClInclude Include="audio_mod.h" />
     <ClInclude Include="script_names.h" />
+    <ClInclude Include="scrThread.hh" />
     <ClInclude Include="strangers_and_freaks_names.h" />
     <ClInclude Include="switch_anim_dict_names.h" />
     <ClInclude Include="sync_scene_mod.h" />

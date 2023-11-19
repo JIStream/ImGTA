@@ -9,6 +9,7 @@
 #include "types.h"
 #include "enums.h"
 #include "main.h"
+#include "injector/injector.hpp"
 
 #include <Windows.h>
 #include <cstdint>
@@ -21,7 +22,6 @@ struct handle_data
 	unsigned long processID;
 	HWND windowHandle;
 };
-
 
 struct ScrThread {
 	uint64_t field_0; // 0
@@ -86,6 +86,32 @@ struct PaddedInt {
 	DWORD _padding;
 };
 
+/*******************************************************/
+template <typename T = void>
+T*
+GetRelativeReference(const std::string& pattern, int dataOffset,
+	int nextInstOffset)
+{
+	uint8_t* addr = hook::get_pattern<uint8_t>(pattern);
+	int32_t  offset = *(int32_t*)(addr + dataOffset);
+	return (T*)(addr + offset + nextInstOffset);
+}
+
+/*******************************************************/
+template <typename T = void>
+T*
+GetRelativeReference(const std::string& pattern, int dataOffset)
+{
+	uint32_t offset = *hook::get_pattern<uint32_t>(pattern, dataOffset);
+	return (T*)(hook::getRVA(offset));
+}
+
+template <typename Func, typename Addr>
+void
+ReadCall(Addr address, Func& func)
+{
+	func = (Func)injector::GetBranchDestination(address).as_int();
+}
 
 BOOL IsMainWindow(HWND handle);
 BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam);
@@ -107,7 +133,7 @@ char* GetCallName(int callID);
 // Thanks Parik (explanation on where and how to find addresses as well as thread structures...
 //				 everything you see in these two functions)
 // Thanks Gogsi123 (how to get the value from addresses in C++)
-bool InitThreadBasket();
+void InitThreadBasket();
 uint64_t* GetThreadAddress(int localId, int scriptHash);
 uint64_t* GetGlobalPtr(int globalId);
 std::string GetGameVersionString();

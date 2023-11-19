@@ -6,14 +6,16 @@
  */
 
 #include "utils.h"
-
 #include "mod.h"
-
 #include "natives.h"
+#include "scrThread.hh"
+#include "atArray.hh"
+#include "Patterns.hh"
 
 #include <bitset>
 
-ThreadBasket threadBasket;
+
+atArray<scrThread*>* threadBasket;
 int textDrawCount = 0;
 
 BOOL IsMainWindow(HWND handle)
@@ -121,44 +123,10 @@ bool IsVersionSupportedForGlobals(eGameVersion ver)
 	return ver == eGameVersion::VER_1_0_372_2_STEAM || ver == eGameVersion::VER_1_0_372_2_NOSTEAM;
 }
 
-bool InitThreadBasket()
+void InitThreadBasket()
 {
-	// 0x9B5BCD: offset to get to the mov instruction that contains the offset to the threads structure
-	// 0x2A07D38: Offset to get the pointer to the ThreadBasket structure
-
-	// (*(srcThreads))[0] -> Address to first thread script
-	// (*srcThreads)[1] -> Address to second thread script
-
-	// (*(*srcThreads)[0]) -> First script thread
-
-	// (*(*srcThreads)[0]).pStack -> First script stack start address
-	// *(*(*srcThreads)[0]).pStack + index) -> iLocal_index
-	if (IsVersionSupportedForGlobals(getGameVersion()))
-	{
-		PVOID baseAddress = GetModuleHandleA("GTA5.exe");
-		if (baseAddress == NULL)
-			return false;
-
-		// Offset to the thread basket address, valid for build 372 only
-		PVOID offsetAddress = (PVOID)((char*)baseAddress + 0x2A07D38);
-
-		DWORD d, ds;
-
-		// Make the memory readable
-		if (!VirtualProtect(offsetAddress, sizeof(ThreadBasket), PAGE_EXECUTE_READ, &d))
-			return false;
-
-		// Copy the ThreadBasket
-		if (!memcpy(&threadBasket, offsetAddress, sizeof(ThreadBasket)))
-			return false;
-
-		// Return the previous rights to the memory
-		if (!VirtualProtect(offsetAddress, sizeof(ThreadBasket), d, &ds))
-			return false;
-		return true;
-	}
-	else
-		return false;
+	threadBasket = GetRelativeReference<atArray<scrThread*>>(
+		"8b 0d ? ? ? ? 3b ca 7d ? ? 8b 0d ", 13, 17);
 }
 
 std::string GetGameVersionString() {
@@ -170,27 +138,17 @@ uint64_t* GetThreadAddress(int localId, int scriptHash)
 	if (localId < 0 || scriptHash == 0)
 		return nullptr;
 
-	bool threadBasketLoaded = false;
-	if (threadBasket.srcThreads == nullptr)
-		threadBasketLoaded = InitThreadBasket();
-	else
-		threadBasketLoaded = true;
-
 	uint64_t* localAddress = nullptr;
-	if (threadBasketLoaded)
-	{
-		for (unsigned short i = 0; i < threadBasket.threadCount; i++)
+	for (const auto& thread : *threadBasket)
 		{
-			ScrThread* scrThread = threadBasket.srcThreads[i];
-			if (scrThread != nullptr && scrThread->pStack != nullptr)
+			if (thread->m_Context.m_nScriptHash == scriptHash)
 			{
-				if (scrThread->scriptHash == scriptHash)
+				if (thread != nullptr && (uint64_t*)thread->m_pStack != nullptr)
 				{
-					localAddress = scrThread->pStack + localId;
+					localAddress = thread->m_pStack + localId;
 					break;
 				}
 			}
-		}
 	}
 
 	return localAddress;
