@@ -141,9 +141,9 @@ uint64_t* GetThreadAddress(int localId, int scriptHash)
 	uint64_t* localAddress = nullptr;
 	for (const auto& thread : *threadBasket)
 		{
-			if (thread->m_Context.m_nScriptHash == scriptHash)
+			if (thread != nullptr)
 			{
-				if (thread != nullptr && (uint64_t*)thread->m_pStack != nullptr)
+				if (thread->m_Context.m_nScriptHash == scriptHash && (uint64_t*)thread->m_pStack != nullptr)
 				{
 					localAddress = thread->m_pStack + localId;
 					break;
