@@ -10,9 +10,10 @@
 #include "natives.h"
 #include "scrThread.hh"
 #include "atArray.hh"
-#include "Patterns.hh"
-
 #include <bitset>
+#include "Patterns/Patterns.hh"
+#include "ModUtils/Trampoline.h"
+#include "injector/injector.hpp"
 
 
 atArray<scrThread*>* threadBasket;

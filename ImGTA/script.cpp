@@ -22,6 +22,7 @@
 #include "test_mod.h"
 #include "lua_console_mod.h"
 #include "utils.h"
+#include "script_logger_mod.cc"
 
 #include "natives.h"
 
@@ -68,6 +69,7 @@ void DLLObject::InitMods()
 		m_modsLoaded.push_back(new CommsMod(*this, supportGlobals));
 		m_modsLoaded.push_back(missionMod = new MissionMod(*this, supportGlobals));
 	}
+	m_modsLoaded.push_back(new ScriptLoggerMod(*this, supportGlobals));
 	//modsLoaded.push_back(new TestMod(supportGlobals));
 }
 

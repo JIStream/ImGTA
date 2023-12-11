@@ -1,14 +1,11 @@
 #include "scrThread.hh"
-#include "Patterns.hh"
+#include "Patterns/Patterns.hh"
 #include "utils.h"
 #include <cstdint>
 #include <utility>
 #include <array>
 #include <sstream>
-
-#ifdef ENABLE_DEBUG_SERVER
 #include <fmt/core.h>
-#endif
 
 class gBaseScriptDirectory;
 
@@ -234,7 +231,6 @@ scrThread::FindInstSize(scrProgram* program, uint32_t offset)
     return FindInstSize(&program->GetCodeByte<uint8_t>(offset));
 }
 
-#ifdef ENABLE_DEBUG_SERVER
 /*******************************************************/
 std::string
 scrThread::DisassemblInsn(scrProgram* program, uint32_t offset)
@@ -350,7 +346,6 @@ scrThread::DisassemblInsn(scrProgram* program, uint32_t offset)
 
     return out;
 }
-#endif
 
 /*******************************************************/
 eScriptState(*scrThread__Run) (uint64_t*, uint64_t**, scrProgram*,

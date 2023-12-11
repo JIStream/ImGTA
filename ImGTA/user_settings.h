@@ -112,6 +112,10 @@ struct MissionSettings {
 	CommonSettings common;
 };
 
+struct ScriptLoggerSettings {
+	CommonSettings common;
+};
+
 struct ScriptsSettings {
 	CommonSettings common;
 	bool sortByName = true;
@@ -138,6 +142,7 @@ struct UserSettings {
 	ScriptsSettings scripts;
 	PlayerSwitchSettings playerSwitch;
 	SyncSceneSettings syncScene;
+	ScriptLoggerSettings loggerSettings;
 };
 
 class UserSettingsManager {

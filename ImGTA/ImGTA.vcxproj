@@ -114,7 +114,7 @@ copy "$(SolutionDir)lua\lua53.dll" "E:\Grand Theft Auto V"</Command>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookV_SDK\inc\;$(SolutionDir)Libraries\imgui\;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\json;$(SolutionDir)Libraries\lua\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookV_SDK\inc\;$(SolutionDir)Libraries\imgui\;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\fmt-master\include\;$(SolutionDir)Libraries\json;$(SolutionDir)Libraries\lua\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -161,7 +161,7 @@ copy "$(SolutionDir)lua\lua53.dll" "E:\Grand Theft Auto V"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookV_SDK\inc\;$(SolutionDir)Libraries\imgui\;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\lua\include\;$(SolutionDir)Libraries\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookV_SDK\inc\;$(SolutionDir)Libraries\imgui\;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\fmt-master\include\;$(SolutionDir)Libraries\lua\include\;$(SolutionDir)Libraries\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -190,11 +190,13 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClCompile Include="anim_dict.cpp" />
     <ClCompile Include="area_mod.cpp" />
     <ClCompile Include="cheats_mod.cpp" />
+    <ClCompile Include="common\common.cpp" />
     <ClCompile Include="comms_mod.cpp" />
     <ClCompile Include="cutscene_mod.cpp" />
     <ClCompile Include="gta_script.cpp" />
     <ClCompile Include="handle_helper_mod.cpp" />
     <ClCompile Include="imgui_extras.cpp" />
+    <ClCompile Include="logger.cpp" />
     <ClCompile Include="lua_console_mod.cpp" />
     <ClCompile Include="lua_engine.cpp" />
     <ClCompile Include="main.cpp" />
@@ -203,10 +205,10 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClCompile Include="mission_mod.cpp" />
     <ClCompile Include="mod.cpp" />
     <ClCompile Include="model.cpp" />
-    <ClCompile Include="Patterns.cpp" />
     <ClCompile Include="player_switch_mod.cpp" />
     <ClCompile Include="script.cpp" />
     <ClCompile Include="audio_mod.cpp" />
+    <ClCompile Include="script_logger_mod.cc" />
     <ClCompile Include="scripts_mod.cpp" />
     <ClCompile Include="scrThread.cpp" />
     <ClCompile Include="strangers_and_freaks_names.cpp" />
@@ -231,6 +233,8 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClInclude Include="atArray.hh" />
     <ClInclude Include="audio_scenes.h" />
     <ClInclude Include="cheats_mod.h" />
+    <ClInclude Include="common\common.hh" />
+    <ClInclude Include="common\logger.hh" />
     <ClInclude Include="comms_mod.h" />
     <ClInclude Include="cutscene_mod.h" />
     <ClInclude Include="cutscene_names.h" />
@@ -241,11 +245,12 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClInclude Include="imgui_extras.h" />
     <ClInclude Include="injector\injector.hpp" />
     <ClInclude Include="input_controls.h" />
+    <ClInclude Include="logger.hh" />
     <ClInclude Include="lua_console_mod.h" />
     <ClInclude Include="mem_watcher_mod.h" />
     <ClInclude Include="mission_helper.h" />
     <ClInclude Include="mission_mod.h" />
-    <ClInclude Include="Patterns.hh" />
+    <ClInclude Include="rage.hh" />
     <ClInclude Include="script_infos.h" />
     <ClInclude Include="mod.h" />
     <ClInclude Include="model.h" />

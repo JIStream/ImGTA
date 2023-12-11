@@ -1,0 +1,629 @@
+#include <map>
+#include "utils.h"
+#include "common/common.hh"
+#include "common/logger.hh"
+#include "fmt/core.h"
+#include "imgui.h"
+#include "misc/cpp/imgui_stdlib.h"
+#include "rage.hh"
+#include "scrThread.hh"
+#include <array>
+#include <cstdint>
+#include <stdio.h>
+#include <time.h>
+#include "mod.h"
+#include "ModUtils/Trampoline.h"
+#include "Patterns/Patterns.hh"
+#include "user_settings.h"
+
+using WriteFunction = void (*) (FILE*, uint8_t*, uint64_t*, uint64_t*);
+
+inline void
+WriteStackArgs(FILE* file, uint64_t* SP, uint8_t num)
+{
+	fwrite(&num, 1, 1, file);
+	fwrite(SP - (num - 1), 8, num, file);
+}
+
+template <uint8_t Stack = 0, uint8_t IpBytes = 0, int8_t... Pointers>
+void
+BasicOpcodeWrite(FILE* file, uint8_t* bytes, uint64_t* SP, uint64_t* FSP)
+{
+	fwrite(&bytes, 8, 1, file);
+	fwrite(bytes, 1, IpBytes + 1, file);
+	fwrite(SP - (Stack - 1), 8, Stack, file);
+
+	(..., fwrite(reinterpret_cast<void*> (SP[-Pointers]), 8, 1, file));
+}
+
+inline static void
+NativeWriteFunction(FILE* file, uint8_t* bytes, uint64_t* SP, uint64_t* FSP)
+{
+	BasicOpcodeWrite<0, 4>(file, bytes, SP, FSP);
+	WriteStackArgs(file, SP, bytes[1] >> 2);
+}
+
+inline static void
+EnterWriteFunction(FILE* file, uint8_t* bytes, uint64_t* SP, uint64_t* FSP)
+{
+	BasicOpcodeWrite<0, 5>(file, bytes, SP, FSP);
+	WriteStackArgs(file, SP - 1, bytes[1]);
+}
+
+inline static void
+LeaveWriteFunction(FILE* file, uint8_t* bytes, uint64_t* SP, uint64_t* FSP)
+{
+	BasicOpcodeWrite<0, 5>(file, bytes, SP, FSP);
+
+	uint8_t stackOff = bytes[1];
+	uint8_t numRets = bytes[2];
+	WriteStackArgs(file, SP, numRets);
+}
+
+template <uint32_t Stacks, int32_t... StringIndices>
+inline static void
+TextLabelFunction(FILE* file, uint8_t* bytes, uint64_t* SP, uint64_t* FSP)
+{
+	BasicOpcodeWrite<Stacks, 1>(file, bytes, SP, FSP);
+
+	uint8_t bufferSize = bytes[1];
+	fwrite(&bufferSize, 1, 1, file);
+	(..., fwrite(reinterpret_cast<char*> (SP[-StringIndices]), 1, bufferSize,
+		file));
+}
+
+enum class VariableType
+{
+	ARRAY,
+	STATIC,
+	LOCAL,
+	OFFSET,
+	GLOBAL
+};
+
+template <VariableType type, uint8_t size, uint8_t stackSize>
+inline static void
+VarWriteFunction(FILE* file, uint8_t* bytes, uint64_t* SP, uint64_t* FSP)
+{
+	BasicOpcodeWrite<stackSize, size / 8>(file, bytes, SP, FSP);
+
+	uint32_t imm
+		= *reinterpret_cast<uint32_t*> (bytes + 1) & ((1 << size) - 1);
+	int16_t   simm16 = *reinterpret_cast<int16_t*> (bytes + 1);
+	uint64_t* ptr = reinterpret_cast<uint64_t*> (SP[0]);
+
+	switch (type)
+	{
+		// Array
+	case VariableType::ARRAY:
+		ptr += (imm * (static_cast<uint32_t> (SP[-1]) + 1));
+		break;
+
+		// Static
+	case VariableType::STATIC:
+		ptr = &scrThread::GetActiveThread()->GetStaticVariable(imm);
+		break;
+
+		// Global
+	case VariableType::GLOBAL: ptr = &scrThread::GetGlobal(imm); break;
+	case VariableType::LOCAL: ptr = (FSP + imm); break;
+	case VariableType::OFFSET: ptr += size == 16 ? simm16 : imm;
+	}
+
+	fwrite(&ptr, 8, 1, file);
+	fwrite(ptr, 8, 1, file);
+}
+
+inline void
+OffsetWriteFunction(FILE* file, uint8_t* bytes, uint64_t* SP, uint64_t* FSP)
+{
+	BasicOpcodeWrite<2, 0, 1>(file, bytes, SP, FSP);
+	uint64_t* ptr
+		= reinterpret_cast<uint64_t*> (SP[0]) + static_cast<uint32_t> (SP[-1]);
+
+	fwrite(&ptr, 8, 1, file);
+	fwrite(ptr, 8, 1, file);
+}
+
+inline void
+Load_N_WriteFunction(FILE* file, uint8_t* bytes, uint64_t* SP, uint64_t* FSP)
+{
+	BasicOpcodeWrite<2, 0, 0>(file, bytes, SP, FSP);
+
+	uint64_t* ptr = reinterpret_cast<uint64_t*> (SP[0]);
+	uint32_t  numItems = SP[-1];
+
+	fwrite(&numItems, 8, 1, file);
+	for (uint64_t i = 0; i < numItems; i++, ptr++)
+	{
+		fwrite(&ptr, 8, 1, file);
+		fwrite(ptr, 8, 1, file);
+	}
+}
+
+inline void
+Store_N_WriteFunction(FILE* file, uint8_t* bytes, uint64_t* SP, uint64_t* FSP)
+{
+	BasicOpcodeWrite<2, 0, 0>(file, bytes, SP, FSP);
+	uint32_t numItems = SP[-1];
+
+	WriteStackArgs(file, SP - 2, numItems);
+}
+
+static constexpr std::array<WriteFunction, 128> Opcodes = { {
+	BasicOpcodeWrite,                              // NOP
+	BasicOpcodeWrite<2>,                           // IADD
+	BasicOpcodeWrite<2>,                           // ISUB
+	BasicOpcodeWrite<2>,                           // IMUL
+	BasicOpcodeWrite<2>,                           // IDIV
+	BasicOpcodeWrite<2>,                           // IMOD
+	BasicOpcodeWrite<1>,                           // INOT
+	BasicOpcodeWrite<1>,                           // INEG
+	BasicOpcodeWrite<2>,                           // IEQ
+	BasicOpcodeWrite<2>,                           // INE
+	BasicOpcodeWrite<2>,                           // IGT
+	BasicOpcodeWrite<2>,                           // IGE
+	BasicOpcodeWrite<2>,                           // ILT
+	BasicOpcodeWrite<2>,                           // ILE
+	BasicOpcodeWrite<2>,                           // FADD
+	BasicOpcodeWrite<2>,                           // FSUB
+	BasicOpcodeWrite<2>,                           // FMUL
+	BasicOpcodeWrite<2>,                           // FDIV
+	BasicOpcodeWrite<2>,                           // FMOD
+	BasicOpcodeWrite<1>,                           // FNEG
+	BasicOpcodeWrite<1>,                           // FEQ
+	BasicOpcodeWrite<1>,                           // FNE
+	BasicOpcodeWrite<1>,                           // FGT
+	BasicOpcodeWrite<1>,                           // FGE
+	BasicOpcodeWrite<1>,                           // FLT
+	BasicOpcodeWrite<1>,                           // FLE
+	BasicOpcodeWrite<6>,                           // VADD
+	BasicOpcodeWrite<6>,                           // VSUB
+	BasicOpcodeWrite<6>,                           // VMUL
+	BasicOpcodeWrite<6>,                           // VDIV
+	BasicOpcodeWrite<3>,                           // VNEG
+	BasicOpcodeWrite<2>,                           // IAND
+	BasicOpcodeWrite<2>,                           // IOR
+	BasicOpcodeWrite<2>,                           // IXOR
+	BasicOpcodeWrite<1>,                           // I2F
+	BasicOpcodeWrite<1>,                           // F2I
+	BasicOpcodeWrite<1>,                           // F2V
+	BasicOpcodeWrite<0, 1>,                        // PUSH_CONST_U8
+	BasicOpcodeWrite<0, 2>,                        // PUSH_CONST_U8_U8
+	BasicOpcodeWrite<0, 3>,                        // PUSH_CONST_U8_U8_U8
+	BasicOpcodeWrite<0, 4>,                        // PUSH_CONST_U32
+	BasicOpcodeWrite<0, 4>,                        // PUSH_CONST_F
+	BasicOpcodeWrite<1>,                           // DUP
+	BasicOpcodeWrite<1>,                           // DROP
+	NativeWriteFunction,                           // NATIVE
+	EnterWriteFunction,                            // ENTER
+	LeaveWriteFunction,                            // LEAVE
+	BasicOpcodeWrite<1, 0, 0>,                     // LOAD
+	BasicOpcodeWrite<2, 0, 0>,                     // STORE
+	BasicOpcodeWrite<2, 0, 1>,                     // STORE_REV
+	Load_N_WriteFunction,                          // LOAD_N
+	Store_N_WriteFunction,                         // STORE_N
+	VarWriteFunction<VariableType::ARRAY, 8, 2>,   // ARRAY_U8
+	VarWriteFunction<VariableType::ARRAY, 8, 2>,   // ARRAY_U8_LOAD
+	VarWriteFunction<VariableType::ARRAY, 8, 3>,   // ARRAY_U8_STORE
+	VarWriteFunction<VariableType::LOCAL, 8, 0>,   // LOCAL_U8
+	VarWriteFunction<VariableType::LOCAL, 8, 0>,   // LOCAL_U8_LOAD
+	VarWriteFunction<VariableType::LOCAL, 8, 1>,   // LOCAL_U8_STORE
+	VarWriteFunction<VariableType::STATIC, 8, 0>,  // STATIC_U8
+	VarWriteFunction<VariableType::STATIC, 8, 0>,  // STATIC_U8_LOAD
+	VarWriteFunction<VariableType::STATIC, 8, 1>,  // STATIC_U8_STORE
+	BasicOpcodeWrite<1, 1>,                        // IADD_U8
+	BasicOpcodeWrite<1, 1>,                        // IMUL_U8
+	OffsetWriteFunction,                           // IOFFSET
+	VarWriteFunction<VariableType::OFFSET, 8, 1>,  // IOFFSET_U8
+	VarWriteFunction<VariableType::OFFSET, 8, 1>,  // IOFFSET_U8_LOAD
+	VarWriteFunction<VariableType::OFFSET, 8, 2>,  // IOFFSET_U8_STORE
+	BasicOpcodeWrite<1, 2>,                        // PUSH_CONST_S16
+	BasicOpcodeWrite<1, 2>,                        // IADD_S16
+	BasicOpcodeWrite<1, 2>,                        // IMUL_S16
+	VarWriteFunction<VariableType::OFFSET, 8, 1>,  // IOFFSET_S16
+	VarWriteFunction<VariableType::OFFSET, 8, 1>,  // IOFFSET_S16_LOAD
+	VarWriteFunction<VariableType::OFFSET, 8, 2>,  // IOFFSET_S16_STORE
+	VarWriteFunction<VariableType::ARRAY, 16, 2>,  // ARRAY_U16
+	VarWriteFunction<VariableType::ARRAY, 16, 2>,  // ARRAY_U16_LOAD
+	VarWriteFunction<VariableType::ARRAY, 16, 3>,  // ARRAY_U16_STORE
+	VarWriteFunction<VariableType::LOCAL, 8, 0>,   // LOCAL_U16
+	VarWriteFunction<VariableType::LOCAL, 8, 0>,   // LOCAL_U16_LOAD
+	VarWriteFunction<VariableType::LOCAL, 8, 1>,   // LOCAL_U16_STORE
+	VarWriteFunction<VariableType::STATIC, 16, 0>, // STATIC_U16
+	VarWriteFunction<VariableType::STATIC, 16, 0>, // STATIC_U16_LOAD
+	VarWriteFunction<VariableType::STATIC, 16, 1>, // STATIC_U16_STORE
+	VarWriteFunction<VariableType::GLOBAL, 16, 0>, // GLOBAL_U16
+	VarWriteFunction<VariableType::GLOBAL, 16, 0>, // GLOBAL_U16_LOAD
+	VarWriteFunction<VariableType::GLOBAL, 16, 1>, // GLOBAL_U16_STORE
+	BasicOpcodeWrite,                              // J
+	BasicOpcodeWrite<1>,                           // JZ
+	BasicOpcodeWrite<2>,                           // IEQ_JZ
+	BasicOpcodeWrite<2>,                           // INE_JZ
+	BasicOpcodeWrite<2>,                           // IGT_JZ
+	BasicOpcodeWrite<2>,                           // IGE_JZ
+	BasicOpcodeWrite<2>,                           // ILT_JZ
+	BasicOpcodeWrite<2>,                           // ILE_JZ
+	BasicOpcodeWrite,                              // CALL
+	VarWriteFunction<VariableType::GLOBAL, 24, 0>, // GLOBAL_U24
+	VarWriteFunction<VariableType::GLOBAL, 24, 0>, // GLOBAL_U24_LOAD
+	VarWriteFunction<VariableType::GLOBAL, 24, 1>, // GLOBAL_U24_STORE
+	BasicOpcodeWrite<0, 3>,                        // PUSH_CONST_U24
+	BasicOpcodeWrite<1>,                           // SWITCH
+	BasicOpcodeWrite,                              // STRING
+	TextLabelFunction<1, 0>,                       // STRINGHASH
+	TextLabelFunction<2, 0, 1>,                    // TEXT_LABEL_ASSIGN_STRING
+	TextLabelFunction<2, 0>,                       // TEXT_LABEL_ASSIGN_INT
+	TextLabelFunction<2, 0, 1>,                    // TEXT_LABEL_APPEND_STRING
+	TextLabelFunction<2, 0>,                       // TEXT_LABEL_APPEND_INT
+	BasicOpcodeWrite,                              // TEXT_LABEL_COPY
+	BasicOpcodeWrite,                              // CATCH
+	BasicOpcodeWrite,                              // THROW
+	BasicOpcodeWrite<1>,                           // CALLINDIRECT
+	BasicOpcodeWrite,                              // PUSH_CONST_M1
+	BasicOpcodeWrite,                              // PUSH_CONST_0
+	BasicOpcodeWrite,                              // PUSH_CONST_1
+	BasicOpcodeWrite,                              // PUSH_CONST_2
+	BasicOpcodeWrite,                              // PUSH_CONST_3
+	BasicOpcodeWrite,                              // PUSH_CONST_4
+	BasicOpcodeWrite,                              // PUSH_CONST_5
+	BasicOpcodeWrite,                              // PUSH_CONST_6
+	BasicOpcodeWrite,                              // PUSH_CONST_7
+	BasicOpcodeWrite,                              // PUSH_CONST_FM1
+	BasicOpcodeWrite,                              // PUSH_CONST_F0
+	BasicOpcodeWrite,                              // PUSH_CONST_F1
+	BasicOpcodeWrite,                              // PUSH_CONST_F2
+	BasicOpcodeWrite,                              // PUSH_CONST_F3
+	BasicOpcodeWrite,                              // PUSH_CONST_F4
+	BasicOpcodeWrite,                              // PUSH_CONST_F5
+	BasicOpcodeWrite,                              // PUSH_CONST_F6
+	BasicOpcodeWrite,                              // PUSH_CONST_F7
+	BasicOpcodeWrite<2>                            // IS_BIT_SET
+} };
+
+class TTDFile
+{
+	FILE* m_File = nullptr;
+	enum
+	{
+		PAUSED,
+		CAPTURING_ALL,
+		CAPTURING_CFLOW,
+		CAPTURING_GLOBALS,
+		CAPTURING_LOCALS
+	} m_eState
+		= PAUSED;
+
+	void
+		WriteHeader(scrThread* thread, scrProgram* program)
+	{
+		char MagicNumber[] = "RBTTD";
+		fwrite(MagicNumber, 1, sizeof(MagicNumber), m_File);
+
+		fwrite(thread->GetName(), 1, 64, m_File);
+		fwrite(&thread->m_Context.m_nThreadId, 4, 1, m_File);
+		fwrite(&thread->m_pStack, 8, 1, m_File);
+
+		uint32_t numPages = program->GetTotalPages(program->m_nCodeSize);
+		fwrite(&numPages, 4, 1, m_File);
+		fwrite(program->m_pCodeBlocks, 8, numPages, m_File);
+
+		fflush(m_File);
+	}
+
+	void
+		WriteGlobals()
+	{
+		const uint8_t NUM_GLOBALS = 64;
+
+		fwrite(scrThread::sm_Globals, 8, NUM_GLOBALS, m_File);
+		for (uint8_t i = 0; i < NUM_GLOBALS; i++)
+		{
+			ImGTA::Logger::LogMessage(
+				"Writing globals: %x (size = %x)", scrThread::sm_Globals[i],
+				scrThread::sm_GlobalSizes[i]);
+
+			fwrite(&scrThread::sm_GlobalSizes[i], 4, 1, m_File);
+			if (scrThread::sm_Globals[i] && scrThread::sm_GlobalSizes[i])
+				fwrite(scrThread::sm_Globals[i], 1,
+					scrThread::sm_GlobalSizes[i], m_File);
+		}
+	}
+
+	void
+		WriteStack(scrThread* thread)
+	{
+		fwrite(&thread->m_Context.m_nStackSize, 4, 1, m_File);
+		fwrite(thread->m_pStack, 8, thread->m_Context.m_nStackSize, m_File);
+	}
+
+	void
+		OpenFile(scrThread* thread, scrProgram* program)
+	{
+		if (m_File)
+			return;
+
+		m_File = ImGTA::Common::GetRainbomizerFile(
+			fmt::format("{}_{}.{}.ttd", thread->GetName(),
+				thread->m_Context.m_nThreadId, time(nullptr)),
+			"wb", "ttd/");
+
+		WriteHeader(thread, program);
+		WriteGlobals();
+		WriteStack(thread);
+	}
+
+	void
+		CloseFile()
+	{
+		fclose(m_File);
+		m_File = nullptr;
+	}
+
+public:
+	bool
+		StartCapture(scrThread* thread, scrProgram* program, bool CFlowOnly,
+			bool GlobalsOnly, bool LocalsOnly)
+	{
+		if (m_eState != PAUSED)
+			return true;
+
+		ImGTA::Logger::LogMessage("Starting capture thread: %s",
+			thread->GetName());
+
+		if (CFlowOnly)
+			m_eState = CAPTURING_CFLOW;
+		else if (GlobalsOnly)
+			m_eState = CAPTURING_GLOBALS;
+		else if (LocalsOnly)
+			m_eState = CAPTURING_LOCALS;
+		else
+			m_eState = CAPTURING_ALL;
+
+		OpenFile(thread, program);
+		return false;
+	}
+
+	void
+		StopCapture()
+	{
+		m_eState = PAUSED;
+		CloseFile();
+	}
+
+	bool
+		ShouldWriteOpcode(YscOpCode op)
+	{
+		//#define ENABLE_TTD_DEBUG_WRITE_OPCODE
+#ifdef ENABLE_TTD_DEBUG_WRITE_OPCODE
+		Rainbomizer::Logger::LogMessage("Attempting to write opcode: %d", op);
+#endif
+
+		switch (m_eState)
+		{
+		case CAPTURING_ALL: return true;
+		case PAUSED: return false;
+		case CAPTURING_CFLOW:
+			switch (op)
+			{
+			case NATIVE:
+			case ENTER:
+			case LEAVE:
+			case LOAD:
+			case STORE:
+			case STORE_REV:
+
+			default: return false;
+			}
+		case CAPTURING_GLOBALS:
+			switch (op)
+			{
+			default: return false;
+			}
+		case CAPTURING_LOCALS:
+			switch (op)
+			{
+			default: return false;
+			}
+			break;
+		}
+
+		return true;
+	}
+
+	void
+		WriteOpcode(uint8_t* ip, uint64_t* SP, uint64_t* FSP)
+	{
+		if (ShouldWriteOpcode(static_cast<YscOpCode> (*ip)))
+		{
+			Opcodes[*ip](m_File, ip, SP, FSP);
+
+#ifdef ENABLE_TTD_DEBUG_WRITE_OPCODE
+			Rainbomizer::Logger::LogMessage(
+				"Successfully wrote opcode: %d", *ip);
+#endif
+		}
+	}
+};
+
+class ScriptLoggerMod : public Mod
+{
+	class TTDFileManager
+	{
+		inline static std::map<uint32_t, TTDFile> m_Files{};
+
+		uint32_t m_NumIterations = 0;
+
+	public:
+		TTDFileManager(uint32_t numIterations = 1)
+			: m_NumIterations(numIterations)
+		{
+		}
+
+		~TTDFileManager()
+		{
+			for (auto& i : m_Files)
+				i.second.StopCapture();
+		}
+
+		bool
+			IsActive()
+		{
+			return m_NumIterations != 0 && m_NumIterations-- != 0;
+		}
+
+		bool
+			Activate(scrProgram* program)
+		{
+			if (!IsActive())
+				return false;
+
+			auto thread = scrThread::GetActiveThread();
+
+			m_CurrentFile = &m_Files[thread->m_Context.m_nThreadId];
+			m_CurrentFile->StartCapture(thread, program, false, false, false);
+
+			return true;
+		}
+
+		void
+			SetNumIterations(uint32_t iters)
+		{
+			this->m_NumIterations = iters;
+		}
+	};
+
+	inline static std::map<uint32_t, TTDFileManager> m_Files{};
+	inline static TTDFile* m_CurrentFile = nullptr;
+
+	/*******************************************************/
+	static uint32_t
+		PerOpcodeHook(uint8_t* ip, uint64_t* SP, uint64_t* FSP)
+	{
+		ProcessOpcode(ip, SP, FSP);
+		return *ip;
+	}
+
+	/*******************************************************/
+	void
+		InitialisePerOpcodeHook()
+	{
+		const int CALL_OFFSET = 23;
+		const int JMP_OFFSET = 36;
+		const int ORIG_INSTRUCTIONS = 6;
+
+		unsigned char Instructions[] = {
+			0x48, 0xff, 0xc7,             // INC     RDI
+			0x0f, 0xb6, 0x07,             // MOVZX   EAX,byte ptr [RDI]
+			0x41, 0x50,                   // PUSH    R8
+			0x41, 0x51,                   // PUSH    R9
+			0x41, 0x52,                   // PUSH    R10
+			0x41, 0x53,                   // PUSH    R11
+			0x48, 0x89, 0xf9,             // MOV     RCX,RDI
+			0x48, 0x89, 0xda,             // MOV     RDX,RBX
+			0x4d, 0x89, 0xd8,             // MOV     R8, R11
+			0xe8, 0x00, 0x00, 0x00, 0x00, // CALL    0x0
+			0x41, 0x5b,                   // POP     R11
+			0x41, 0x5a,                   // POP     R10
+			0x41, 0x59,                   // POP     R9
+			0x41, 0x58,                   // POP     R8
+			0xe9, 0x00, 0x00, 0x00, 0x00  // JMP     0x0
+		};
+
+		void* addr = hook::get_pattern("48 ff c7 0f b6 07 83 f8 ? 0f 87");
+		auto trampoline = Trampoline::MakeTrampoline(GetModuleHandle(nullptr))
+			->Pointer<decltype (Instructions)>();
+
+		memcpy(trampoline, Instructions, sizeof(Instructions));
+		memcpy(trampoline, addr, ORIG_INSTRUCTIONS);
+
+		injector::MakeNOP(addr, ORIG_INSTRUCTIONS);
+		injector::MakeJMP(addr, trampoline);
+		injector::MakeJMP(&trampoline[0][JMP_OFFSET], (uint8_t*)addr + 5);
+
+		RegisterHook(&trampoline[0][CALL_OFFSET], PerOpcodeHook);
+	}
+
+	bool
+		Draw() override
+	{
+		static std::string threadName = "";
+		static int         iterations = 0;
+		bool               pause;
+
+		ImGui::InputText("Thread Name", &threadName);
+		ImGui::InputInt("Iterations", &iterations);
+
+		if (ImGui::Button("Capture"))
+		{
+			ImGui::OpenPopup("Capture?");
+		}
+		ImGui::SameLine();
+		pause = ImGui::Button("Pause");
+
+		if (ImGui::BeginPopupModal("Capture?"))
+		{
+			ImGui::Text("ARE YOU SURE?!?!?!?!!?!");
+			if (ImGui::Button("Yes"))
+			{
+				m_Files[rage::atStringHash(threadName)]
+					.SetNumIterations((pause) ? 0 : iterations);
+
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("No"))
+				ImGui::CloseCurrentPopup();
+
+			ImGui::EndPopup();
+		}
+	}
+
+	void
+		Process(uint64_t* stack, uint64_t* globals, scrProgram* program,
+			scrThreadContext* ctx) override
+	{
+		Rainbomizer::ExceptionHandlerMgr::GetInstance().Init();
+
+		m_CurrentFile = nullptr;
+		if (auto file = LookupMap(m_Files, ctx->m_nScriptHash))
+		{
+			if (!file->Activate(program))
+			{
+				m_Files.erase(ctx->m_nScriptHash);
+				ImGTA::Logger::LogMessage(
+					"Finished tracing thread: %s",
+					scrThread::GetActiveThread()->GetName());
+			}
+		}
+	}
+
+private:
+	ScriptLoggerSettings m_settings;
+
+public:
+	static ScriptLoggerMod sm_Instance;
+
+	ScriptLoggerMod(DLLObject& dllObject, bool supportGlobals) : Mod(dllObject, "Script Logger", true, supportGlobals) {
+		m_windowFlags = ImGuiWindowFlags_MenuBar;
+	}
+
+	static void
+		ProcessOpcode(uint8_t* ip, uint64_t* SP, uint64_t* FSP)
+	{
+		if (m_CurrentFile)
+			m_CurrentFile->WriteOpcode(ip, SP, FSP);
+	}
+	void Load()
+	{
+		InitialiseAllComponents();
+		//InitialisePerOpcodeHook ();
+	}
+	void Unload() {
+
+	}
+	CommonSettings& GetCommonSettings() override { return m_settings.common; }
+};
+
+//TimeTravelDebugInterface TimeTravelDebugInterface::sm_Instance{};
