@@ -191,12 +191,12 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClCompile Include="area_mod.cpp" />
     <ClCompile Include="cheats_mod.cpp" />
     <ClCompile Include="common\common.cpp" />
+    <ClCompile Include="common\events.cc" />
     <ClCompile Include="comms_mod.cpp" />
     <ClCompile Include="cutscene_mod.cpp" />
     <ClCompile Include="gta_script.cpp" />
     <ClCompile Include="handle_helper_mod.cpp" />
     <ClCompile Include="imgui_extras.cpp" />
-    <ClCompile Include="logger.cpp" />
     <ClCompile Include="lua_console_mod.cpp" />
     <ClCompile Include="lua_engine.cpp" />
     <ClCompile Include="main.cpp" />
@@ -234,6 +234,7 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClInclude Include="audio_scenes.h" />
     <ClInclude Include="cheats_mod.h" />
     <ClInclude Include="common\common.hh" />
+    <ClInclude Include="common\events.hh" />
     <ClInclude Include="common\logger.hh" />
     <ClInclude Include="comms_mod.h" />
     <ClInclude Include="cutscene_mod.h" />
@@ -245,7 +246,6 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClInclude Include="imgui_extras.h" />
     <ClInclude Include="injector\injector.hpp" />
     <ClInclude Include="input_controls.h" />
-    <ClInclude Include="logger.hh" />
     <ClInclude Include="lua_console_mod.h" />
     <ClInclude Include="mem_watcher_mod.h" />
     <ClInclude Include="mission_helper.h" />

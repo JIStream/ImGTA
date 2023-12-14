@@ -10,6 +10,8 @@
 #include "enums.h"
 #include "main.h"
 #include "injector/injector.hpp"
+#include "Patterns/Patterns.hh"
+#include "ModUtils/Trampoline.h"
 
 #include <Windows.h>
 #include <cstdint>
@@ -94,38 +96,6 @@ GetRelativeReference(const std::string& pattern, int dataOffset)
 	uint32_t offset = *hook::get_pattern<uint32_t>(pattern, dataOffset);
 	return (T*)(hook::getRVA(offset));
 }
-
-template <typename Func, typename Addr>
-void
-ReadCall(Addr address, Func& func)
-{
-	func = (Func)injector::GetBranchDestination(address).as_int();
-}
-
-BOOL IsMainWindow(HWND handle);
-BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam);
-HWND FindMainWindow(unsigned long processID);
-void ResetTextDrawCount();
-int GetTextDrawCount();
-float TextFontHeight(float size, eFont font);
-// WARNING DrawTextToScreen: Only the first 100 calls to this function are displayed!
-void DrawTextToScreen(const char* text, float x, float y, float scale, eFont font, bool alignRight = false, int red = 255, int green = 255, int blue = 255);
-void ClipInt(int& value, int min, int max);
-void ClipFloat(float& value, float min, float max);
-const char* BoolToStr(bool value);
-Vector3 InitVector3(float value);
-bool IsVersionSupportedForGlobals(eGameVersion ver);
-
-char* GetCommsCharacterName(int characterId);
-char* GetTextMessageName(int textId);
-char* GetCallName(int callID);
-// Thanks Parik (explanation on where and how to find addresses as well as thread structures...
-//				 everything you see in these two functions)
-// Thanks Gogsi123 (how to get the value from addresses in C++)
-void InitThreadBasket();
-uint64_t* GetThreadAddress(int localId, int scriptHash);
-uint64_t* GetGlobalPtr(int globalId);
-std::string GetGameVersionString();
 
 /*******************************************************/
 /* Returns a random element from a container           */
@@ -326,26 +296,6 @@ SearchBack(const std::string& pattern, const std::string& pattern2,
 }
 
 /*******************************************************/
-template <typename T = void>
-T*
-GetRelativeReference(const std::string& pattern, int dataOffset,
-	int nextInstOffset)
-{
-	uint8_t* addr = hook::get_pattern<uint8_t>(pattern);
-	int32_t  offset = *(int32_t*)(addr + dataOffset);
-	return (T*)(addr + offset + nextInstOffset);
-}
-
-/*******************************************************/
-template <typename T = void>
-T*
-GetRelativeReference(const std::string& pattern, int dataOffset)
-{
-	uint32_t offset = *hook::get_pattern<uint32_t>(pattern, dataOffset);
-	return (T*)(hook::getRVA(offset));
-}
-
-/*******************************************************/
 /* Macro to facilitate a hook
    Define a function like this:
 
@@ -390,3 +340,28 @@ GetRelativeReference(const std::string& pattern, int dataOffset)
         static ret (*F) (__VA_ARGS__);                                         \
         RegisterHookVft<type, offset> (F, function<F>);                        \
     }
+
+BOOL IsMainWindow(HWND handle);
+BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam);
+HWND FindMainWindow(unsigned long processID);
+void ResetTextDrawCount();
+int GetTextDrawCount();
+float TextFontHeight(float size, eFont font);
+// WARNING DrawTextToScreen: Only the first 100 calls to this function are displayed!
+void DrawTextToScreen(const char* text, float x, float y, float scale, eFont font, bool alignRight = false, int red = 255, int green = 255, int blue = 255);
+void ClipInt(int& value, int min, int max);
+void ClipFloat(float& value, float min, float max);
+const char* BoolToStr(bool value);
+Vector3 InitVector3(float value);
+bool IsVersionSupportedForGlobals(eGameVersion ver);
+
+char* GetCommsCharacterName(int characterId);
+char* GetTextMessageName(int textId);
+char* GetCallName(int callID);
+// Thanks Parik (explanation on where and how to find addresses as well as thread structures...
+//				 everything you see in these two functions)
+// Thanks Gogsi123 (how to get the value from addresses in C++)
+void InitThreadBasket();
+uint64_t* GetThreadAddress(int localId, int scriptHash);
+uint64_t* GetGlobalPtr(int globalId);
+std::string GetGameVersionString();

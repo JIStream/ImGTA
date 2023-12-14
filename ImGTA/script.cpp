@@ -69,7 +69,7 @@ void DLLObject::InitMods()
 		m_modsLoaded.push_back(new CommsMod(*this, supportGlobals));
 		m_modsLoaded.push_back(missionMod = new MissionMod(*this, supportGlobals));
 	}
-	m_modsLoaded.push_back(new ScriptLoggerMod(*this, supportGlobals));
+	m_modsLoaded.push_back(new ScriptLoggerMod(*this));
 	//modsLoaded.push_back(new TestMod(supportGlobals));
 }
 

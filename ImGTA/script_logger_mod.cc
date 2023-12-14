@@ -15,6 +15,7 @@
 #include "ModUtils/Trampoline.h"
 #include "Patterns/Patterns.hh"
 #include "user_settings.h"
+#include "common/events.hh"
 
 using WriteFunction = void (*) (FILE*, uint8_t*, uint64_t*, uint64_t*);
 
@@ -541,7 +542,7 @@ class ScriptLoggerMod : public Mod
 		injector::MakeJMP(addr, trampoline);
 		injector::MakeJMP(&trampoline[0][JMP_OFFSET], (uint8_t*)addr + 5);
 
-		RegisterHook(&trampoline[0][CALL_OFFSET], PerOpcodeHook);
+		//RegisterHook(&trampoline[0][CALL_OFFSET], PerOpcodeHook);
 	}
 
 	bool
@@ -580,11 +581,43 @@ class ScriptLoggerMod : public Mod
 		}
 	}
 
-	void
-		Process(uint64_t* stack, uint64_t* globals, scrProgram* program,
-			scrThreadContext* ctx) override
+private:
+	ScriptLoggerSettings m_settings;
+
+public:
+	ScriptLoggerMod(DLLObject& dllObject) : Mod(dllObject, "Script Logger", true, true) {
+		m_windowFlags = ImGuiWindowFlags_MenuBar;
+	}
+
+	static void
+		ProcessOpcode(uint8_t* ip, uint64_t* SP, uint64_t* FSP)
 	{
-		Rainbomizer::ExceptionHandlerMgr::GetInstance().Init();
+		if (m_CurrentFile)
+			m_CurrentFile->WriteOpcode(ip, SP, FSP);
+	}
+
+	void Load()
+	{
+		ImGTA::Events().OnRunThread += Process;
+		//m_settings = m_dllObject.GetUserSettings();
+		//InitialiseAllComponents();
+		//InitialisePerOpcodeHook ();
+	}
+
+	void Unload() {
+		//m_dllObject.GetUserSettings().memWatcher = m_settings;
+	}
+
+	void Think() {}
+
+	CommonSettings& GetCommonSettings() override { return m_settings.common; }
+
+	void
+		Process(uint64_t* stack, uint64_t* globals,
+			scrProgram* program,
+			scrThreadContext* ctx)
+	{
+		//Rainbomizer::ExceptionHandlerMgr::GetInstance().Init();
 
 		m_CurrentFile = nullptr;
 		if (auto file = LookupMap(m_Files, ctx->m_nScriptHash))
@@ -598,32 +631,4 @@ class ScriptLoggerMod : public Mod
 			}
 		}
 	}
-
-private:
-	ScriptLoggerSettings m_settings;
-
-public:
-	static ScriptLoggerMod sm_Instance;
-
-	ScriptLoggerMod(DLLObject& dllObject, bool supportGlobals) : Mod(dllObject, "Script Logger", true, supportGlobals) {
-		m_windowFlags = ImGuiWindowFlags_MenuBar;
-	}
-
-	static void
-		ProcessOpcode(uint8_t* ip, uint64_t* SP, uint64_t* FSP)
-	{
-		if (m_CurrentFile)
-			m_CurrentFile->WriteOpcode(ip, SP, FSP);
-	}
-	void Load()
-	{
-		InitialiseAllComponents();
-		//InitialisePerOpcodeHook ();
-	}
-	void Unload() {
-
-	}
-	CommonSettings& GetCommonSettings() override { return m_settings.common; }
 };
-
-//TimeTravelDebugInterface TimeTravelDebugInterface::sm_Instance{};
