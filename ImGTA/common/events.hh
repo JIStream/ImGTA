@@ -44,6 +44,12 @@ public:
         m_Callbacks.push_back (f);
     }
 
+    void
+        add (FunctionType f)
+    {
+        m_Callbacks.push_back(f);
+    }
+
     friend class EventTriggerer;
 };
 

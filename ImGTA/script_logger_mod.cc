@@ -1,3 +1,4 @@
+#pragma once
 #include <map>
 #include "utils.h"
 #include "common/common.hh"
@@ -612,7 +613,7 @@ public:
 
 	CommonSettings& GetCommonSettings() override { return m_settings.common; }
 
-	void
+	static void
 		Process(uint64_t* stack, uint64_t* globals,
 			scrProgram* program,
 			scrThreadContext* ctx)

@@ -192,6 +192,7 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClCompile Include="cheats_mod.cpp" />
     <ClCompile Include="common\common.cpp" />
     <ClCompile Include="common\events.cc" />
+    <ClCompile Include="common\logger.cpp" />
     <ClCompile Include="comms_mod.cpp" />
     <ClCompile Include="cutscene_mod.cpp" />
     <ClCompile Include="gta_script.cpp" />
@@ -205,6 +206,7 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClCompile Include="mission_mod.cpp" />
     <ClCompile Include="mod.cpp" />
     <ClCompile Include="model.cpp" />
+    <ClCompile Include="Patterns\Patterns.cpp" />
     <ClCompile Include="player_switch_mod.cpp" />
     <ClCompile Include="script.cpp" />
     <ClCompile Include="audio_mod.cpp" />
