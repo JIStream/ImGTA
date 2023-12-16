@@ -114,7 +114,7 @@ copy "$(SolutionDir)lua\lua53.dll" "E:\Grand Theft Auto V"</Command>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookV_SDK\inc\;$(SolutionDir)Libraries\imgui\;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\fmt-master\include\;$(SolutionDir)Libraries\json;$(SolutionDir)Libraries\lua\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookV_SDK\inc\;$(SolutionDir)Libraries\imgui\;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\fmt-master\include;$(SolutionDir)Libraries\json;$(SolutionDir)Libraries\lua\include\;%(AdditionalIncludeDirectories);C:\Users\vboxuser\source\repos\ImGTA\Libraries\imgui\misc</AdditionalIncludeDirectories>
       <ShowIncludes>
       </ShowIncludes>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -161,7 +161,7 @@ copy "$(SolutionDir)lua\lua53.dll" "E:\Grand Theft Auto V"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookV_SDK\inc\;$(SolutionDir)Libraries\imgui\;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\fmt-master\include\;$(SolutionDir)Libraries\lua\include\;$(SolutionDir)Libraries\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\ScriptHookV_SDK\inc\;$(SolutionDir)Libraries\imgui\;$(SolutionDir)Libraries\imgui\backends\;$(SolutionDir)Libraries\fmt-master\include;$(SolutionDir)Libraries\lua\include\;$(SolutionDir)Libraries\json;%(AdditionalIncludeDirectories);C:\Users\vboxuser\source\repos\ImGTA\Libraries\imgui\misc</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -187,6 +187,7 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClCompile Include="..\Libraries\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\Libraries\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Libraries\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\Libraries\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="anim_dict.cpp" />
     <ClCompile Include="area_mod.cpp" />
     <ClCompile Include="cheats_mod.cpp" />
@@ -230,6 +231,7 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClInclude Include="..\Libraries\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\Libraries\imgui\imstb_textedit.h" />
     <ClInclude Include="..\Libraries\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\Libraries\imgui\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="anim_dict.h" />
     <ClInclude Include="area_mod.h" />
     <ClInclude Include="atArray.hh" />

@@ -1,3 +1,4 @@
+#define FMT_HEADER_ONLY
 #include "scrThread.hh"
 #include "Patterns/Patterns.hh"
 #include "utils.h"
@@ -6,6 +7,7 @@
 #include <array>
 #include <sstream>
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 class gBaseScriptDirectory;
 

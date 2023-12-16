@@ -10,6 +10,7 @@
 #include "script.h"
 #include "utils.h"
 #include "user_settings.h"
+#include "common/logger.hh"
 
 Mod::Mod(DLLObject & dllObject, std::string name, bool hasWindow, bool supportGlobals) :
 	m_dllObject(dllObject),
@@ -18,7 +19,6 @@ Mod::Mod(DLLObject & dllObject, std::string name, bool hasWindow, bool supportGl
 	m_supportGlobals(supportGlobals),
 	m_textDrawMaxWarning(false)
 {
-
 }
 
 bool Mod::HasWindow()

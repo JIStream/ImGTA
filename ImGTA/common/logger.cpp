@@ -122,5 +122,4 @@ namespace ImGTA {
 				14, rage__formatf6eb9, AppendBuildVersion);
 		}
 	} _display;
-
 }

@@ -3,8 +3,6 @@
 #include <cstring>
 #include <filesystem>
 #include "logger.hh"
-//#include <rage.hh>
-//#include <Natives.hh>
 #include <cstdlib>
 #include <system_error>
 #include <array>
@@ -48,9 +46,9 @@ namespace ImGTA {
             const std::string& subdirs, bool temp)
     {
         std::string baseDir
-            = GetGameDirRelativePathA(("rainbomizer/" + subdirs).c_str());
+            = GetGameDirRelativePathA(("ImGTA/" + subdirs).c_str());
 
-        if (!std::filesystem::exists(GetGameDirRelativePathA("rainbomizer/")))
+        if (!std::filesystem::exists(GetGameDirRelativePathA("ImGTA/")))
         {
             MessageBox(NULL,
                 "Failed to locate Rainbomizer Data "
@@ -62,7 +60,7 @@ namespace ImGTA {
 
         if (temp)
             baseDir = std::filesystem::temp_directory_path().string()
-            + "/rainbomizer/" + subdirs;
+            + "/ImGTA/" + subdirs;
 
         std::error_code ec;
         std::filesystem::create_directories(baseDir, ec);

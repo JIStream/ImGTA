@@ -13,8 +13,8 @@
 #include <stdio.h>
 #include <time.h>
 #include "mod.h"
-#include "ModUtils/Trampoline.h"
-#include "Patterns/Patterns.hh"
+//#include "ModUtils/Trampoline.h"
+//#include "Patterns/Patterns.hh"
 #include "user_settings.h"
 #include "common/events.hh"
 
@@ -477,14 +477,25 @@ class ScriptLoggerMod : public Mod
 		bool
 			Activate(scrProgram* program)
 		{
+			ImGTA::Logger::LogMessage("Activate THREAD HELP");
 			if (!IsActive())
 				return false;
 
 			auto thread = scrThread::GetActiveThread();
 
-			m_CurrentFile = &m_Files[thread->m_Context.m_nThreadId];
-			m_CurrentFile->StartCapture(thread, program, false, false, false);
+			if (thread != nullptr)
+			{
+				ImGTA::Logger::LogMessage("Activate thread");
 
+				m_CurrentFile = &m_Files[thread->m_Context.m_nThreadId];
+
+				ImGTA::Logger::LogMessage("Before Start Capture");
+				m_CurrentFile->StartCapture(thread, program, false, false, false);
+				ImGTA::Logger::LogMessage("After Start Capture");
+			}
+			else {
+				ImGTA::Logger::LogMessage("Thread is NULL");
+			}
 			return true;
 		}
 
@@ -546,9 +557,67 @@ class ScriptLoggerMod : public Mod
 		//RegisterHook(&trampoline[0][CALL_OFFSET], PerOpcodeHook);
 	}
 
+private:
+	ScriptLoggerSettings m_settings;
+
+public:
+	ScriptLoggerMod(DLLObject& dllObject) : Mod(dllObject, "Script Logger", true, true) {
+		m_windowFlags = ImGuiWindowFlags_MenuBar;
+	}
+
+	static void
+		ProcessOpcode(uint8_t* ip, uint64_t* SP, uint64_t* FSP)
+	{
+		if (m_CurrentFile)
+			m_CurrentFile->WriteOpcode(ip, SP, FSP);
+	}
+
+	void Load()
+	{
+		scrThread::InitialisePatterns();
+		ImGTA::Events().OnRunThread += Process;
+		//m_settings = m_dllObject.GetUserSettings();
+		//InitialiseAllComponents();
+		//InitialisePerOpcodeHook ();
+	}
+
+	void Unload() {
+		//m_dllObject.GetUserSettings().memWatcher = m_settings;
+	}
+
+	void Think() {}
+
+	CommonSettings& GetCommonSettings() override { return m_settings.common; }
+
+	static void
+		Process(uint64_t* stack, uint64_t* globals,
+			scrProgram* program,
+			scrThreadContext* ctx)
+	{
+		//Rainbomizer::ExceptionHandlerMgr::GetInstance().Init();
+
+		ImGTA::Logger::LogMessage(
+			"Tracing thread");
+
+		m_CurrentFile = nullptr;
+		if (auto file = LookupMap(m_Files, ctx->m_nScriptHash))
+		{
+			if (!file->Activate(program))
+			{
+				m_Files.erase(ctx->m_nScriptHash);
+				ImGTA::Logger::LogMessage(
+					"Finished tracing thread: %s",
+					scrThread::GetActiveThread()->GetName());
+			}
+		}
+	}
+
 	bool
 		Draw() override
 	{
+		/*ImGTA::Logger::LogMessage(
+			"Draw() called: %s",
+			scrThread::GetActiveThread()->GetName());*/
 		static std::string threadName = "";
 		static int         iterations = 0;
 		bool               pause;
@@ -572,6 +641,8 @@ class ScriptLoggerMod : public Mod
 					.SetNumIterations((pause) ? 0 : iterations);
 
 				ImGui::CloseCurrentPopup();
+
+				ImGTA::Logger::LogMessage("Yes Pressed");
 			}
 
 			ImGui::SameLine();
@@ -580,56 +651,6 @@ class ScriptLoggerMod : public Mod
 
 			ImGui::EndPopup();
 		}
-	}
-
-private:
-	ScriptLoggerSettings m_settings;
-
-public:
-	ScriptLoggerMod(DLLObject& dllObject) : Mod(dllObject, "Script Logger", true, true) {
-		m_windowFlags = ImGuiWindowFlags_MenuBar;
-	}
-
-	static void
-		ProcessOpcode(uint8_t* ip, uint64_t* SP, uint64_t* FSP)
-	{
-		if (m_CurrentFile)
-			m_CurrentFile->WriteOpcode(ip, SP, FSP);
-	}
-
-	void Load()
-	{
-		ImGTA::Events().OnRunThread += Process;
-		//m_settings = m_dllObject.GetUserSettings();
-		//InitialiseAllComponents();
-		//InitialisePerOpcodeHook ();
-	}
-
-	void Unload() {
-		//m_dllObject.GetUserSettings().memWatcher = m_settings;
-	}
-
-	void Think() {}
-
-	CommonSettings& GetCommonSettings() override { return m_settings.common; }
-
-	static void
-		Process(uint64_t* stack, uint64_t* globals,
-			scrProgram* program,
-			scrThreadContext* ctx)
-	{
-		//Rainbomizer::ExceptionHandlerMgr::GetInstance().Init();
-
-		m_CurrentFile = nullptr;
-		if (auto file = LookupMap(m_Files, ctx->m_nScriptHash))
-		{
-			if (!file->Activate(program))
-			{
-				m_Files.erase(ctx->m_nScriptHash);
-				ImGTA::Logger::LogMessage(
-					"Finished tracing thread: %s",
-					scrThread::GetActiveThread()->GetName());
-			}
-		}
+		return true;
 	}
 };

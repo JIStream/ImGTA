@@ -64,12 +64,12 @@ void DLLObject::InitMods()
 	m_modsLoaded.push_back(new PlayerSwitchMod(*this, supportGlobals));
 	m_modsLoaded.push_back(new AreaMod(*this, supportGlobals));
 	m_modsLoaded.push_back(new LuaConsoleMod(*this, supportGlobals, m_luaEngine));
+	m_modsLoaded.push_back(new ScriptLoggerMod(*this));
 	if (supportGlobals)
 	{
 		m_modsLoaded.push_back(new CommsMod(*this, supportGlobals));
 		m_modsLoaded.push_back(missionMod = new MissionMod(*this, supportGlobals));
 	}
-	m_modsLoaded.push_back(new ScriptLoggerMod(*this));
 	//modsLoaded.push_back(new TestMod(supportGlobals));
 }
 
@@ -162,12 +162,26 @@ void DLLObject::UpdateWindows()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
+	ImGTA::Logger::LogMessage(
+		"Update Windows");
+
 	for (auto &m : m_modsLoaded)
 	{
 		if (m->HasWindow())
+		{
+			/*ImGTA::Logger::LogMessage(
+				"Begin ImGUI: %s",
+				m->GetName());*/
 			ImGui::Begin(m->GetName().c_str(), nullptr, m->m_windowFlags);
-		if (m->Draw() && m->HasWindow())
-			ImGui::End();
+
+			if (m->Draw())
+			{
+				/*ImGTA::Logger::LogMessage(
+					"End ImGUI: %s",
+					m->GetName());*/
+				ImGui::End();
+			}
+		}
 	}
 
 	ImGui::Render();
@@ -246,8 +260,14 @@ void DLLObject::Unload()
 		}
 		m_modsLoaded.clear();
 
+		ImGTA::Logger::LogMessage(
+			"Mods Unloaded");
+
 		// Save settings
 		m_userSettings.Save(m_userSettingsFile);
+
+		ImGTA::Logger::LogMessage(
+			"Settings Saved");
 
 		ImGui_ImplDX11_Shutdown();
 		ImGui_ImplWin32_Shutdown();
@@ -255,6 +275,9 @@ void DLLObject::Unload()
 		if (m_oldProc)
 			SetWindowLongPtr(FindMainWindow(GetCurrentProcessId()), GWLP_WNDPROC, m_oldProc);
 		m_isLoaded = false;
+
+		ImGTA::Logger::LogMessage(
+			"Mods Finished Unloading");
 	}
 }
 
