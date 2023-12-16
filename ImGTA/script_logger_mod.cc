@@ -477,7 +477,7 @@ class ScriptLoggerMod : public Mod
 		bool
 			Activate(scrProgram* program)
 		{
-			ImGTA::Logger::LogMessage("Activate THREAD HELP");
+			ImGTA::Logger::LogMessage("Activate stepped in");
 			if (!IsActive())
 				return false;
 
@@ -561,9 +561,7 @@ private:
 	ScriptLoggerSettings m_settings;
 
 public:
-	ScriptLoggerMod(DLLObject& dllObject) : Mod(dllObject, "Script Logger", true, true) {
-		m_windowFlags = ImGuiWindowFlags_MenuBar;
-	}
+	ScriptLoggerMod(DLLObject& dllObject) : Mod(dllObject, "Script Logger", true, true) {}
 
 	static void
 		ProcessOpcode(uint8_t* ip, uint64_t* SP, uint64_t* FSP)
@@ -577,7 +575,6 @@ public:
 		scrThread::InitialisePatterns();
 		ImGTA::Events().OnRunThread += Process;
 		//m_settings = m_dllObject.GetUserSettings();
-		//InitialiseAllComponents();
 		//InitialisePerOpcodeHook ();
 	}
 
@@ -600,6 +597,7 @@ public:
 			"Tracing thread");
 
 		m_CurrentFile = nullptr;
+		//if currently executed script by the game is added to tracing
 		if (auto file = LookupMap(m_Files, ctx->m_nScriptHash))
 		{
 			if (!file->Activate(program))
@@ -615,9 +613,6 @@ public:
 	bool
 		Draw() override
 	{
-		/*ImGTA::Logger::LogMessage(
-			"Draw() called: %s",
-			scrThread::GetActiveThread()->GetName());*/
 		static std::string threadName = "";
 		static int         iterations = 0;
 		bool               pause;

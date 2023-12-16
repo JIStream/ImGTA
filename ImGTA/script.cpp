@@ -64,7 +64,7 @@ void DLLObject::InitMods()
 	m_modsLoaded.push_back(new PlayerSwitchMod(*this, supportGlobals));
 	m_modsLoaded.push_back(new AreaMod(*this, supportGlobals));
 	m_modsLoaded.push_back(new LuaConsoleMod(*this, supportGlobals, m_luaEngine));
-	m_modsLoaded.push_back(new ScriptLoggerMod(*this));
+	//m_modsLoaded.push_back(new ScriptLoggerMod(*this));
 	if (supportGlobals)
 	{
 		m_modsLoaded.push_back(new CommsMod(*this, supportGlobals));
