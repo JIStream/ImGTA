@@ -13,8 +13,6 @@
 #include <stdio.h>
 #include <time.h>
 #include "mod.h"
-//#include "ModUtils/Trampoline.h"
-//#include "Patterns/Patterns.hh"
 #include "user_settings.h"
 #include "common/events.hh"
 
@@ -483,19 +481,13 @@ class ScriptLoggerMod : public Mod
 		bool
 			Activate(scrProgram* program)
 		{
-			ImGTA::Logger::LogMessage("Activate stepped in");
-
 			auto thread = scrThread::GetActiveThread();
 			m_CurrentFile = &m_Files[thread->m_Context.m_nScriptHash];
 
 			if (!m_CurrentFile->IsActive())
 				return false;
 
-			ImGTA::Logger::LogMessage("IsActive passed");
-
-			ImGTA::Logger::LogMessage("Before Start Capture");
 			m_CurrentFile->StartCapture(thread, program, false, false, false);
-			ImGTA::Logger::LogMessage("After Start Capture");
 			return true;
 		}
 
@@ -520,12 +512,15 @@ class ScriptLoggerMod : public Mod
 	}
 
 	/*******************************************************/
+	static const int ORIG_INSTRUCTIONS_SIZE = 6;
+	unsigned char originalMem[ORIG_INSTRUCTIONS_SIZE];
+	void * opcodeHookEntryAddress;
+
 	void
 		InitialisePerOpcodeHook()
 	{
 		const int CALL_OFFSET = 23;
-		const int JMP_OFFSET = 36;
-		const int ORIG_INSTRUCTIONS = 6;
+		const int JMP_OFFSET = 36;	
 
 		unsigned char Instructions[] = {
 			0x48, 0xff, 0xc7,             // INC     RDI
@@ -545,20 +540,28 @@ class ScriptLoggerMod : public Mod
 			0xe9, 0x00, 0x00, 0x00, 0x00  // JMP     0x0
 		};
 
-		void* addr = hook::get_pattern("48 ff c7 0f b6 07 83 f8 ? 0f 87");
+		opcodeHookEntryAddress = hook::get_pattern("48 ff c7 0f b6 07 83 f8 ? 0f 87");
 		auto trampoline = Trampoline::MakeTrampoline(GetModuleHandle(nullptr))
 			->Pointer<decltype (Instructions)>();
 
 		memcpy(trampoline, Instructions, sizeof(Instructions));
-		memcpy(trampoline, addr, ORIG_INSTRUCTIONS);
+		memcpy(originalMem, opcodeHookEntryAddress, ORIG_INSTRUCTIONS_SIZE);
+		memcpy(trampoline, opcodeHookEntryAddress, ORIG_INSTRUCTIONS_SIZE);
 
-		injector::MakeNOP(addr, ORIG_INSTRUCTIONS);
-		injector::MakeJMP(addr, trampoline);
-		injector::MakeJMP(&trampoline[0][JMP_OFFSET], (uint8_t*)addr + 5);
+		injector::MakeNOP(opcodeHookEntryAddress, ORIG_INSTRUCTIONS_SIZE);
+		injector::MakeJMP(opcodeHookEntryAddress, trampoline);
+		injector::MakeJMP(&trampoline[0][JMP_OFFSET], (uint8_t*)opcodeHookEntryAddress + 5);
 
 		RegisterHook(&trampoline[0][CALL_OFFSET], PerOpcodeHook);
 
 		ImGTA::Logger::LogMessage("Per Opcode Hook Initialized!");
+	}
+
+	void
+		RemovePerOpcodeHook()
+	{
+		injector::WriteMemoryRaw(opcodeHookEntryAddress, originalMem, ORIG_INSTRUCTIONS_SIZE, true);
+		ImGTA::Logger::LogMessage("PerOpcodeHook Removed!");
 	}
 
 private:
@@ -581,7 +584,9 @@ public:
 		ImGTA::Events().OnRunThread += Process;
 	}
 
-	void Unload() override {}
+	void Unload() override {
+		RemovePerOpcodeHook();
+	}
 
 	void Think() override {}
 
@@ -595,15 +600,12 @@ public:
 		//Rainbomizer::ExceptionHandlerMgr::GetInstance().Init();
 
 		m_CurrentFile = nullptr;
-		//if currently executed script by the game is added to tracing
+		//if script currently executed by the game is added to tracing
 		if (auto file = LookupMap(ttdManager.m_Files, ctx->m_nScriptHash))
 		{
 			if (!ttdManager.Activate(program))
 			{
-				ImGTA::Logger::LogMessage("Activate!!!!!!!!!");
-				ImGTA::Logger::LogMessage("m_Files size %d hash %d", ttdManager.m_Files.size(), ctx->m_nScriptHash);
 				ttdManager.Deactivate(ctx->m_nScriptHash);
-				ImGTA::Logger::LogMessage("Acti2v22a2te!!!!!!!!!");
 				ImGTA::Logger::LogMessage(
 					"Finished tracing thread: %s",
 					scrThread::GetActiveThread()->GetName());
@@ -614,7 +616,6 @@ public:
 	bool
 		Draw() override
 	{
-		//ImGTA::Logger::LogMessage("Draw!!!!!!!!!");
 		static std::string threadName = "";
 		static int         iterations = 0;
 		bool               pause;
@@ -638,8 +639,6 @@ public:
 					.SetNumIterations((pause) ? 0 : iterations);
 
 				ImGui::CloseCurrentPopup();
-
-				ImGTA::Logger::LogMessage("Yes Pressed");
 			}
 
 			ImGui::SameLine();

@@ -211,7 +211,7 @@ copy "$(TargetPath)" "Z:\"</Command>
     <ClCompile Include="player_switch_mod.cpp" />
     <ClCompile Include="script.cpp" />
     <ClCompile Include="audio_mod.cpp" />
-    <ClCompile Include="script_logger_mod.cc" />
+    <ClCompile Include="script_logger_mod.h" />
     <ClCompile Include="scripts_mod.cpp" />
     <ClCompile Include="scrThread.cpp" />
     <ClCompile Include="strangers_and_freaks_names.cpp" />

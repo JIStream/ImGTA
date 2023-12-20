@@ -176,7 +176,7 @@
     <ClCompile Include="Patterns\Patterns.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="script_logger_mod.cc">
+    <ClCompile Include="script_logger_mod.h">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scrThread.cpp">

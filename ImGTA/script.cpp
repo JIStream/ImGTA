@@ -22,7 +22,7 @@
 #include "test_mod.h"
 #include "lua_console_mod.h"
 #include "utils.h"
-#include "script_logger_mod.cc"
+#include "script_logger_mod.h"
 
 #include "natives.h"
 
