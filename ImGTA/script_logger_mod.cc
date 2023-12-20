@@ -286,6 +286,7 @@ static constexpr std::array<WriteFunction, 128> Opcodes = { {
 class TTDFile
 {
 	FILE* m_File = nullptr;
+	uint32_t m_NumIterations = 0;
 	enum
 	{
 		PAUSED,
@@ -393,6 +394,18 @@ public:
 		CloseFile();
 	}
 
+	void
+		SetNumIterations(uint32_t iters)
+	{
+		this->m_NumIterations = iters;
+	}
+
+	bool
+		IsActive()
+	{
+		return m_NumIterations != 0 && m_NumIterations-- != 0;
+	}
+
 	bool
 		ShouldWriteOpcode(YscOpCode op)
 	{
@@ -452,15 +465,13 @@ class ScriptLoggerMod : public Mod
 {
 	class TTDFileManager
 	{
+	public:
+		//Does not support logging multiple instances of the same script, original implementation used threadID
+		//so that might've been possible but very unintuitive
+		//Possibly add UI option and proper logic but whtever for now
 		inline static std::map<uint32_t, TTDFile> m_Files{};
 
-		uint32_t m_NumIterations = 0;
-
-	public:
-		TTDFileManager(uint32_t numIterations = 1)
-			: m_NumIterations(numIterations)
-		{
-		}
+		TTDFileManager() {}
 
 		~TTDFileManager()
 		{
@@ -470,24 +481,17 @@ class ScriptLoggerMod : public Mod
 		}
 
 		bool
-			IsActive()
-		{
-			return m_NumIterations != 0 && m_NumIterations-- != 0;
-		}
-
-		bool
 			Activate(scrProgram* program)
 		{
 			ImGTA::Logger::LogMessage("Activate stepped in");
 
-			if (!IsActive())
+			auto thread = scrThread::GetActiveThread();
+			m_CurrentFile = &m_Files[thread->m_Context.m_nScriptHash];
+
+			if (!m_CurrentFile->IsActive())
 				return false;
 
 			ImGTA::Logger::LogMessage("IsActive passed");
-
-			auto thread = scrThread::GetActiveThread();
-
-			m_CurrentFile = &m_Files[thread->m_Context.m_nThreadId];
 
 			ImGTA::Logger::LogMessage("Before Start Capture");
 			m_CurrentFile->StartCapture(thread, program, false, false, false);
@@ -496,13 +500,14 @@ class ScriptLoggerMod : public Mod
 		}
 
 		void
-			SetNumIterations(uint32_t iters)
+			Deactivate(uint32_t m_nScriptHash)
 		{
-			this->m_NumIterations = iters;
+			ttdManager.m_Files[m_nScriptHash].StopCapture();
+			ttdManager.m_Files.erase(m_nScriptHash);
 		}
 	};
 
-	inline static std::map<uint32_t, TTDFileManager> m_Files{};
+	inline static TTDFileManager ttdManager;
 	inline static TTDFile* m_CurrentFile = nullptr;
 
 	/*******************************************************/
@@ -572,7 +577,7 @@ public:
 	void Load() override
 	{
 		scrThread::InitialisePatterns();
-		InitialisePerOpcodeHook ();
+		InitialisePerOpcodeHook();
 		ImGTA::Events().OnRunThread += Process;
 	}
 
@@ -591,13 +596,13 @@ public:
 
 		m_CurrentFile = nullptr;
 		//if currently executed script by the game is added to tracing
-		if (auto file = LookupMap(m_Files, ctx->m_nScriptHash))
+		if (auto file = LookupMap(ttdManager.m_Files, ctx->m_nScriptHash))
 		{
-			if (!file->Activate(program))
+			if (!ttdManager.Activate(program))
 			{
 				ImGTA::Logger::LogMessage("Activate!!!!!!!!!");
-				ImGTA::Logger::LogMessage("m_Files size %d hash %d", m_Files.size(), ctx->m_nScriptHash);
-				m_Files.erase(ctx->m_nScriptHash);
+				ImGTA::Logger::LogMessage("m_Files size %d hash %d", ttdManager.m_Files.size(), ctx->m_nScriptHash);
+				ttdManager.Deactivate(ctx->m_nScriptHash);
 				ImGTA::Logger::LogMessage("Acti2v22a2te!!!!!!!!!");
 				ImGTA::Logger::LogMessage(
 					"Finished tracing thread: %s",
@@ -609,7 +614,7 @@ public:
 	bool
 		Draw() override
 	{
-		ImGTA::Logger::LogMessage("Draw!!!!!!!!!");
+		//ImGTA::Logger::LogMessage("Draw!!!!!!!!!");
 		static std::string threadName = "";
 		static int         iterations = 0;
 		bool               pause;
@@ -629,7 +634,7 @@ public:
 			ImGui::Text("ARE YOU SURE?!?!?!?!!?!");
 			if (ImGui::Button("Yes"))
 			{
-				m_Files[rage::atStringHash(threadName)]
+				ttdManager.m_Files[rage::atStringHash(threadName)]
 					.SetNumIterations((pause) ? 0 : iterations);
 
 				ImGui::CloseCurrentPopup();

@@ -168,12 +168,12 @@ void DLLObject::UpdateWindows()
 		{
 			ImGui::Begin(m->GetName().c_str(), nullptr, m->m_windowFlags);
 
-			ImGTA::Logger::LogMessage("Begin %s", m->GetName().c_str());
+			//ImGTA::Logger::LogMessage("Begin %s", m->GetName().c_str());
 			if (m->Draw())
 			{
-				ImGTA::Logger::LogMessage("After Draw %s", m->GetName().c_str());
+				//ImGTA::Logger::LogMessage("After Draw %s", m->GetName().c_str());
 				ImGui::End();
-				ImGTA::Logger::LogMessage("After End %s", m->GetName().c_str());
+				//ImGTA::Logger::LogMessage("After End %s", m->GetName().c_str());
 			}
 		}
 	}
