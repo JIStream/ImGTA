@@ -400,6 +400,9 @@ public:
     std::pair<uint32_t, uint32_t> FindCurrentFunctionBounds(scrProgram* program
         = nullptr);
 
+    static eScriptState(*scrThread__Run) (uint64_t*, uint64_t**, scrProgram*,
+        scrThreadContext*);
+
     static eScriptState Run(uint64_t* stack, uint64_t** globals,
         scrProgram* program, scrThreadContext* ctx);
 

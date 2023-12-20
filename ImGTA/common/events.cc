@@ -1,6 +1,7 @@
 #include "events.hh"
 #include "logger.hh"
 #include "../scrThread.hh"
+#include "../injector/injector.hpp"
 
 #include "../utils.h"
 #include <cstdint>
@@ -78,6 +79,13 @@ class EventTriggerer
     }
 
 public:
+    ~EventTriggerer() {
+        UnRegisterHook("8d 15 ? ? ? ? ? 8b c0 e8 ? ? ? ? ? 85 ff ? 89 1d", 9, scrThread__Run);
+    }
+
+    eScriptState(*scrThread__Run) (uint64_t*, uint64_t*, scrProgram*,
+        scrThreadContext*);
+    
     EventTriggerer ()
     {/*
         REGISTER_HOOK ("e8 ? ? ? ? e8 ? ? ? ? ? 8d 0d ? ? ? ? ba 04 00 00 00",
@@ -87,6 +95,11 @@ public:
         REGISTER_HOOK (
             "? 8d 0d ? ? ? ? ba 08 00 00 00 e8 ? ? ? ? c6 05 ? ? ? ? 01 ", 12,
             ProcessInitCallbacks, void, gameSkeleton *, uint32_t);*/
+
+        //getting address of original function
+        ReadCall(hook::get_pattern(
+            "8d 15 ? ? ? ? ? 8b c0 e8 ? ? ? ? ? 85 ff ? 89 1d", 9),
+            scrThread__Run);
 
         REGISTER_HOOK ("8d 15 ? ? ? ? ? 8b c0 e8 ? ? ? ? ? 85 ff ? 89 1d", 9,
                        RunThreadHook, eScriptState, uint64_t *, uint64_t *,

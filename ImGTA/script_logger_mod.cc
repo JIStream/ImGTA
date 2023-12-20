@@ -464,6 +464,7 @@ class ScriptLoggerMod : public Mod
 
 		~TTDFileManager()
 		{
+			ImGTA::Logger::LogMessage("TTD Destruction");
 			for (auto& i : m_Files)
 				i.second.StopCapture();
 		}
@@ -478,24 +479,19 @@ class ScriptLoggerMod : public Mod
 			Activate(scrProgram* program)
 		{
 			ImGTA::Logger::LogMessage("Activate stepped in");
+
 			if (!IsActive())
 				return false;
 
+			ImGTA::Logger::LogMessage("IsActive passed");
+
 			auto thread = scrThread::GetActiveThread();
 
-			if (thread != nullptr)
-			{
-				ImGTA::Logger::LogMessage("Activate thread");
+			m_CurrentFile = &m_Files[thread->m_Context.m_nThreadId];
 
-				m_CurrentFile = &m_Files[thread->m_Context.m_nThreadId];
-
-				ImGTA::Logger::LogMessage("Before Start Capture");
-				m_CurrentFile->StartCapture(thread, program, false, false, false);
-				ImGTA::Logger::LogMessage("After Start Capture");
-			}
-			else {
-				ImGTA::Logger::LogMessage("Thread is NULL");
-			}
+			ImGTA::Logger::LogMessage("Before Start Capture");
+			m_CurrentFile->StartCapture(thread, program, false, false, false);
+			ImGTA::Logger::LogMessage("After Start Capture");
 			return true;
 		}
 
@@ -513,6 +509,7 @@ class ScriptLoggerMod : public Mod
 	static uint32_t
 		PerOpcodeHook(uint8_t* ip, uint64_t* SP, uint64_t* FSP)
 	{
+		//ImGTA::Logger::LogMessage("Per Opcode Hook!");
 		ProcessOpcode(ip, SP, FSP);
 		return *ip;
 	}
@@ -554,7 +551,9 @@ class ScriptLoggerMod : public Mod
 		injector::MakeJMP(addr, trampoline);
 		injector::MakeJMP(&trampoline[0][JMP_OFFSET], (uint8_t*)addr + 5);
 
-		//RegisterHook(&trampoline[0][CALL_OFFSET], PerOpcodeHook);
+		RegisterHook(&trampoline[0][CALL_OFFSET], PerOpcodeHook);
+
+		ImGTA::Logger::LogMessage("Per Opcode Hook Initialized!");
 	}
 
 private:
@@ -570,19 +569,16 @@ public:
 			m_CurrentFile->WriteOpcode(ip, SP, FSP);
 	}
 
-	void Load()
+	void Load() override
 	{
 		scrThread::InitialisePatterns();
+		InitialisePerOpcodeHook ();
 		ImGTA::Events().OnRunThread += Process;
-		//m_settings = m_dllObject.GetUserSettings();
-		//InitialisePerOpcodeHook ();
 	}
 
-	void Unload() {
-		//m_dllObject.GetUserSettings().memWatcher = m_settings;
-	}
+	void Unload() override {}
 
-	void Think() {}
+	void Think() override {}
 
 	CommonSettings& GetCommonSettings() override { return m_settings.common; }
 
@@ -593,16 +589,16 @@ public:
 	{
 		//Rainbomizer::ExceptionHandlerMgr::GetInstance().Init();
 
-		ImGTA::Logger::LogMessage(
-			"Tracing thread");
-
 		m_CurrentFile = nullptr;
 		//if currently executed script by the game is added to tracing
 		if (auto file = LookupMap(m_Files, ctx->m_nScriptHash))
 		{
 			if (!file->Activate(program))
 			{
+				ImGTA::Logger::LogMessage("Activate!!!!!!!!!");
+				ImGTA::Logger::LogMessage("m_Files size %d hash %d", m_Files.size(), ctx->m_nScriptHash);
 				m_Files.erase(ctx->m_nScriptHash);
+				ImGTA::Logger::LogMessage("Acti2v22a2te!!!!!!!!!");
 				ImGTA::Logger::LogMessage(
 					"Finished tracing thread: %s",
 					scrThread::GetActiveThread()->GetName());
@@ -613,6 +609,7 @@ public:
 	bool
 		Draw() override
 	{
+		ImGTA::Logger::LogMessage("Draw!!!!!!!!!");
 		static std::string threadName = "";
 		static int         iterations = 0;
 		bool               pause;

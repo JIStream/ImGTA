@@ -9,6 +9,7 @@
 #include "types.h"
 #include "enums.h"
 #include "main.h"
+#include "common/logger.hh"
 #include "injector/injector.hpp"
 #include "Patterns/Patterns.hh"
 #include "ModUtils/Trampoline.h"
@@ -238,6 +239,15 @@ RegisterHook(const std::string& pattern, int offset, F hookedFunc)
 }
 
 /*******************************************************/
+template <bool Jmp = false, typename Func>
+void
+UnRegisterHook(const std::string& pattern, int offset, Func& originalFunc)
+{
+	void* addr = hook::get_pattern(pattern, offset);
+	injector::MakeCALL(addr, originalFunc);
+}
+
+/*******************************************************/
 template<typename F, typename O>
 void
 RegisterHookOperand(const std::string& pattern, int offset, F hookedFunc, O& originalFunc)
@@ -312,6 +322,12 @@ SearchBack(const std::string& pattern, const std::string& pattern2,
     {                                                                          \
         static ret (*F) (__VA_ARGS__);                                         \
         RegisterHook (pattern, offset, F, function<F>);                        \
+    }
+
+#define UNREGISTER_HOOK(pattern, offset, function, ret, ...)                     \
+    {                                                                          \
+        static ret (*F) (__VA_ARGS__);                                         \
+        UnRegisterHook (pattern, offset, F);                        \
     }
 
 #define REGISTER_HOOK_OPERAND(pattern, offset, function, ret, ...)             \

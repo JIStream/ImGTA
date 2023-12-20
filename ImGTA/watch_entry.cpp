@@ -61,9 +61,11 @@ std::string GetDisplayForType(uint64_t* globalAddr, WatchType type)
 		std::snprintf(buf, sizeof(buf), "%.4f", *(float*)globalAddr);
 		break;
 	case WatchType::kVector3:
+	{
 		Vector3 vec = *(Vector3*)globalAddr;
 		std::snprintf(buf, sizeof(buf), "(%.4f, %.4f, %.4f)", vec.x, vec.y, vec.z);
-		break;
+	}
+	break;
 	case WatchType::kString:
 		std::snprintf(buf, sizeof(buf), "\"%s\"", (char*)globalAddr);
 		break;

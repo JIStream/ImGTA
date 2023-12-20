@@ -57,7 +57,7 @@ namespace ImGTA {
 
 			fprintf(mFile, "===========================================\n");
 			fprintf(mFile, "%d\n", (int)time(NULL));
-			fprintf(mFile, "Rainbomizer V Build: %s \n", BUILD_INFO);
+			fprintf(mFile, "ImGTA V Build: %s \n", BUILD_INFO);
 			fprintf(mFile, "===========================================\n");
 		}
 
@@ -94,32 +94,4 @@ namespace ImGTA {
 	{
 		return sg_GameBuild;
 	}
-
-	/*******************************************************/
-	class DisplayBuildVersion
-	{
-		static char*
-			AppendBuildVersion(char* out, char const* format, char* build,
-				char* version)
-		{
-			sg_GameBuild = std::stoi(version);
-			Logger::LogMessage("Set Game Build to %d", sg_GameBuild);
-
-#ifndef NDEBUG
-			return rage__formatf6eb9(out, "Rainbomizer Build %s",
-				version);
-#else
-			return rage__formatf6eb9(out, "Rainbomizer %s   Build %s",
-				RAINBOMIZER_BUILD_SHORT, version);
-#endif
-		}
-
-	public:
-		DisplayBuildVersion()
-		{
-			RegisterHook("8d ? ? ? ? ? ? 8d ? ? ? ? 8b c0 e8 ? ? ? ? ? 8d ? ? ? "
-				"b2 01 e8 ? ? ? ? ? 8d ",
-				14, rage__formatf6eb9, AppendBuildVersion);
-		}
-	} _display;
 }

@@ -350,14 +350,12 @@ scrThread::DisassemblInsn(scrProgram* program, uint32_t offset)
 }
 
 /*******************************************************/
-eScriptState(*scrThread__Run) (uint64_t*, uint64_t**, scrProgram*,
-    scrThreadContext*);
-eScriptState
-scrThread::Run(uint64_t* stack, uint64_t** globals, scrProgram* program,
-    scrThreadContext* ctx)
-{
-    return scrThread__Run(stack, globals, program, ctx);
-}
+//eScriptState
+//scrThread::Run(uint64_t* stack, uint64_t** globals, scrProgram* program,
+//    scrThreadContext* ctx)
+//{
+//    return scrThread__Run(stack, globals, program, ctx);
+//}
 
 /*******************************************************/
 void
@@ -373,9 +371,9 @@ scrThread::InitialisePatterns()
         = GetRelativeReference<uint32_t>("8b d9 33 d2 ? 8d 15 ? ? ? ? ? 8d 05",
             7, 11);
 
-    ReadCall(hook::get_pattern(
+   /* ReadCall(hook::get_pattern(
         "8d 15 ? ? ? ? ? 8b c0 e8 ? ? ? ? ? 85 ff ? 89 1d", 9),
-        scrThread__Run);
+        scrThread__Run);*/
 
     // scrProgram related
     {

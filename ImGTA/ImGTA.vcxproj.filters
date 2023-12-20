@@ -161,6 +161,27 @@
     <ClCompile Include="widgets.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Libraries\imgui\misc\cpp\imgui_stdlib.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="common\common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="common\events.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="common\logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Patterns\Patterns.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="script_logger_mod.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scrThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="script.h">
@@ -293,6 +314,30 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vectors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\imgui\misc\cpp\imgui_stdlib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atArray.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common\common.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common\events.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common\logger.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="injector\injector.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rage.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scrThread.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

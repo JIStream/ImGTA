@@ -165,7 +165,7 @@ void MemWatcherMod::DrawWatchToScreen(WatchEntry w, int addressIndex, std::strin
 		w.m_scriptRunning ? "" : "(STOPPED) ",
 		w.m_scriptName.c_str(),
 		addressIndex,
-		watchText,
+		watchText.c_str(),
 		infoDetail.c_str(),
 		w.m_value.c_str());
 	bufferLines += std::string(watchOnScreenInfoBuf) + "\n";
@@ -535,7 +535,7 @@ bool MemWatcherMod::Draw()
 			for (auto& arrayItem : w.m_arrayWatches)
 			{
 				std::string memberIndex = w.m_arrayIndexInItem > 0 ? ".f_" + std::to_string(w.m_arrayIndexInItem) : "";
-				std::snprintf(buf, sizeof(buf), indexFormat, w.m_addressIndex, "[" + std::to_string(index) + "]" + memberIndex, arrayItem.m_addressIndex, arrayItem.m_scriptHash);
+				std::snprintf(buf, sizeof(buf), indexFormat, w.m_addressIndex, ("[" + std::to_string(index) + "]" + memberIndex).c_str(), arrayItem.m_addressIndex, arrayItem.m_scriptHash);
 				if (ImGui::Selectable(buf, false, ImGuiSelectableFlags_SpanAllColumns))
 				{
 					m_selectedEntry = &arrayItem;
