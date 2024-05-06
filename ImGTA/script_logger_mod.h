@@ -514,13 +514,14 @@ class ScriptLoggerMod : public Mod
 	/*******************************************************/
 	static const int ORIG_INSTRUCTIONS_SIZE = 6;
 	unsigned char originalMem[ORIG_INSTRUCTIONS_SIZE];
-	void * opcodeHookEntryAddress;
+	void* opcodeHookEntryAddress;
+	std::vector<scrThread> previousThreads;
 
 	void
 		InitialisePerOpcodeHook()
 	{
 		const int CALL_OFFSET = 23;
-		const int JMP_OFFSET = 36;	
+		const int JMP_OFFSET = 36;
 
 		unsigned char Instructions[] = {
 			0x48, 0xff, 0xc7,             // INC     RDI
@@ -582,13 +583,88 @@ public:
 		scrThread::InitialisePatterns();
 		InitialisePerOpcodeHook();
 		ImGTA::Events().OnRunThread += Process;
+		for (int i = 0; i < GetThreads()->Size; i++)
+		{
+			previousThreads.push_back(*(*GetThreads())[i]);
+		}
 	}
 
 	void Unload() override {
 		RemovePerOpcodeHook();
 	}
 
-	void Think() override {}
+	void Think() override {
+		atArray<scrThread*>* curThreads = GetThreads();
+
+		bool changesDetected = false;
+		for (int i = 0; i < curThreads->Size; i++)
+		{
+			//don't log script termination
+			if ((*curThreads)[i]->m_Context.m_nThreadId != previousThreads.at(i).m_Context.m_nThreadId && (*curThreads)[i]->m_Context.m_nThreadId != 0)
+			{
+				changesDetected = true;
+				std::string previousScriptName;
+				if (IsSlotEmpty(previousThreads.at(i)))
+				{
+					previousScriptName = "nothing (slot was empty before)";
+				}
+				else
+				{
+					previousScriptName = previousThreads.at(i).GetName();
+				}
+				ImGTA::Logger::LogMessage(
+					"%s took the slot %d previously occupied by %s",
+					(*curThreads)[i]->GetName(), i, previousScriptName.c_str());
+				ImGTA::Logger::AddEmptyLine(1);
+			}
+		}
+
+		if (changesDetected)
+		{
+			ImGTA::Logger::LogMessage(
+				"Threads this frame: ", curThreads->Size);
+			for (int i = 0; i < curThreads->Size; i++)
+			{
+				if (!IsSlotEmpty(*(*curThreads)[i]))
+				{
+					std::string state = GetStateString((*curThreads)[i]->m_Context.m_nState);
+					ImGTA::Logger::LogMessage(
+						"[%d]: %s State: %s",
+						i, (*curThreads)[i]->GetName(), state.c_str());
+				}
+			}
+			ImGTA::Logger::AddEmptyLine(3);
+		}
+
+		previousThreads.clear();
+		for (int i = 0; i < curThreads->Size; i++)
+		{
+			previousThreads.push_back(*(*curThreads)[i]);
+		}
+	}
+
+	bool IsSlotEmpty(scrThread thread) {
+		return thread.m_Context.m_nThreadId == 0 && thread.m_Context.m_nState == eScriptState::RUNNING;
+	}
+
+	std::string GetStateString(eScriptState stateEnum) {
+		std::string state;
+		switch (stateEnum) {
+		case eScriptState::RUNNING:
+			state = "RUNNING";
+			break;
+		case eScriptState::KILLED:
+			state = "KILLED";
+			break;
+		case eScriptState::HALTED:
+			state = "HALTED";
+			break;
+		case eScriptState::WAITING:
+			state = "WAITING";
+			break;
+		}
+		return state;
+	}
 
 	CommonSettings& GetCommonSettings() override { return m_settings.common; }
 

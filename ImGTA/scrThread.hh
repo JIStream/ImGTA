@@ -9,7 +9,7 @@ enum class eScriptState : uint32_t
     RUNNING = 0,
     WAITING,
     KILLED,
-    STATE_3,
+    HALTED,
     STATE_4
 };
 

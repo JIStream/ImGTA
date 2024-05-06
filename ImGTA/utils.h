@@ -13,6 +13,8 @@
 #include "injector/injector.hpp"
 #include "Patterns/Patterns.hh"
 #include "ModUtils/Trampoline.h"
+#include "scrThread.hh"
+#include "atArray.hh"
 
 #include <Windows.h>
 #include <cstdint>
@@ -378,6 +380,7 @@ char* GetCallName(int callID);
 //				 everything you see in these two functions)
 // Thanks Gogsi123 (how to get the value from addresses in C++)
 void InitThreadBasket();
+atArray<scrThread*>* GetThreads();
 uint64_t* GetThreadAddress(int localId, int scriptHash);
 uint64_t* GetGlobalPtr(int globalId);
 std::string GetGameVersionString();

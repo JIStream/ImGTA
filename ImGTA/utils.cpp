@@ -130,6 +130,10 @@ void InitThreadBasket()
 		"8b 0d ? ? ? ? 3b ca 7d ? ? 8b 0d ", 13, 17);
 }
 
+atArray<scrThread*>* GetThreads() {
+	return threadBasket;
+}
+
 std::string GetGameVersionString() {
 	return std::to_string(getGameVersion());
 }

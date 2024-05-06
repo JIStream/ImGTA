@@ -177,7 +177,7 @@ copy "$(SolutionDir)$(ProjectName)\Lua\*.lua" "$(SolutionDir)Build\$(Platform)\$
 copy "$(SolutionDir)Config\*" "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(ProjectName)\$(ProjectName)\"
 copy "$(SolutionDir)Libraries\lua\lua53.dll" "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(ProjectName)\"
 copy "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)" "$(SolutionDir)Build\$(Platform)\$(Configuration)\$(ProjectName)\"
-copy "$(TargetPath)" "Z:\"</Command>
+copy "$(TargetPath)" "Y:\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

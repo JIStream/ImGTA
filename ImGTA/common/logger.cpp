@@ -89,6 +89,13 @@ namespace ImGTA {
 		fflush(file);
 	}
 
+	void Logger::AddEmptyLine(int count) {
+		for (int i = 0; i < count; i++)
+		{
+			LogMessage("");
+		}
+	}
+
 	uint32_t
 		Logger::GetGameBuild()
 	{

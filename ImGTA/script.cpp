@@ -165,17 +165,9 @@ void DLLObject::UpdateWindows()
 	for (auto &m : m_modsLoaded)
 	{
 		if (m->HasWindow())
-		{
 			ImGui::Begin(m->GetName().c_str(), nullptr, m->m_windowFlags);
-
-			//ImGTA::Logger::LogMessage("Begin %s", m->GetName().c_str());
-			if (m->Draw())
-			{
-				//ImGTA::Logger::LogMessage("After Draw %s", m->GetName().c_str());
-				ImGui::End();
-				//ImGTA::Logger::LogMessage("After End %s", m->GetName().c_str());
-			}
-		}
+		if (m->Draw() && m->HasWindow())
+			ImGui::End();
 	}
 
 	ImGui::Render();

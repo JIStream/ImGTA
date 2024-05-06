@@ -12,6 +12,7 @@ namespace ImGTA {
 
     public:
         static void LogMessage(const char* format, ...);
+        static void AddEmptyLine(int count);
 
         static uint32_t GetGameBuild();
     };
